@@ -1,5 +1,5 @@
 import { obtenerUsuarios as obtenerUsuariosModel,obtenerUsuarioPorId ,actualizarUsuario, eliminarUsuario } from "../models/user.js";
-import bcrypt from 'bcrypt';
+
 
 //obtener todos los usuarios
 export const obtenerUsuarios = async (req, res) => {
