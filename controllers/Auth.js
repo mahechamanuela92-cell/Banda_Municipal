@@ -3,10 +3,10 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
-    const { nombre, correo, contrasena, rol } = req.body;
+    const { nombre, email, contrasena, rol } = req.body;
 
     try {
-        const userExists = await AuthModel.findByEmail(correo);
+        const userExists = await AuthModel.findByEmail(email);
         if (userExists) {
             return res.status(400).json({ message: 'El correo ya está registrado' });
         }
@@ -14,9 +14,10 @@ export const register = async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(contrasena, saltRounds);
 
+        // Se envía hashedPassword a la columna 'password' del modelo
         const newUser = await AuthModel.createUser(
             nombre, 
-            correo, 
+            email, 
             hashedPassword, 
             rol || 'Usuario'
         );
@@ -26,20 +27,25 @@ export const register = async (req, res) => {
             user: newUser
         });
     } catch (error) {
-        res.status(500).json({ message: 'Error en el servidor', error: error.message });
+        console.error('Error en register:', error);
+        res.status(500).json({ 
+            message: 'Error en el servidor', 
+            error: error.message || error 
+        });
     }
 };
 
 export const login = async (req, res) => {
-    const { correo, contrasena } = req.body;
+    const { email, contrasena } = req.body;
 
     try {
-        const user = await AuthModel.findByEmail(correo);
+        const user = await AuthModel.findByEmail(email);
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        const isMatch = await bcrypt.compare(contrasena, user.contrasena);
+        // Se compara con user.password
+        const isMatch = await bcrypt.compare(contrasena, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Contraseña incorrecta' });
         }
@@ -56,7 +62,7 @@ export const login = async (req, res) => {
             user: {
                 user_id: user.user_id,
                 nombre: user.nombre,
-                correo: user.correo,
+                email: user.email,
                 rol: user.rol
             }
         });
