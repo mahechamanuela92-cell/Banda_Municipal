@@ -1,9 +1,14 @@
-import { Router } from 'express';
-import { listarMultimedia, subirMultimedia } from '../controllers/multimediaController.js';
+import {Router} from 'express';
+import {
+    crearMultimedia,
+    listarMultimedia,
+    borrarMultimedia
+} from '../controllers/multimediaController.js';
 
 const router = Router();
 
-router.get('/', listarMultimedia);
-router.post('/', subirMultimedia);
+router.post('/', crearMultimedia);
+router.get('/', listarMultimedia);       //?id_evento= o ?tipo_archivo= opcional
+router.delete('/:id', borrarMultimedia);
 
 export default router;

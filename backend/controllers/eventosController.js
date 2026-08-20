@@ -1,50 +1,114 @@
-import * as EventoModel from '../models/eventosModel.js';
+import {
+    crearEvento,
+    obtenerEventos,
+    obtenerEventosPorUsuario,
+    obtenerEventoPorId,
+    editarEvento,
+    eliminarEvento
+} from '../models/eventosModel.js';
 
-export const listarEventos = async (req, res) => {
-  try {
-    const data = await EventoModel.obtenerEventosBD();
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
+//guardar evento (fecha de concierto)
 export const guardarEvento = async (req, res) => {
-  try {
-    const { id_usuario, nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion } = req.body;
+    try {
+        const {user_id, nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion} = req.body;
 
-    // OJO: la clave de la izquierda debe ser EXACTAMENTE el nombre
-    // de la columna en Supabase
-    const datosParaBD = {
-      user_id: id_usuario,
-      nombre_evento,
-      fecha_evento,
-      hora_evento,
-      lugar_evento,
-      descripcion
-    };
+        //validamos los datos
+        if (!user_id || !nombre_evento || !fecha_evento) {
+            return res.status(400).json({
+                error: 'faltan datos del evento'
+            });
+        }
 
-    const nuevo = await EventoModel.crearEventoBD(datosParaBD);
-    res.status(201).json(nuevo);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+        const {data, error} = await crearEvento(user_id, nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion);
+
+        if (error) {
+            return res.status(400).json({error: error.message});
+        }
+
+        res.status(201).json({mensaje: 'evento creado correctamente', evento: data});
+
+    } catch (error) {
+        res.status(500).json({error: 'error en el servidor', detalle: error.message});
+    }
 };
 
-export const editarEvento = async (req, res) => {
-  try {
-    const editado = await EventoModel.actualizarEventoBD(req.params.id, req.body);
-    res.json(editado);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+//listar eventos (todos o por usuario si viene ?user_id=)
+export const listarEventos = async (req, res) => {
+    try {
+        const {user_id} = req.query;
+
+        const {data, error} = user_id
+            ? await obtenerEventosPorUsuario(user_id)
+            : await obtenerEventos();
+
+        if (error) {
+            return res.status(400).json({error: error.message});
+        }
+
+        res.status(200).json(data);
+
+    } catch (error) {
+        res.status(500).json({error: 'error en el servidor', detalle: error.message});
+    }
 };
 
+//obtener un evento por id
+export const obtenerEvento = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {data, error} = await obtenerEventoPorId(id);
+
+        if (error || !data) {
+            return res.status(404).json({error: 'evento no encontrado'});
+        }
+
+        res.status(200).json(data);
+
+    } catch (error) {
+        res.status(500).json({error: 'error en el servidor', detalle: error.message});
+    }
+};
+
+//editar un evento
+export const actualizarEvento = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion} = req.body;
+
+        const {data, error} = await editarEvento(id, nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion);
+
+        if (error) {
+            return res.status(400).json({error: error.message});
+        }
+
+        if (!data || data.length === 0) {
+            return res.status(404).json({error: 'evento no encontrado'});
+        }
+
+        res.status(200).json({mensaje: 'evento actualizado correctamente', evento: data});
+
+    } catch (error) {
+        res.status(500).json({error: 'error en el servidor', detalle: error.message});
+    }
+};
+
+//eliminar un evento
 export const borrarEvento = async (req, res) => {
-  try {
-    await EventoModel.eliminarEventoBD(req.params.id);
-    res.json({ mensaje: "Evento eliminado correctamente" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const {id} = req.params;
+        const {data, error} = await eliminarEvento(id);
+
+        if (error) {
+            return res.status(400).json({error: error.message});
+        }
+
+        if (!data || data.length === 0) {
+            return res.status(404).json({error: 'evento no encontrado'});
+        }
+
+        res.status(200).json({mensaje: 'evento eliminado correctamente'});
+
+    } catch (error) {
+        res.status(500).json({error: 'error en el servidor', detalle: error.message});
+    }
 };

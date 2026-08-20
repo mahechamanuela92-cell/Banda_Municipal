@@ -1,69 +1,30 @@
 {
-
   "name": "backend",
-
   "version": "1.0.0",
-
+  "description": "Proyecto de explicacion del backend",
   "main": "index.js",
-
-  "scripts": {
-
-    "start": "node index.js",
-
-    "dev": "nodemon index.js",
-
-    "test": "echo \"Error: no test specified\" && exit 1"
-
-  },
-
-  "keywords": [],
-
-  "author": "",
-
-  "license": "ISC",
-
   "type": "module",
-
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-
-    "@supabase/ssr": "^0.12.4",
-
-    "@supabase/supabase-js": "^2.111.0",
-
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.112.3",
     "bcrypt": "^6.0.0",
-<<<<<<< HEAD
-
     "cloudinary": "^1.41.3",
-
-=======
-    "cloudinary": "^1.41.3",
->>>>>>> a14b2ff166bcd53b04b8f3b0d231498d44378185
     "cors": "^2.8.6",
-
     "dotenv": "^17.4.2",
-
     "express": "^5.2.1",
-
     "jsonwebtoken": "^9.0.3",
-<<<<<<< HEAD
-
-    "multer": "^2.2.0",
-
-    "multer-storage-cloudinary": "^4.0.0",
-
-=======
     "multer": "^2.2.0",
     "multer-storage-cloudinary": "^4.0.0",
->>>>>>> a14b2ff166bcd53b04b8f3b0d231498d44378185
-    "nodemailer": "^9.0.3",
-
+    "nodemailer": "^8.0.11",
     "nodemon": "^3.1.14",
-
-    "pg": "^8.23.0",
-
     "ws": "^8.21.3"
-
   }
-
 }
-

@@ -1,11 +1,18 @@
-import { Router } from 'express';
-import { listarEventos, guardarEvento, editarEvento, borrarEvento } from '../controllers/eventosController.js';
+import {Router} from 'express';
+import {
+    guardarEvento,
+    listarEventos,
+    obtenerEvento,
+    actualizarEvento,
+    borrarEvento
+} from '../controllers/eventosController.js';
 
 const router = Router();
 
-router.get('/', listarEventos);
 router.post('/', guardarEvento);
-router.put('/:id', editarEvento);
+router.get('/', listarEventos);          //?user_id= opcional
+router.get('/:id', obtenerEvento);
+router.put('/:id', actualizarEvento);
 router.delete('/:id', borrarEvento);
 
 export default router;
