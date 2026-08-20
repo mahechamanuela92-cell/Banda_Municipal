@@ -1,38 +1,40 @@
-//importar toda la funcionalida de express
+//importar toda la funcionalidad de express
 import express from 'express';
 import dotenv from 'dotenv'; 
-import { conectarDB, supabase} from './config/supabase.js';
-import userRoutes from './routes/user.js';
+import { conectarDB } from './config/supabase.js';
+import userRoutes from './routes/Auth.js';
+import instrumentosRoutes from './routes/instrumentosRoutes.js';
 import cors from 'cors';
 
-//cargar variable de entorno 
+//cargar variables de entorno 
 dotenv.config();
-
 
 //creamos la aplicacion de express
 const app = express();
 
-// leer el json
+// middlewares
 app.use(express.json());
 app.use(cors());
 
-// creamos la ruta
+// ruta de bienvenida
 app.get('/', (req, res) => {
     res.json({
-        mensaje: 'bienvenido al backend de MIMOS',
+        mensaje: 'bienvenido al backend de la Banda Municipal',
         estado: 'en linea',
         version: '1.0.0'
     });
 });
-//ruta de autenticacion 
+
+// registrar rutas
 app.use('/usuarios', userRoutes);
+app.use('/instrumentos', instrumentosRoutes);
 
 // configuramos el puerto
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // poner a escuchar el servidor
 app.listen(PORT, () => {
-    conectarDB(); // Llama a la función para ver el mensaje en consola al iniciar
-    console.log(`Servidor escuchando en el puerto ${PORT}`); // Corregido a backticks ``
+    conectarDB();
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
     console.log(`http://localhost:${PORT}`);
 });
