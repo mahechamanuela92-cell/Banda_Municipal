@@ -7,15 +7,12 @@ import { conectarDB } from './config/supabase.js';
 // Importar rutas (Asegúrate de no duplicar "userRoutes")
 import userRoutes from './routes/Auth.js';
 import instrumentosRoutes from './routes/instrumentosRoutes.js';
-<<<<<<< HEAD
-import cors from 'cors';
 import eventosRoutes from './routes/eventosRoutes.js';
 import multimediaRoutes from './routes/multimediaRoutes.js';
 import catalogoRoutes from './routes/catalogoRoutes.js';
-=======
 import partiturasRoutes from './routes/partiturasRoutes.js';
 import perfilRoutes from './routes/perfil.js';
->>>>>>> a14b2ff166bcd53b04b8f3b0d231498d44378185
+
 
 // Cargar variables de entorno 
 dotenv.config();
@@ -42,13 +39,11 @@ app.get('/', (req, res) => {
 app.use('/usuarios', userRoutes); // Dentro de Auth.js ya tienes /forgot-password y /verify-code
 app.use('/perfil', perfilRoutes);
 app.use('/instrumentos', instrumentosRoutes);
-<<<<<<< HEAD
 app.use('/eventos', eventosRoutes);
 app.use('/multimedia', multimediaRoutes);
 app.use('/catalogo', catalogoRoutes);
-=======
 app.use('/partituras', partiturasRoutes);
->>>>>>> a14b2ff166bcd53b04b8f3b0d231498d44378185
+
 
 // Middleware para manejar rutas no encontradas (404)
 app.use((req, res) => {
