@@ -10,7 +10,10 @@ import instrumentosRoutes from './routes/instrumentosRoutes.js';
 import eventosRoutes from './routes/eventosRoutes.js';
 import multimediaRoutes from './routes/multimediaRoutes.js';
 import catalogoRoutes from './routes/catalogoRoutes.js';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4856b2f7c74298afdef69a2b0f86d2602fbd6487
 import partiturasRoutes from './routes/partiturasRoutes.js';
 import perfilRoutes from './routes/perfil.js';
 
@@ -40,11 +43,17 @@ app.get('/', (req, res) => {
 app.use('/usuarios', userRoutes); // Dentro de Auth.js ya tienes /forgot-password y /verify-code
 app.use('/perfil', perfilRoutes);
 app.use('/instrumentos', instrumentosRoutes);
+<<<<<<< HEAD
 
 app.use('/eventos', eventosRoutes);
 app.use('/multimedia', multimediaRoutes);
 app.use('/catalogo', catalogoRoutes);
 
+=======
+app.use('/eventos', eventosRoutes);
+app.use('/multimedia', multimediaRoutes);
+app.use('/catalogo', catalogoRoutes);
+>>>>>>> 4856b2f7c74298afdef69a2b0f86d2602fbd6487
 app.use('/partituras', partiturasRoutes);
 
 
