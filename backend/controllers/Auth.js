@@ -1,72 +1,84 @@
-import { AuthModel } from '../models/Auth.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import { crearUser, obtenerPorEmail } from '../models/User.js';
 
-export const register = async (req, res) => {
-    const { nombre, email, contrasena, rol } = req.body;
+export const registro = async (req, res) => {
+  try {
+    const { nombre, email, password } = req.body;
 
-    try {
-        const userExists = await AuthModel.findByEmail(email);
-        if (userExists) {
-            return res.status(400).json({ message: 'El correo ya está registrado' });
-        }
-
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(contrasena, saltRounds);
-
-        // Se envía hashedPassword a la columna 'password' del modelo
-        const newUser = await AuthModel.createUser(
-            nombre, 
-            email, 
-            hashedPassword, 
-            rol || 'Usuario'
-        );
-
-        res.status(201).json({
-            message: 'Usuario registrado con éxito',
-            user: newUser
-        });
-    } catch (error) {
-        console.error('Error en register:', error);
-        res.status(500).json({ 
-            message: 'Error en el servidor', 
-            error: error.message || error 
-        });
+    if (!nombre || !email || !password) {
+      return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
+
+    const { data: usuarioExiste } = await obtenerPorEmail(email);
+    if (usuarioExiste) {
+      return res.status(400).json({ error: "El email ya existe" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const rolPorDefecto = "musico";
+
+    const { data, error } = await crearUser(nombre, email, hashedPassword, rolPorDefecto);
+
+    if (error) {
+      return res.status(500).json({ error: "Error al crear el usuario" });
+    }
+
+    return res.status(201).json({
+      message: "Usuario registrado con éxito",
+      usuario: {
+        id: data[0].user_id,
+        nombre: data[0].nombre,
+        email: data[0].email,
+        rol: data[0].rol
+      }
+    });
+  } catch (error) {
+    console.error("Error en registro:", error);
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 export const login = async (req, res) => {
-    const { email, contrasena } = req.body;
+  try {
+    const { email, password } = req.body;
 
-    try {
-        const user = await AuthModel.findByEmail(email);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-
-        // Se compara con user.password
-        const isMatch = await bcrypt.compare(contrasena, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Contraseña incorrecta' });
-        }
-
-        const token = jwt.sign(
-            { user_id: user.user_id, rol: user.rol },
-            process.env.JWT_SECRET || 'secreto_super_seguro',
-            { expiresIn: '8h' }
-        );
-
-        res.json({
-            message: 'Inicio de sesión exitoso',
-            token,
-            user: {
-                user_id: user.user_id,
-                nombre: user.nombre,
-                email: user.email,
-                rol: user.rol
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Error en el servidor', error: error.message });
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email y contraseña son requeridos" });
     }
+
+    const { data: usuario, error } = await obtenerPorEmail(email);
+
+    if (!usuario) {
+      return res.status(400).json({ error: "El email no está registrado" });
+    }
+
+    const passwordValido = await bcrypt.compare(password, usuario.password);
+    if (!passwordValido) {
+      return res.status(400).json({ error: "Contraseña incorrecta" });
+    }
+
+    const token = jwt.sign(
+      {
+        id: usuario.user_id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    return res.status(200).json({
+      message: "Login exitoso",
+      token: token,
+      id: usuario.user_id,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      rol: usuario.rol
+    });
+  } catch (error) {
+    console.error("Error en el login:", error);
+    return res.status(500).json({ error: "Error en el servidor" });
+  }
 };

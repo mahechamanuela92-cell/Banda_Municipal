@@ -5,7 +5,8 @@ import cors from 'cors';
 import { conectarDB } from './config/supabase.js';
 
 // Importar rutas (Asegúrate de no duplicar "userRoutes")
-import userRoutes from './routes/Auth.js';
+import authRoutes from './routes/Auth.js';
+import userRoutes from './routes/User.js';
 import instrumentosRoutes from './routes/instrumentosRoutes.js';
 import eventosRoutes from './routes/eventosRoutes.js';
 import multimediaRoutes from './routes/multimediaRoutes.js';
@@ -40,7 +41,8 @@ app.get('/', (req, res) => {
     });
 });
 // Registrar rutas
-app.use('/usuarios', userRoutes); // Dentro de Auth.js ya tienes /forgot-password y /verify-code
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes); // Dentro de Auth.js ya tienes /forgot-password y /verify-code
 app.use('/perfil', perfilRoutes);
 app.use('/instrumentos', instrumentosRoutes);
 <<<<<<< HEAD
