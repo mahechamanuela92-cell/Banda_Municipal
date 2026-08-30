@@ -61,7 +61,7 @@ export const enviarCorreoRecuperacion = async (email, codigo) => {
     // Aquí es donde vinculamos físicamente la imagen de tu carpeta assets
     attachments: [{
       filename: 'logo.jpg',
-      path: path.join(__dirname, '../assets/logo.jpg'), // Ajusta si tu carpeta assets está en otro nivel
+      path: path.join(__dirname, '../assets/images/logo.jpg'), // Ajusta si tu carpeta assets está en otro nivel
       cid: 'logo_banda' // Debe coincidir con el src="cid:logo_banda" de arriba
     }]
   };
