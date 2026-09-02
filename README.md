@@ -64,8 +64,8 @@ El proyecto utiliza una arquitectura moderna basada en un cliente móvil, un ser
 `npm run dev`
 
 ---
+###  Estructura del proyecto
 
-###Estructura del Proyecto
 Banda_Municipal/
 └── backend/
     ├── assets/          # Archivos multimedia y recursos locales
@@ -84,7 +84,7 @@ Banda_Municipal/
 
 * **Manuela Mahecha Paloma**
   * *Tecnóloga en Análisis y Desarrollo de Software (ADSO)*
-  *   * **Especialidad:** Desarrollo de aplicaciones móviles y web, arquitecturas cliente-servidor e integración de APIs 
+  *  **Especialidad:** Desarrollo de aplicaciones móviles y web, arquitecturas cliente-servidor e integración de APIs 
   * * **Danny Camila Cediel Perdomo**
     *   * *Tecnóloga en Análisis y Desarrollo de Software (ADSO)*
   * **Especialidad:** Desarrollo de aplicaciones móviles y web, arquitecturas cliente-servidor e integración de APIs 
