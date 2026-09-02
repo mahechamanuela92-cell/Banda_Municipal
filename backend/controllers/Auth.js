@@ -7,6 +7,7 @@ export const registro = async (req, res) => {
     const { nombre, email, password } = req.body;
 
     if (!nombre || !email || !password) {
+      
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 

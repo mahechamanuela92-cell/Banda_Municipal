@@ -1,13 +1,13 @@
 import {supabase} from "../config/supabase.js";
 
-//---------- categorias ----------
+// categorias 
 
 //obtener todas las categorias
 export const obtenerCategorias = async () => {
     const {data, error} = await supabase
         .from('categorias_instrumentos')
         .select('*')
-        .order('nombre_categoria', {ascending: true});
+        .order('nombre_categoria', {ascending: true}); 
 
     return {data, error};
 };
@@ -22,7 +22,7 @@ export const crearCategoria = async (nombre_categoria) => {
     return {data, error};
 };
 
-//---------- catalogo de instrumentos ----------
+//catalogo de instrumentos 
 
 //obtener el catalogo completo (con el nombre de la categoria)
 export const obtenerCatalogo = async () => {
