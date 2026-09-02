@@ -35,7 +35,7 @@ El proyecto utiliza una arquitectura moderna basada en un cliente móvil, un ser
 ---
 
 ## ⚙️ Instalación y Configuración
-* **npm install
+* npm install
 * @getbrevo/brevo
 * @supabase/ssr
 * @supabase/supabase-js
