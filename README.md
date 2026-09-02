@@ -67,6 +67,7 @@ El proyecto utiliza una arquitectura moderna basada en un cliente móvil, un ser
 ###  Estructura del proyecto
 
 Banda_Municipal/
+
 └── backend/
     ├── assets/          # Archivos multimedia y recursos locales
     
