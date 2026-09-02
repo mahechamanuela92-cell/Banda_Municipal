@@ -38,12 +38,9 @@ app.get('/', (req, res) => {
 });
 // Registrar rutas
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes); // Dentro de Auth.js ya tienes /forgot-password y /verify-code
+app.use('/api/users', userRoutes); 
 app.use('/perfil', perfilRoutes);
 app.use('/instrumentos', instrumentosRoutes);
-app.use('/eventos', eventosRoutes);
-app.use('/multimedia', multimediaRoutes);
-app.use('/catalogo', catalogoRoutes);
 app.use('/eventos', eventosRoutes);
 app.use('/multimedia', multimediaRoutes);
 app.use('/catalogo', catalogoRoutes);
