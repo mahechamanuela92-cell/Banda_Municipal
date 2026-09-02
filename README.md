@@ -96,8 +96,8 @@ Banda_Municipal/
 * **Manuela Mahecha Paloma**
   * *Tecnóloga en Análisis y Desarrollo de Software (ADSO)*
   *  **Especialidad:** Desarrollo de aplicaciones móviles y web, arquitecturas cliente-servidor e integración de APIs 
-  * * **Danny Camila Cediel Perdomo**
-    *   * *Tecnóloga en Análisis y Desarrollo de Software (ADSO)*
+* **Danny Camila Cediel Perdomo**
+  * *Tecnóloga en Análisis y Desarrollo de Software (ADSO)*
   * **Especialidad:** Desarrollo de aplicaciones móviles y web, arquitecturas cliente-servidor e integración de APIs 
 
 ---
