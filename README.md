@@ -69,15 +69,25 @@ El proyecto utiliza una arquitectura moderna basada en un cliente móvil, un ser
 Banda_Municipal/
 └── backend/
     ├── assets/          # Archivos multimedia y recursos locales
+    
     ├── config/          # Configuraciones (Base de datos, Cloudinary)
+    
     ├── controllers/     # Lógica de negocio de la aplicación
+    
     ├── middlewares/     # Validaciones, JWT y subida de archivos
+    
     ├── models/          # Modelos y esquemas de datos
+    
     ├── routes/          # Definición de rutas y endpoints del API
+    
     ├── utils/           # Funciones auxiliares y helpers
+    
     ├── .env             # Variables de entorno secretas (Local)
+    
     ├── .gitignore       # Exclusiones de control de versiones
+    
     ├── index.js         # Punto de entrada y servidor principal
+    
     └── package.json     # Dependencias y scripts de Node.js
 
 ## 👨‍💻 Autor
