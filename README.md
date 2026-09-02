@@ -18,12 +18,12 @@ El proyecto utiliza una arquitectura moderna basada en un cliente móvil, un ser
 ---
 
 ## 🚀 Características del Proyecto
-* **Panel de Control en Tiempo Real: Interfaz intuitiva para monitorear métricas, gestionar registros y controlar permisos de usuarios.
-* **Procesamiento Multimedia Inteligente: Subida directa de archivos a la nube (Cloudinary) con compresión automática y generación de miniaturas al instante.
-* **Base de Datos de Alto Rendimiento: Estructura optimizada (MongoDB/Supabase) para búsquedas rápidas, filtros avanzados y sincronización de datos en vivo.
-* **Autenticación Multi-Nivel: Sistema seguro de inicio de sesión con roles diferenciados (Administrador, Editor, Usuario).
-* **Entorno Modular y Virtualizado: Diseñado sobre Node.js para facilitar la integración de nuevos módulos y adaptable a contenedores en entornos locales (Hyper-V).
-* **Diseño Adaptable (Responsive): Totalmente optimizado para funcionar sin problemas en dispositivos móviles, tablets y computadoras de escritorio.
+* Panel de Control en Tiempo Real: Interfaz intuitiva para monitorear métricas, gestionar registros y controlar permisos de usuarios.
+* Procesamiento Multimedia Inteligente: Subida directa de archivos a la nube (Cloudinary) con compresión automática y generación de miniaturas al instante.
+* Base de Datos de Alto Rendimiento: Estructura optimizada (MongoDB/Supabase) para búsquedas rápidas, filtros avanzados y sincronización de datos en vivo.
+* Autenticación Multi-Nivel: Sistema seguro de inicio de sesión con roles diferenciados (Administrador, Editor, Usuario).
+* Entorno Modular y Virtualizado: Diseñado sobre Node.js para facilitar la integración de nuevos módulos y adaptable a contenedores en entornos locales (Hyper-V).
+* Diseño Adaptable (Responsive): Totalmente optimizado para funcionar sin problemas en dispositivos móviles, tablets y computadoras de escritorio.
 
 ### 🔐 Autenticación y Seguridad
 
