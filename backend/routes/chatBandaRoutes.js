@@ -1,5 +1,5 @@
 import express from "express";
-import { chatBanda, obtenerHistorialBanda } from "../controllers/chatBandaController.js";
+import { chatBanda, obtenerHistorialBanda } from "../controllers/chatcontroller.js";
 
 const router = express.Router();
 
