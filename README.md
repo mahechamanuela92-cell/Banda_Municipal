@@ -66,7 +66,7 @@ El proyecto utiliza una arquitectura moderna basada en un cliente móvil, un ser
 ---
 ###  Estructura del proyecto
 
-´´´
+<pre><code>
 Banda_Municipal/
 └── backend/
     ├── assets/         # Archivos multimedia y recursos locales    
@@ -80,7 +80,7 @@ Banda_Municipal/
     ├── .gitignore      # Exclusiones de control de versiones
     ├── index.js        # Punto de entrada y servidor principal
     └── package.json    # Dependencias y scripts de Node.js
-´´´
+</code></pre>
 
 ## 👨‍💻 Autor
 
