@@ -1,11 +1,13 @@
 import { supabase } from "../config/supabase.js";
 
 // Crear un nuevo usuario (Registro)
-export const crearUser = async (nombre, email, password, rol, codigoVerificacion, codigoVerificacionExpiracion) => {
+export const crearUser = async (nombre, email, password, rol, codigoVerificacion, 
+  codigoverificacionExpiracion) => {
   const { data, error } = await supabase
     .from("usuarios")
-    .insert([{ nombre, email, password, rol }])
-    .select("user_id, nombre, email, password, rol, isVerified: false, codigoVerificacion, codigoVerificacionExpiracion");
+    .insert([{ nombre, email, password, rol, codigoVerificacion: codigoVerificacion,
+        codigoverificacionExpiracion: codigoverificacionExpiracion }])
+    .select("user_id, nombre, email, password, rol ");
   return { data, error };
 };
 
@@ -15,7 +17,7 @@ export const obtenerPorEmail = async (email) => {
     .from("usuarios")
     .select("*")
     .eq("email", email)
-    .single();
+    .maybeSingle ();
   return { data, error };
 };
 
@@ -23,7 +25,9 @@ export const obtenerPorEmail = async (email) => {
 export const ObtenerUsuarios = async () => {
   const { data, error } = await supabase
     .from("usuarios")
-    .select("user_id, nombre, email, rol, fecha_registro");
+    .select("user_id, nombre, email, rol, fecha_registro")
+    .eq("user_id", id)
+    .single()
   return { data, error };
 };
 

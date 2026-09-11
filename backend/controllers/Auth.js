@@ -22,7 +22,7 @@ export const registro = async (req, res) => {
     const rolPorDefecto = "musico";
     //generar codigo de verificacion con math.random() y fecha de expiracion (15 minutos)
     const codigoVerificacion = Math.floor(100000 + Math.random() * 900000).toString();
-    const codigoVerificacionExpiracion = new Date(Date.now() + 15 * 60 * 1000).toString();
+   const codigoVerificacionExpiracion = new Date(Date.now() + 15 * 60 * 1000).toISOString();
     //guardar en supabase enviando los nuevos campos
     const { data, error } = await crearUser(
       nombre, 
@@ -34,6 +34,7 @@ export const registro = async (req, res) => {
       );
 
     if (error) {
+      console.error("Error detallado de Supabase:", error);
       return res.status(500).json({ error: "Error al crear el usuario" });
     }
     // enviar el correo con el codigo de 6 digitos usando Brevo
@@ -123,7 +124,7 @@ export const verificarCuenta = async (req, res) => {
       }
       //1 buscar al usuario en supabase 
       const {data: usuario, error: errorUsuario} = await supabase
-      .from('usuario')
+      .from('usuarios')
       .select('id, email, isVerified, codigoVerificacion, codigoVerificacionExpiracion')
       .eq('email', email)
       .single();
@@ -153,10 +154,10 @@ export const verificarCuenta = async (req, res) => {
         });
       }
       //5. activar la cuenta
-      const {error: errorDate} = await supabase
+      const {error: errorUpdate} = await supabase
       .from('usuarios')
       .update({
-        isVerfied: true,
+        isVerified: true,
         codigoVerificacion: null,
         codigoVerificacionExpiracion: null
       })
