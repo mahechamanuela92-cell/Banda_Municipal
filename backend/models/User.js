@@ -26,8 +26,6 @@ export const ObtenerUsuarios = async () => {
   const { data, error } = await supabase
     .from("usuarios")
     .select("user_id, nombre, email, rol, fecha_registro")
-    .eq("user_id", id)
-    .single()
   return { data, error };
 };
 
