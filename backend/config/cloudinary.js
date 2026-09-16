@@ -15,7 +15,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params:{
         folder: 'Banda/Banda_Municipal',
-        resource_fype: 'auto',
+        resource_type: 'auto', // <- Corregido de fype a type
         allowed_formats: ['jpg', 'png', 'jpeg', 'avif', 'webp', 'mp4', 'avi'],
     },
 });
