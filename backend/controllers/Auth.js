@@ -5,7 +5,10 @@ import { crearUser, obtenerPorEmail } from '../models/User.js';
 import {enviarCodigoVerificacion} from '../utils/emailService.js';
 
 export const registro = async (req, res) => {
+<<<<<<< HEAD
   console.log("🔥 ¡LLEGÓ UNA PETICIÓN DESDE EL CELULAR AL BACKEND! 🔥");
+=======
+>>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
   try {
     const { nombre, email, password } = req.body;
 
@@ -23,7 +26,11 @@ export const registro = async (req, res) => {
     const rolPorDefecto = "musico";
     //generar codigo de verificacion con math.random() y fecha de expiracion (15 minutos)
     const codigoVerificacion = Math.floor(100000 + Math.random() * 900000).toString();
+<<<<<<< HEAD
     const codigoVerificacionExpiracion = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+=======
+   const codigoVerificacionExpiracion = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+>>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
     //guardar en supabase enviando los nuevos campos
     const { data, error } = await crearUser(
       nombre, 
@@ -34,6 +41,7 @@ export const registro = async (req, res) => {
       codigoVerificacionExpiracion
       );
 
+<<<<<<< HEAD
 if (error) {
       console.error("❌ Error de Supabase:", error);
       return res.status(500).json({ error: error.message || "Error al crear el usuario" });
@@ -42,6 +50,11 @@ if (error) {
     // Asegurarnos de que data tenga elementos antes de usarlos
     if (!data || data.length === 0) {
       return res.status(500).json({ error: "No se pudo retornar el usuario creado" });
+=======
+    if (error) {
+      console.error("Error detallado de Supabase:", error);
+      return res.status(500).json({ error: "Error al crear el usuario" });
+>>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
     }
     // enviar el correo con el codigo de 6 digitos usando Brevo
     const resultadoEnvio = await enviarCodigoVerificacion(email,nombre,codigoVerificacion);
@@ -130,7 +143,11 @@ export const verificarCuenta = async (req, res) => {
       }
       //1 buscar al usuario en supabase 
       const {data: usuario, error: errorUsuario} = await supabase
+<<<<<<< HEAD
       .from('usuario')
+=======
+      .from('usuarios')
+>>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
       .select('id, email, isVerified, codigoVerificacion, codigoVerificacionExpiracion')
       .eq('email', email)
       .single();
@@ -160,10 +177,17 @@ export const verificarCuenta = async (req, res) => {
         });
       }
       //5. activar la cuenta
+<<<<<<< HEAD
       const {error: errorDate} = await supabase
       .from('usuarios')
       .update({
         isVerfied: true,
+=======
+      const {error: errorUpdate} = await supabase
+      .from('usuarios')
+      .update({
+        isVerified: true,
+>>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
         codigoVerificacion: null,
         codigoVerificacionExpiracion: null
       })
