@@ -166,7 +166,7 @@ class PantallaContacto extends StatelessWidget {
                     border: Border.all(color: Colores.amarillo, width: 1.5),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -198,7 +198,7 @@ class PantallaContacto extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.75),
+                                  color: Colors.black.withValues(alpha: 0.75),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(color: Colores.amarillo, width: 1),
                                 ),
@@ -257,7 +257,7 @@ class _GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.08)
+      ..color = Colors.white.withValues(alpha: 0.08)
       ..strokeWidth = 1;
 
     for (double i = 0; i < size.width; i += 25) {

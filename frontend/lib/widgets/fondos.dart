@@ -81,21 +81,21 @@ class FondoMusicalPainter extends CustomPainter {
 
     // Pinturas para círculos claros
     final Paint paintNubesClaras = Paint()
-      ..color = Colores.fondoBolitasClaro.withOpacity(0.18)
+      ..color = Colores.fondoBolitasClaro.withValues(alpha: 0.18)
       ..style = PaintingStyle.fill;
 
     // Pinturas para círculos oscuros transparentes
     final Paint paintNubesOscuras = Paint()
-      ..color = Colores.fondoBolitasOscuro.withOpacity(0.25)
+      ..color = Colores.fondoBolitasOscuro.withValues(alpha: 0.25)
       ..style = PaintingStyle.fill;
 
     final Paint paintLineas = Paint()
-      ..color = Colores.fondoBolitasOscuro.withOpacity(0.55)
+      ..color = Colores.fondoBolitasOscuro.withValues(alpha: 0.55)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.2;
 
     final Paint paintNotas = Paint()
-      ..color = Colores.bolitaOscura.withOpacity(0.65)
+      ..color = Colores.bolitaOscura.withValues(alpha: 0.65)
       ..style = PaintingStyle.fill;
 
     // --- 1. Formas circulares claras de fondo ---

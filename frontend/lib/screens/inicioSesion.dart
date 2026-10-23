@@ -16,7 +16,7 @@ class _InicioSesionState extends State<InicioSesion> {
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
-  bool _cargando = false;
+  final bool _cargando = false;
   @override
 void dispose() {
   _correoController.dispose();
@@ -27,7 +27,7 @@ void dispose() {
   Color _colorRegistrarse = Colors.white;
   Color _colorOlvido = Colors.white;
 
-  get _iniciarSesion => null;
+  Null get _iniciarSesion => null;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ void dispose() {
                       borderRadius: BorderRadius.circular(30.0),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -248,7 +248,7 @@ void dispose() {
         borderRadius: BorderRadius.circular(30.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

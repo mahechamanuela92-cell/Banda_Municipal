@@ -133,7 +133,7 @@ Widget _buildBotonMenuIcono({required VoidCallback onTap}) {
       borderRadius: BorderRadius.circular(24.0),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.25),
+          color: Colors.black.withValues(alpha: 0.25),
           blurRadius: 6,
           offset: const Offset(0, 3),
         ),
@@ -170,7 +170,7 @@ Widget _crearTarjeta({
       borderRadius: BorderRadius.circular(30.0),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.2),
+          color: Colors.black.withValues(alpha: 0.2),
           blurRadius: 8,
           offset: const Offset(0, 4),
         ),
