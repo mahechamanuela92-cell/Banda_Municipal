@@ -3,10 +3,7 @@ import express from 'express';
 import dotenv from 'dotenv'; 
 import cors from 'cors';
 import { conectarDB } from './config/supabase.js';
-<<<<<<< HEAD
-=======
 import chatBandaRoutes from "./routes/chatBandaRoutes.js";
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
 
 // Importar rutas (Asegúrate de no duplicar "userRoutes")
 import authRoutes from './routes/Auth.js';
@@ -19,10 +16,7 @@ import partiturasRoutes from './routes/partiturasRoutes.js';
 import perfilRoutes from './routes/perfil.js';
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
 // Cargar variables de entorno 
 dotenv.config();
 
@@ -53,10 +47,8 @@ app.use('/eventos', eventosRoutes);
 app.use('/multimedia', multimediaRoutes);
 app.use('/catalogo', catalogoRoutes);
 app.use('/partituras', partiturasRoutes);
-<<<<<<< HEAD
-=======
 app.use("/api/banda", chatBandaRoutes);
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
+
 
 
 // Middleware para manejar rutas no encontradas (404)

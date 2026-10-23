@@ -1,19 +1,16 @@
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
-import {supabase} from '../config/supabase.js';
+import { supabase } from '../config/supabase.js';
 import { crearUser, obtenerPorEmail } from '../models/User.js';
-import {enviarCodigoVerificacion} from '../utils/emailService.js';
+import { enviarCodigoVerificacion } from '../utils/emailService.js';
 
 export const registro = async (req, res) => {
-<<<<<<< HEAD
   console.log("🔥 ¡LLEGÓ UNA PETICIÓN DESDE EL CELULAR AL BACKEND! 🔥");
-=======
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
+
   try {
     const { nombre, email, password } = req.body;
 
     if (!nombre || !email || !password) {
-      
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
@@ -24,14 +21,12 @@ export const registro = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const rolPorDefecto = "musico";
-    //generar codigo de verificacion con math.random() y fecha de expiracion (15 minutos)
+    
+    // Generar código de verificación y fecha de expiración (15 minutos)
     const codigoVerificacion = Math.floor(100000 + Math.random() * 900000).toString();
-<<<<<<< HEAD
     const codigoVerificacionExpiracion = new Date(Date.now() + 15 * 60 * 1000).toISOString();
-=======
-   const codigoVerificacionExpiracion = new Date(Date.now() + 15 * 60 * 1000).toISOString();
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
-    //guardar en supabase enviando los nuevos campos
+
+    // Guardar en Supabase enviando los nuevos campos
     const { data, error } = await crearUser(
       nombre, 
       email, 
@@ -39,50 +34,44 @@ export const registro = async (req, res) => {
       rolPorDefecto,
       codigoVerificacion,
       codigoVerificacionExpiracion
-      );
+    );
 
-<<<<<<< HEAD
-if (error) {
-      console.error("❌ Error de Supabase:", error);
+    if (error) {
+      console.error("❌ Error detallado de Supabase:", error);
       return res.status(500).json({ error: error.message || "Error al crear el usuario" });
     }
 
     // Asegurarnos de que data tenga elementos antes de usarlos
     if (!data || data.length === 0) {
       return res.status(500).json({ error: "No se pudo retornar el usuario creado" });
-=======
-    if (error) {
-      console.error("Error detallado de Supabase:", error);
-      return res.status(500).json({ error: "Error al crear el usuario" });
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
     }
-    // enviar el correo con el codigo de 6 digitos usando Brevo
-    const resultadoEnvio = await enviarCodigoVerificacion(email,nombre,codigoVerificacion);
-    // normalizar el objeto de usuario (soporta dormato con o sin .single)
+
+    // Enviar el correo con el código de 6 dígitos usando Brevo
+    const resultadoEnvio = await enviarCodigoVerificacion(email, nombre, codigoVerificacion);
+
+    // Normalizar el objeto de usuario
     const usuarioCreado = Array.isArray(data) ? data[0] : data;
     const usuarioRespuesta = {
-      id: usuarioCreado.id,
+      id: usuarioCreado.user_id || usuarioCreado.id,
       nombre: usuarioCreado.nombre,
       email: usuarioCreado.email,
       rol: usuarioCreado.rol
     };
-    //si brevo fallo, el usuario ya quedo creado, pero avisamos que el correo no llego
+
+    // Si Brevo falló, el usuario ya quedó creado, pero avisamos que el correo no llegó
     if (!resultadoEnvio.exito) {
       return res.status(201).json({
-        message: 'Tu cuenta fue creada, pero hubo un problema enviando el codigo de verificacion a tu correo. Intenta registrar de nuevo en unos minutos o contacta soporte.',
+        message: 'Tu cuenta fue creada, pero hubo un problema enviando el código de verificación a tu correo. Intenta registrar de nuevo en unos minutos o contacta soporte.',
         emailEnviado: false,
         usuario: usuarioRespuesta
       });
     }
+
     return res.status(201).json({
-      message: "Usuario registrado con éxito",
-      usuario: {
-        id: data[0].user_id,
-        nombre: data[0].nombre,
-        email: data[0].email,
-        rol: data[0].rol
-      }
+      message: "Usuario registrado con éxito. Revisa tu correo para verificar la cuenta.",
+      usuario: usuarioRespuesta
     });
+
   } catch (error) {
     console.error("Error en registro:", error);
     return res.status(500).json({ error: error.message });
@@ -132,75 +121,74 @@ export const login = async (req, res) => {
     return res.status(500).json({ error: "Error en el servidor" });
   }
 };
-//verificar cuenta con codigo de 6 digitos
+
+// Verificar cuenta con código de 6 dígitos
 export const verificarCuenta = async (req, res) => {
   try {
-    const {email, codigo} = req.body;
-      if (!email || !codigo) {
-        return res.status(400).json({
-          error: 'El email y el codigo de verificacion son requeridos'
-        });
-      }
-      //1 buscar al usuario en supabase 
-      const {data: usuario, error: errorUsuario} = await supabase
-<<<<<<< HEAD
-      .from('usuario')
-=======
+    const { email, codigo } = req.body;
+    
+    if (!email || !codigo) {
+      return res.status(400).json({
+        error: 'El email y el código de verificación son requeridos'
+      });
+    }
+
+    // 1. Buscar al usuario en Supabase
+    const { data: usuario, error: errorUsuario } = await supabase
       .from('usuarios')
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
       .select('id, email, isVerified, codigoVerificacion, codigoVerificacionExpiracion')
       .eq('email', email)
       .single();
-      if (errorUsuario || !usuario){
-        return res.status(404).json({
-          error: 'Usuario no encontrado'
-        });
-      }
-      //2. revisar si ya esta activo
-      if (usuario.isVerified){
-        return res.status(400).json({
-          error: 'La cuenta ya se encuentra verificada'
-        });
-      }
-      //3. comparar el codigo
-      if (String(usuario.codigoVerificacion).trim() !== String(codigo).trim()){
-        return res.status(400).json({
-          error: 'El codigo de verificacion es incorrecto'
-        });
-      }
-      //4. velidar expiracion (15 minutos)
-      const ahora = new Date();
-      const expiracion = new Date(usuario.codigoVerificacionExpiracion);
-      if (ahora > expiracion){
-        return res.status(400).json({
-          error: 'El codigo ha expirado. Por favor solicita uno nuevo'
-        });
-      }
-      //5. activar la cuenta
-<<<<<<< HEAD
-      const {error: errorDate} = await supabase
-      .from('usuarios')
-      .update({
-        isVerfied: true,
-=======
-      const {error: errorUpdate} = await supabase
+
+    if (errorUsuario || !usuario) {
+      return res.status(404).json({
+        error: 'Usuario no encontrado'
+      });
+    }
+
+    // 2. Revisar si ya está activo
+    if (usuario.isVerified) {
+      return res.status(400).json({
+        error: 'La cuenta ya se encuentra verificada'
+      });
+    }
+
+    // 3. Comparar el código
+    if (String(usuario.codigoVerificacion).trim() !== String(codigo).trim()) {
+      return res.status(400).json({
+        error: 'El código de verificación es incorrecto'
+      });
+    }
+
+    // 4. Validar expiración (15 minutos)
+    const ahora = new Date();
+    const expiracion = new Date(usuario.codigoVerificacionExpiracion);
+    if (ahora > expiracion) {
+      return res.status(400).json({
+        error: 'El código ha expirado. Por favor solicita uno nuevo'
+      });
+    }
+
+    // 5. Activar la cuenta
+    const { error: errorUpdate } = await supabase
       .from('usuarios')
       .update({
         isVerified: true,
->>>>>>> f28c40ba2b245bd7b016a88f39433d7377722d9b
         codigoVerificacion: null,
         codigoVerificacionExpiracion: null
       })
       .eq('id', usuario.id);
 
-      if (errorUpdate){
-        return res.status(500).json({
-          error: 'Error al actualizar el estado de verificacion'
-        });
-      }
-      return res.status(200).json({
-        message: 'Cuenta verificada exitosamente. Ya puedes iniciar sesion en Banda Sinfonica Municipal de Garzon Huila'
+    if (errorUpdate) {
+      return res.status(500).json({
+        error: 'Error al actualizar el estado de verificación'
       });
+    }
+
+    return res.status(200).json({
+      message: 'Cuenta verificada exitosamente. Ya puedes iniciar sesión en Banda Sinfónica Municipal de Garzón Huila'
+    });
+
   } catch (error) {
     console.error('Error en verificarCuenta:', error);
     return res.status(500).json({
