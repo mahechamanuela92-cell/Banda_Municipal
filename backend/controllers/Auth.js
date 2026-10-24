@@ -8,10 +8,24 @@ export const registro = async (req, res) => {
   console.log("🔥 ¡LLEGÓ UNA PETICIÓN DESDE EL CELULAR AL BACKEND! 🔥");
 
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password, tipo_documento, numero_documento, telefono, codigoInvitacion } = req.body;
 
-    if (!nombre || !email || !password) {
+    if (!nombre || !email || !password || !codigoInvitacion) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
+    }
+
+    // Validar el código de invitación generado por el administrador
+    const { data: invitacion } = await supabase
+      .from('codigos_invitacion')
+      .select('id, usado')
+      .eq('codigo', String(codigoInvitacion).trim())
+      .maybeSingle();
+
+    if (!invitacion) {
+      return res.status(400).json({ error: "El código de registro no es válido" });
+    }
+    if (invitacion.usado) {
+      return res.status(400).json({ error: "El código de registro ya fue usado" });
     }
 
     const { data: usuarioExiste } = await obtenerPorEmail(email);
@@ -33,7 +47,10 @@ export const registro = async (req, res) => {
       hashedPassword, 
       rolPorDefecto,
       codigoVerificacion,
-      codigoVerificacionExpiracion
+      codigoVerificacionExpiracion,
+      tipo_documento,
+      numero_documento,
+      telefono
     );
 
     if (error) {
@@ -45,6 +62,12 @@ export const registro = async (req, res) => {
     if (!data || data.length === 0) {
       return res.status(500).json({ error: "No se pudo retornar el usuario creado" });
     }
+
+    // Marcar el código de invitación como usado
+    await supabase
+      .from('codigos_invitacion')
+      .update({ usado: true })
+      .eq('id', invitacion.id);
 
     // Enviar el correo con el código de 6 dígitos usando Brevo
     const resultadoEnvio = await enviarCodigoVerificacion(email, nombre, codigoVerificacion);
@@ -136,7 +159,7 @@ export const verificarCuenta = async (req, res) => {
     // 1. Buscar al usuario en Supabase
     const { data: usuario, error: errorUsuario } = await supabase
       .from('usuarios')
-      .select('id, email, isVerified, codigoVerificacion, codigoVerificacionExpiracion')
+      .select('user_id, email, isVerified, codigoVerificacion, codigoverificacionExpiracion')
       .eq('email', email)
       .single();
 
@@ -162,7 +185,7 @@ export const verificarCuenta = async (req, res) => {
 
     // 4. Validar expiración (15 minutos)
     const ahora = new Date();
-    const expiracion = new Date(usuario.codigoVerificacionExpiracion);
+    const expiracion = new Date(usuario.codigoverificacionExpiracion);
     if (ahora > expiracion) {
       return res.status(400).json({
         error: 'El código ha expirado. Por favor solicita uno nuevo'
@@ -175,9 +198,9 @@ export const verificarCuenta = async (req, res) => {
       .update({
         isVerified: true,
         codigoVerificacion: null,
-        codigoVerificacionExpiracion: null
+        codigoverificacionExpiracion: null
       })
-      .eq('id', usuario.id);
+      .eq('user_id', usuario.user_id);
 
     if (errorUpdate) {
       return res.status(500).json({

@@ -1,3 +1,4 @@
+import 'package:frontend/config/api.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -61,7 +62,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     }
 
     try {
-      final url = Uri.parse('http://localhost:3000/api/auth/register');
+      final url = Uri.parse('$apiUrl/api/auth/register');
       print("Conectando a la URL: $url");
 
       final response = await http.post(

@@ -1,11 +1,11 @@
+import 'package:frontend/config/api.dart';
+import 'package:frontend/config/sesion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../widgets/fondos.dart';
 import '../themes/colores.dart';
-// Asegúrate de importar tu servicio o lugar donde guardes el token del usuario logueado
-// import '../services/auth_service.dart';
 
 class PantallaGenerarCodigo extends StatefulWidget {
   const PantallaGenerarCodigo({super.key});
@@ -26,13 +26,15 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
     });
 
     try {
-      // ⚠️ Reemplaza esta URL con la dirección de tu backend (o IP local / emulador)
-      // Nota: Si usas emulador Android, 'http://localhost:3000' suele ser 'http://10.0.2.2:3000'
-      final url = Uri.parse('http://localhost:3000/api/auth/generar-codigo');
+      final url = Uri.parse('$apiUrl/api/auth/generar-codigo');
+      final tokenAdmin = Sesion.token;
 
-      // TODO: Obtén el token real del administrador guardado en tu app (SharedPreferences, Provider, etc.)
-      // Ejemplo: final token = await AuthService.obtenerToken();
-      final String tokenAdmin = "AQUÍ_DEBES_PASAR_EL_TOKEN_DEL_ADMIN"; 
+      if (tokenAdmin == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Debes iniciar sesión como administrador')),
+        );
+        return;
+      }
 
       final response = await http.post(
         url,
@@ -40,9 +42,11 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $tokenAdmin',
         },
-      );
+      ).timeout(const Duration(seconds: 5));
 
       final data = jsonDecode(response.body);
+
+      if (!mounted) return;
 
       if (response.statusCode == 201) {
         setState(() {
@@ -57,21 +61,17 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
         );
       }
     } catch (e) {
-      // Por si ocurre algún error de conexión con el servidor
       print("Error de conexión: $e");
-      
-      // 💡 SIMULACIÓN LOCAL (Por si quieres probar el diseño de inmediato sin levantar el backend todavía)
-      setState(() {
-        _codigoGenerado = (100000 + (DateTime.now().millisecond * 89) % 900000).toString();
-      });
-      
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Modo simulación: Código generado localmente')),
+        const SnackBar(content: Text('No se pudo conectar con el servidor')),
       );
     } finally {
-      setState(() {
-        _cargando = false;
-      });
+      if (mounted) {
+        setState(() {
+          _cargando = false;
+        });
+      }
     }
   }
 

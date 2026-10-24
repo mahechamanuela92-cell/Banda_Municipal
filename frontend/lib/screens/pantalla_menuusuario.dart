@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/eventos/pantalla_evento.dart';
 import 'package:frontend/screens/multimedia/multimedia.dart';
 import 'package:frontend/screens/pantalla_generar_codigo.dart';
@@ -7,7 +8,7 @@ import 'package:frontend/themes/colores.dart';
 import 'inventario-partituras/inventario_partituras.dart';
 import 'inventario-instrumentos/inventario_instrumentos.dart';
 import 'pantalla_perfil.dart';
-// TODO: Importa aquí tu pantalla de generar código cuando la crees, por ejemplo:
+
 // import 'generar_codigo_pantalla.dart';
 
 class MenuUsuario extends StatelessWidget {
@@ -66,8 +67,9 @@ class MenuUsuario extends StatelessWidget {
                     opcionMenu(context, 'Inventario- Partituras', const InventarioPartituras()),
                     opcionMenu(context, 'Multimedia', const MultimediaPantalla()),
                     opcionMenu(context, 'Eventos', const PantallaEventos()),
-                    // --- NUEVA OPCIÓN PARA EL ADMIN ---
-                    opcionMenu(context, 'Generar Código de Registro', const PantallaGenerarCodigo()),
+                    // --- OPCIÓN SOLO PARA EL ADMIN ---
+                    if (Sesion.rol == 'admin')
+                      opcionMenu(context, 'Generar Código de Registro', const PantallaGenerarCodigo()),
                     opcionMenu(context, 'Perfil', const PantallaPerfil()),
                   ],
                 ),

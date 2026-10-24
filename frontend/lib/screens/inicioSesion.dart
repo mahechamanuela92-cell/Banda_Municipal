@@ -1,8 +1,11 @@
+import 'package:frontend/config/api.dart';
+import 'package:frontend/config/sesion.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/screens/pantalla_inicio.dart';
 import 'package:flutter/material.dart';
 import '../widgets/fondos.dart';
+import 'pantalla_registro.dart';
 
 class InicioSesion extends StatefulWidget {
   const InicioSesion({super.key});
@@ -16,18 +19,92 @@ class _InicioSesionState extends State<InicioSesion> {
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
-  final bool _cargando = false;
+  bool _cargando = false;
   @override
 void dispose() {
   _correoController.dispose();
   _passwordController.dispose();
+  _nombreController.dispose();
   super.dispose();
 }
   // Variables para controlar el cambio de color al hacer clic
   Color _colorRegistrarse = Colors.white;
   Color _colorOlvido = Colors.white;
 
-  Null get _iniciarSesion => null;
+  // Pantalla a la que se envía al usuario según su rol
+  Widget? _pantallaSegunRol(String? rol) {
+    switch (rol) {
+      case 'admin':
+        return const Inicio(); // TODO: cambiar por la pantalla de administrador cuando exista
+      case 'musico':
+        return const Inicio(); // TODO: cambiar por la pantalla de músico cuando exista
+      default:
+        return null;
+    }
+  }
+
+  Future<void> _iniciarSesion() async {
+    final correo = _correoController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (correo.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, ingresa tu correo y contraseña')),
+      );
+      return;
+    }
+
+    setState(() => _cargando = true);
+
+    try {
+      final url = Uri.parse('$apiUrl/api/auth/login');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': correo,
+          'password': password,
+        }),
+      ).timeout(const Duration(seconds: 5));
+
+      final data = jsonDecode(response.body);
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        final pantalla = _pantallaSegunRol(data['rol']);
+        if (pantalla == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Tu usuario no tiene un rol válido')),
+          );
+          return;
+        }
+
+        Sesion.token = data['token'];
+        Sesion.nombre = data['nombre'];
+        Sesion.rol = data['rol'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('¡Bienvenido, ${data['nombre']}!')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => pantalla),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['error'] ?? 'Error al iniciar sesión')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo conectar con el servidor')),
+      );
+    } finally {
+      if (mounted) setState(() => _cargando = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +247,10 @@ void dispose() {
                           setState(() {
                             _colorRegistrarse = Colors.green;
                           });
-                          // TODO: Navegar a la pantalla de Registro cuando la crees
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PantallaRegistro()),
+                          );
                         },
                         child: Text(
                           '¿No tienes cuenta? Regístrate',
@@ -257,6 +337,7 @@ void dispose() {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       alignment: Alignment.center,
       child: TextField(
+        controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
         style: const TextStyle(
