@@ -3,6 +3,7 @@ import 'package:frontend/config/sesion.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/screens/pantalla_inicio.dart';
+import 'package:frontend/usuario/screens/inicial.dart' as musico;
 import 'package:flutter/material.dart';
 import '../widgets/fondos.dart';
 import 'pantalla_registro.dart';
@@ -35,9 +36,9 @@ void dispose() {
   Widget? _pantallaSegunRol(String? rol) {
     switch (rol) {
       case 'admin':
-        return const Inicio(); // TODO: cambiar por la pantalla de administrador cuando exista
+        return const Inicio();
       case 'musico':
-        return const Inicio(); // TODO: cambiar por la pantalla de músico cuando exista
+        return const musico.Inicio();
       default:
         return null;
     }

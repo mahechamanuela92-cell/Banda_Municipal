@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'inicio_sesion.dart';
+import 'package:frontend/config/sesion.dart';
+import 'package:frontend/screens/inicioSesion.dart';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
 
@@ -172,6 +173,9 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                               const SizedBox(height: 16),
                               
                               _opcionMenu(context, 'Cerrar Sesión', () {
+                                Sesion.token = null;
+                                Sesion.nombre = null;
+                                Sesion.rol = null;
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(builder: (context) => const InicioSesion()),
