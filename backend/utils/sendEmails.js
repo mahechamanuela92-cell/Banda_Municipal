@@ -1,76 +1,72 @@
-import nodemailer from 'nodemailer';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { BrevoClient } from "@getbrevo/brevo";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Esto ayuda a calcular la ruta correcta de tu archivo local
+// Obtener la ruta base del archivo actual
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
-  }
-});
+// Inicializamos el cliente de Brevo con tu API Key
+const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
 
 export const enviarCorreoRecuperacion = async (email, codigo) => {
-  const mailOptions = {
-    from: `"Banda Municipal de Garzón" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: `🔑 Código de Verificación - Recuperación de Contraseña`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; }
-          .container { max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eee; }
-          .header { background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%); padding: 25px; text-align: center; }
-          .logo { max-width: 130px; height: auto; display: block; margin: 0 auto; border: 0; }
-          .content { padding: 30px 25px; text-align: center; color: #333333; }
-          .title { font-size: 20px; font-weight: bold; color: #ad1457; margin-bottom: 10px; }
-          .text { font-size: 14px; color: #555555; line-height: 1.5; margin-bottom: 25px; }
-          .code-container { background: #fff8e1; border: 2px dashed #fbc02d; border-radius: 8px; padding: 15px; display: inline-block; margin-bottom: 25px; }
-          .code { font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #d81b60; margin: 0; }
-          .footer { background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #777777; border-top: 1px solid #eeeeee; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <!-- Aquí usamos el identificador cid para la imagen adjunta -->
-            <img src="cid:logo_banda" alt="Banda Municipal de Garzón" class="logo" />
-          </div>
-          <div class="content">
-            <div class="title">Recuperación de Contraseña</div>
-            <p class="text">Has solicitado restablecer tu contraseña. Utiliza el siguiente código de verificación para continuar con el proceso:</p>
-            <div class="code-container">
-              <span class="code">${codigo}</span>
-            </div>
-            <p class="text" style="font-size: 12px; color: #888888; margin-bottom: 0;">Este código es válido durante <strong>15 minutos</strong>. Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
-          </div>
-          <div class="footer">
-            <p style="margin: 0;">Banda Municipal de Garzón &copy; ${new Date().getFullYear()}</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `,
-    // Aquí es donde vinculamos físicamente la imagen de tu carpeta assets
-    attachments: [{
-      filename: 'logo.jpg',
-      path: path.join(__dirname, '../assets/images/logo.jpg'), // Ajusta si tu carpeta assets está en otro nivel
-      cid: 'logo_banda' // Debe coincidir con el src="cid:logo_banda" de arriba
-    }]
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    return { success: true, message: 'Correo enviado' };
+    // Ruta hacia tu imagen local en backend/assets/images/logo.jpg
+    const rutaImagen = path.join(__dirname, "../assets/images/logo.jpg");
+
+    // Convertir la imagen local a Base64
+    let logoBase64 = "";
+    if (fs.existsSync(rutaImagen)) {
+      const imagenBuffer = fs.readFileSync(rutaImagen);
+      logoBase64 = `data:image/jpeg;base64,${imagenBuffer.toString("base64")}`;
+    }
+
+    const result = await brevo.transactionalEmails.sendTransacEmail({
+      subject: "🔑 Código de Verificación - Recuperación de Contraseña",
+      sender: {
+        name: process.env.EMAIL_FROM_NAME || "Banda Municipal de Garzón",
+        email: process.env.EMAIL_USER, // Tu correo registrado en Brevo
+      },
+      to: [{ email: email }],
+      htmlContent: `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #f0e6e6; border-radius: 12px; background-color: #ffffff;">
+            
+            ${
+              logoBase64
+                ? `
+            <!-- Logo local renderizado con bordes redondeados (circulares) -->
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="${logoBase64}" 
+                     alt="Logo Banda Municipal" 
+                     style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #d81b60; display: inline-block;" />
+            </div>
+            `
+                : ""
+            }
+
+            <h2 style="color: #d81b60; text-align: center; margin-bottom: 5px; margin-top: 0;">Banda Municipal de Garzón</h2>
+            <h3 style="color: #333333; text-align: center; margin-top: 0;">Recuperación de Contraseña</h3>
+            
+            <p style="color: #555555; font-size: 15px; text-align: center;">Has solicitado restablecer tu contraseña. Utiliza el siguiente código de verificación:</p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #d81b60; background: #fff8e1; padding: 12px 24px; border-radius: 8px; border: 2px dashed #fbc02d; display: inline-block;">
+                    ${codigo}
+                </span>
+            </div>
+            
+            <p style="color: #888888; font-size: 12px; text-align: center; margin-top: 25px;">
+                Este código es válido durante <strong>15 minutos</strong>. Si no solicitaste este cambio, puedes ignorar este mensaje.
+            </p>
+        </div>
+      `,
+    });
+
+    console.log("Correo de recuperación enviado con éxito vía Brevo");
+    return { success: true, result };
   } catch (error) {
-    console.error('Error al enviar correo:', error);
+    console.error("Error enviando correo de recuperación con Brevo:", error);
     return { success: false, error: error.message };
   }
 };
