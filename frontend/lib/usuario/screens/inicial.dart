@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'menu_usuario.dart';
+import 'contacto.dart';
+import 'package:frontend/widgets/inicio_pantallas/instrumentos_pantallas.dart';
+import 'package:frontend/widgets/inicio_pantallas/nuestra_historia_pantalla.dart';
+
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
 
@@ -8,11 +12,26 @@ class Inicio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Configuración de las tarjetas principales
-    final tarjetas = [
-      {'titulo': 'NUESTRA HISTORIA', 'img': 'assets/images/libro.png', 'der': false},
-      {'titulo': 'INSTRUMENTOS CON LOS QUE CONTAMOS', 'img': 'assets/images/instrumentos.png', 'der': true},
-      {'titulo': 'CONTÁCTENOS', 'img': 'assets/images/contacto.png', 'der': false},
+    // Configuración de las tarjetas principales (cada una con su pantalla de destino)
+    final tarjetas = <Map<String, Object?>>[
+      {
+        'titulo': 'NUESTRA HISTORIA',
+        'img': 'assets/images/libro.png',
+        'der': false,
+        'destino': const NuestraHistoriaPantalla(),
+      },
+      {
+        'titulo': 'INSTRUMENTOS CON LOS QUE CONTAMOS',
+        'img': 'assets/images/instrumentos.png',
+        'der': false,
+        'destino': const InstrumentosPantalla(),
+      },
+      {
+        'titulo': 'CONTÁCTENOS',
+        'img': 'assets/images/contacto.png',
+        'der': false,
+        'destino': const PantallaContacto(),
+      },
     ];
 
     return Scaffold(
@@ -54,10 +73,19 @@ class Inicio extends StatelessWidget {
                             rutaImagen: t['img'] as String,
                             imagenALaDerecha: t['der'] as bool,
                             onTap: () {
-                              final titulo = t['titulo'] as String;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('$titulo: pantalla no disponible')),
-                              );
+                              final destino = t['destino'] as Widget?;
+                              if (destino != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => destino),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${t['titulo']}: pantalla no disponible'),
+                                  ),
+                                );
+                              }
                             },
                           ),
                         )),
@@ -76,8 +104,8 @@ class Inicio extends StatelessWidget {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        opaque: false,            
-                        barrierColor: Colors.transparent, 
+                        opaque: false,
+                        barrierColor: Colors.transparent,
                         pageBuilder: (context, animation, secondaryAnimation) =>
                             const MenuUsuario(),
                       ),
@@ -131,7 +159,7 @@ Widget _buildBotonMenuIcono({required VoidCallback onTap}) {
   );
 }
 
-// Método auxiliar que faltaba para crear las tarjetas principales
+// Método auxiliar para crear las tarjetas principales
 Widget _crearTarjeta({
   required String titulo,
   required String rutaImagen,
