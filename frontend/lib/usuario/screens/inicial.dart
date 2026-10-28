@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'menu_usuario.dart';
-import 'contacto.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_pantallas.dart';
 import 'package:frontend/widgets/inicio_pantallas/nuestra_historia_pantalla.dart';
+import 'package:frontend/widgets/inicio_pantallas/contactenos_pantalla.dart';
 
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
