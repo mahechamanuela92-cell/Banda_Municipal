@@ -1,5 +1,6 @@
 import 'package:frontend/config/api.dart';
 import 'package:frontend/config/sesion.dart';
+import 'package:frontend/screens/recuperar_password.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/screens/pantalla_inicio.dart';
@@ -263,13 +264,21 @@ void dispose() {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      // ¿Olvidaste tu contraseña? (Cambia a rojo)
+
+                      // ¿Olvidaste tu contraseña?
                       TextButton(
                         onPressed: () {
                           setState(() {
-                            _colorOlvido = Colors.red;
+                            _colorOlvido = Colors.red; // Mantiene tu efecto visual si lo deseas
                           });
-                          // TODO: Navegar a la pantalla de Recuperar Contraseña cuando la crees
+
+                          // Navegar a la pantalla de recuperación de contraseña
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PantallaRecuperarPassword(),
+                            ),
+                          );
                         },
                         child: Text(
                           '¿Olvidaste tu contraseña?',
