@@ -38,6 +38,12 @@ app.get('/', (req, res) => {
         version: '1.0.0'
     });
 });
+
+//montando las rutas de la API
+app.get ('/health', (req, res)=>{
+    res.status(200).send('OK');
+});
+
 // Registrar rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes); 
@@ -48,6 +54,8 @@ app.use('/multimedia', multimediaRoutes);
 app.use('/catalogo', catalogoRoutes);
 app.use('/partituras', partiturasRoutes);
 app.use("/api/banda", chatBandaRoutes);
+
+
 
 
 
