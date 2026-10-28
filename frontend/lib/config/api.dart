@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConfig {
   // Cambia a false cuando quieras volver a probar con tu servidor Node.js local
-  static const bool useRemote = false;
+  static const bool useRemote = true;
 
   // URL de tu backend desplegado en Render (sin /api al final,
   // porque las pantallas ya agregan /api/auth/... en cada ruta)
