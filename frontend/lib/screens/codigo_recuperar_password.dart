@@ -16,20 +16,30 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _codeController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _emailController = TextEditingController();
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Si llegó el email desde la pantalla anterior, lo dejamos precargado
+    _emailController.text = widget.email;
+  }
 
   @override
   void dispose() {
     _codeController.dispose();
     _passwordController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
   Future<void> _resetPassword() async {
     final code = _codeController.text.trim();
     final newPassword = _passwordController.text.trim();
+    final email = _emailController.text.trim();
 
-    if (code.isEmpty || newPassword.isEmpty) {
+    if (email.isEmpty || code.isEmpty || newPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor completa todos los campos')),
       );
@@ -45,12 +55,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'email': widget.email,
-          'token': code,
+          'email': email,          // usa el campo de email
+          'code': code,            // el backend espera 'code'
           'newPassword': newPassword,
         }),
       ).timeout(const Duration(seconds: 10));
 
+      if (!mounted) return;
       setState(() => _isLoading = false);
 
       if (response.statusCode == 200) {
@@ -61,10 +72,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       } else {
         final data = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['mensaje'] ?? data['error'] ?? 'Error al actualizar')),
+          SnackBar(
+            content: Text(
+              data['error'] ?? data['mensaje'] ?? data['message'] ?? 'Error al actualizar',
+            ),
+          ),
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error de conexión: $e')),
@@ -165,6 +181,58 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         hintStyle: TextStyle(
                           color: Color(0x880F4C5C),
                           letterSpacing: 6,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // --- CAJA DE TEXTO: EMAIL ---
+                  Container(
+                    width: double.infinity,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFFB3F0EC),
+                          Color(0xFF8AE1DC),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    alignment: Alignment.center,
+                    child: TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      style: const TextStyle(
+                        color: Color(0xFF0F4C5C),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: const InputDecoration(
+                        icon: Icon(
+                          Icons.email,
+                          color: Color(0xFF0F4C5C),
+                          size: 22,
+                        ),
+                        hintText: 'Email',
+                        hintStyle: TextStyle(
+                          color: Color(0xFF0F4C5C),
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                         border: InputBorder.none,
