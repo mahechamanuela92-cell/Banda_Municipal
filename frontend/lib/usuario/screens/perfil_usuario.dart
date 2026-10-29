@@ -104,6 +104,17 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
               // CAPA 2: bloque del perfil + texto de abajo
               Column(
                 children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colores.naranja,
+                        size: 30,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
