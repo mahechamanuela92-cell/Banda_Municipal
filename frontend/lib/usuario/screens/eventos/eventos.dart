@@ -103,6 +103,18 @@ class _PantallaEventosState extends State<PantallaEventos> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colores.naranja,
+                        size: 30,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+
                 // Recuadro oscuro con la información
                 Container(
                   margin: const EdgeInsets.all(12),
