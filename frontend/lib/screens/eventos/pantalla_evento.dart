@@ -108,7 +108,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                         ),
                         child: CalendarDatePicker(
                           initialDate: fechaElegida,
-                          firstDate: DateTime(2020),
+                          firstDate: DateUtils.dateOnly(DateTime.now()),
                           lastDate: DateTime(2035),
                           onDateChanged: (DateTime fecha) {
                             fechaElegida = fecha;
