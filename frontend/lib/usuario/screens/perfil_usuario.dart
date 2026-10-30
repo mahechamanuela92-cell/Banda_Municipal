@@ -17,13 +17,17 @@ class PantallaPerfil extends StatefulWidget {
 }
 
 class _PantallaPerfilState extends State<PantallaPerfil> {
-  File? _foto; // foto elegida de la galería
+  File? _foto;
   String? _fotoUrl;
   bool _cargandoPerfil = true;
+  bool _modoEdicion = false;
   bool _guardando = false;
   final _nombre = TextEditingController(text: Sesion.nombre ?? '');
   final _telefono = TextEditingController();
   final _correo = TextEditingController();
+  String _nombreOriginal = '';
+  String _telefonoOriginal = '';
+  String _correoOriginal = '';
 
   @override
   void initState() {
@@ -41,7 +45,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
 
   String _mensajeError(http.Response response, String alternativa) {
     if (response.statusCode == 404) {
-      return 'El backend remoto aún no tiene la ruta para guardar el perfil. Despliega los cambios del backend.';
+      return 'La ruta del perfil aún no está disponible en el backend.';
     }
     try {
       final body = jsonDecode(response.body);
@@ -90,6 +94,25 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     } finally {
       if (mounted) setState(() => _cargandoPerfil = false);
     }
+  }
+
+  void _iniciarEdicion() {
+    setState(() {
+      _nombreOriginal = _nombre.text;
+      _telefonoOriginal = _telefono.text;
+      _correoOriginal = _correo.text;
+      _modoEdicion = true;
+    });
+  }
+
+  void _cancelarEdicion() {
+    setState(() {
+      _nombre.text = _nombreOriginal;
+      _telefono.text = _telefonoOriginal;
+      _correo.text = _correoOriginal;
+      _foto = null;
+      _modoEdicion = false;
+    });
   }
 
   Future<void> _guardarPerfil() async {
@@ -145,9 +168,14 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
         _foto = null;
       }
 
-      Sesion.nombre = _nombre.text.trim();
+      _nombre.text = _nombre.text.trim();
+      _correo.text = _correo.text.trim();
+      Sesion.nombre = _nombre.text;
+      _nombreOriginal = _nombre.text;
+      _telefonoOriginal = _telefono.text;
+      _correoOriginal = _correo.text;
       if (mounted) {
-        setState(() {});
+        setState(() => _modoEdicion = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Perfil actualizado')),
         );
@@ -163,7 +191,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     }
   }
 
-  // Abre la galería y guarda la foto elegida
   Future<void> _elegirFoto() async {
     final imagen = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (imagen != null) {
@@ -171,7 +198,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     }
   }
 
-  // Campo centrado con lápiz
   Widget _campo(String titulo, TextEditingController controlador) {
     return Column(
       children: [
@@ -179,39 +205,19 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
           Text(titulo, style: const TextStyle(color: Colors.white, fontSize: 18)),
         TextField(
           controller: controlador,
+          readOnly: !_modoEdicion,
           textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.white, fontSize: 16),
-          decoration: const InputDecoration(
-            suffixIcon: Icon(Icons.edit, color: Colors.white, size: 16),
+          decoration: InputDecoration(
+            suffixIcon: _modoEdicion
+                ? const Icon(Icons.edit, color: Colors.white, size: 16)
+                : null,
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
           ),
         ),
       ],
-    );
-  }
-
-  // Botón grande
-  Widget _boton(String texto, VoidCallback onTap) {
-    return SizedBox(
-      width: double.infinity,
-      height: 60,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colores.botonClaro,
-          foregroundColor: Colores.bloqueOscuro,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-        onPressed: _guardando ? null : onTap,
-        child: _guardando
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : Text(texto, style: const TextStyle(fontSize: 20)),
-      ),
     );
   }
 
@@ -227,7 +233,13 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
         onPressed: _guardando ? null : onTap,
-        child: Text(texto, style: const TextStyle(fontSize: 20)),
+        child: _guardando && texto == 'Guardar'
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Text(texto, style: const TextStyle(fontSize: 20)),
       ),
     );
   }
@@ -254,15 +266,23 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
               // CAPA 2: bloque del perfil + texto de abajo
               Column(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: Colores.naranja,
-                        size: 30,
-                      ),
-                      onPressed: () => Navigator.pop(context),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colores.naranja,
+                            size: 30,
+                          ),
+                          tooltip: _modoEdicion ? 'Volver al perfil' : 'Volver',
+                          onPressed: _modoEdicion
+                              ? _cancelarEdicion
+                              : () => Navigator.pop(context),
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(
@@ -288,14 +308,38 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                     child: CircularProgressIndicator(strokeWidth: 2),
                                   ),
                                 ),
-                              const Text('Perfil',
+                              const Center(
+                                child: Text(
+                                  'Perfil',
                                   style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold)),
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              if (!_modoEdicion)
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: ElevatedButton.icon(
+                                    onPressed: _iniciarEdicion,
+                                    icon: const Icon(Icons.edit, size: 18),
+                                    label: const Text('Editar perfil'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colores.botonClaro,
+                                      foregroundColor: Colores.bloqueOscuro,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 10,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               const SizedBox(height: 20),
 
-                              // Foto con lápiz para editar
                               SizedBox(
                                 width: 170,
                                 height: 130,
@@ -307,24 +351,27 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                         radius: 60,
                                         backgroundColor: Colors.white,
                                         backgroundImage: _foto != null
-                                          ? FileImage(_foto!)
-                                          : _fotoUrl != null
-                                            ? NetworkImage(_fotoUrl!)
-                                            : null,
+                                            ? FileImage(_foto!)
+                                            : _fotoUrl != null
+                                                ? NetworkImage(_fotoUrl!)
+                                                : null,
                                         child: _foto == null && _fotoUrl == null
                                             ? const Icon(Icons.person,
                                                 size: 70, color: Colors.grey)
                                             : null,
                                       ),
                                     ),
-                                    Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: GestureDetector(
-                                        onTap: _elegirFoto,
-                                        child: const Icon(Icons.edit, color: Colors.white),
+                                    if (_modoEdicion)
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: IconButton(
+                                          onPressed: _elegirFoto,
+                                          icon: const Icon(Icons.edit,
+                                              color: Colors.white),
+                                          tooltip: 'Cambiar foto',
+                                        ),
                                       ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -335,21 +382,24 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                               _campo('Telefono', _telefono),
                               const SizedBox(height: 28),
                               _campo('Correo', _correo),
-                              const SizedBox(height: 44),
+                              const SizedBox(height: 32),
 
-                              _boton('Guardar', _guardarPerfil),
-                              const SizedBox(height: 16),
-                              
-                              _opcionMenu(context, 'Cerrar Sesión', () {
-                                Sesion.token = null;
-                                Sesion.nombre = null;
-                                Sesion.rol = null;
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const InicioSesion()),
-                                  (route) => false,
-                                );
-                              }),
+                              if (_modoEdicion) ...[
+                                _opcionMenu(context, 'Guardar', _guardarPerfil),
+                                const SizedBox(height: 16),
+                              ],
+
+                              if (!_modoEdicion)
+                                _opcionMenu(context, 'Cerrar Sesión', () {
+                                  Sesion.token = null;
+                                  Sesion.nombre = null;
+                                  Sesion.rol = null;
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const InicioSesion()),
+                                    (route) => false,
+                                  );
+                                }),
                             ],
                           ),
                         ),
