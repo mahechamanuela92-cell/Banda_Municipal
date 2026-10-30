@@ -25,7 +25,7 @@ export const InstrumentosModel = {
         return data;
     },
 
-    // 3. Obtener todos los instrumentos con su detalle (Equivalente al INNER JOIN)
+    // 3. Obtener todos los instrumentos con su detalle y fecha de registro
     getAll: async () => {
         const { data, error } = await supabase
             .from('instrumentos')
@@ -35,7 +35,8 @@ export const InstrumentosModel = {
                 listado_instrumentos (
                     id_listado,
                     nombre_de_instrumento,
-                    instrumento_en
+                    instrumento_en,
+                    fecha_registro
                 )
             `)
             .order('id_instrumentos', { ascending: false });

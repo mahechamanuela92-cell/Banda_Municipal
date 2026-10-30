@@ -1,7 +1,7 @@
 import { supabase } from '../config/supabase.js';
 
 export const PartiturasModel = {
-    // Crear categoría (ya la tienes funcionando)
+    // Crear categoría (esta ya la usa el admin y funciona bien)
     createCategoria: async (nombre_partitura, voz_partitura) => {
         const { data, error } = await supabase
             .from('categorias_partituras')
@@ -13,7 +13,6 @@ export const PartiturasModel = {
         return data;
     },
 
-    // Crear partitura usando id_listado e id_categoria
     createPartitura: async (id_listado, id_categoria) => {
         const { data, error } = await supabase
             .from('partituras')
@@ -25,40 +24,32 @@ export const PartiturasModel = {
         return data;
     },
 
-    // Obtener todas las partituras cruzando los datos con categorías
+    // --- AQUÍ ESTÁ LA SOLUCIÓN ---
+    // Consultamos directamente 'categorias_partituras' y lo envolvemos 
+    // para que la app del usuario lo lea sin modificar Flutter.
     getAll: async () => {
         const { data, error } = await supabase
-            .from('partituras')
-            .select(`
-                id_partitura,
-                id_listado,
-                categorias_partituras (
-                    id_categoria,
-                    nombre_partitura,
-                    voz_partitura
-                )
-            `)
-            .order('id_partitura', { ascending: false });
+            .from('categorias_partituras')
+            .select('*')
+            .order('id_categoria', { ascending: false });
 
         if (error) throw error;
-        return data;
+
+        // Mapeamos para que mantenga la estructura que Flutter ya espera
+        return data.map(categoria => ({
+            categorias_partituras: categoria
+        }));
     },
 
     getByCategoria: async (id_categoria) => {
         const { data, error } = await supabase
-            .from('partituras')
-            .select(`
-                id_partitura,
-                id_listado,
-                categorias_partituras (
-                    id_categoria,
-                    nombre_partitura,
-                    voz_partitura
-                )
-            `)
+            .from('categorias_partituras')
+            .select('*')
             .eq('id_categoria', id_categoria);
 
         if (error) throw error;
-        return data;
+        return data.map(categoria => ({
+            categorias_partituras: categoria
+        }));
     }
 };
