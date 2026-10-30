@@ -2,9 +2,12 @@ import {supabase} from "../config/supabase.js";
 
 //guardar una url de foto o video
 export const guardarMultimedia = async (user_id, id_evento, titulo, tipo_archivo, url_archivo) => {
+    const multimedia = {user_id, titulo, tipo_archivo, url_archivo};
+    if (id_evento) multimedia.id_evento = id_evento;
+
     const {data, error} = await supabase
         .from('multimedia')
-        .insert({user_id, id_evento, titulo, tipo_archivo, url_archivo})
+        .insert(multimedia)
         .select();
 
     return {data, error};

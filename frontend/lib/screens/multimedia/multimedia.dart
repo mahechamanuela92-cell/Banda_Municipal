@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/multimedia/fotos.dart';
-import 'package:frontend/screens/multimedia/videos.dart';
+import 'package:frontend/screens/multimedia/galeria_multimedia_admin.dart';
 import 'package:frontend/themes/colores.dart';
 import 'package:frontend/widgets/fondos.dart';
 
@@ -27,7 +26,11 @@ class MultimediaPantalla extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colores.naranja,
+                          size: 30,
+                        ),
                         tooltip: "Volver",
                         onPressed: () => Navigator.pop(context),
                       ),
@@ -59,16 +62,29 @@ class MultimediaPantalla extends StatelessWidget {
                     ),
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.photo_library, color: Color(0xFFA1E3D8)),
+                        leading: const Icon(
+                          Icons.photo_library,
+                          color: Color(0xFFA1E3D8),
+                        ),
                         title: const Text(
                           "Ver Galería de Fotos",
                           style: TextStyle(color: Colors.white70),
                         ),
-                        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 16),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white38,
+                          size: 16,
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const FotosPantalla()),
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const GaleriaMultimediaAdmin(
+                                    tipoMultimedia: 'foto',
+                                    titulo: 'Fotos',
+                                  ),
+                            ),
                           );
                         },
                       ),
@@ -90,16 +106,29 @@ class MultimediaPantalla extends StatelessWidget {
                     ),
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.video_library, color: Color(0xFFA1E3D8)),
+                        leading: const Icon(
+                          Icons.video_library,
+                          color: Color(0xFFA1E3D8),
+                        ),
                         title: const Text(
                           "Ver Galería de Videos",
                           style: TextStyle(color: Colors.white70),
                         ),
-                        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white38, size: 16),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white38,
+                          size: 16,
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const VideosPantalla()),
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const GaleriaMultimediaAdmin(
+                                    tipoMultimedia: 'video',
+                                    titulo: 'Videos',
+                                  ),
+                            ),
                           );
                         },
                       ),

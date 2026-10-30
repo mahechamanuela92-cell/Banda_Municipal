@@ -5,16 +5,24 @@ import {
     filtrarPorTipo,
     eliminarMultimedia
 } from '../models/multimediaModel.js';
+import { cloudinary } from '../config/cloudinary.js';
  
 //guardar una url de foto o video
 export const crearMultimedia = async (req, res) => {
     try {
-        const {user_id, id_evento, titulo, tipo_archivo, url_archivo} = req.body;
+        const body = req.body ?? {};
+        const {id_evento, titulo, tipo_archivo} = body;
+        const user_id = req.usuario?.id;
+        const url_archivo = req.file?.path ?? body.url_archivo;
+
+        if (!user_id) {
+            return res.status(401).json({error: 'Sesión no autenticada'});
+        }
  
         //validamos los datos
-        if (!user_id || !id_evento || !tipo_archivo || !url_archivo) {
+        if (!['foto', 'video'].includes(tipo_archivo) || !url_archivo) {
             return res.status(400).json({
-                error: 'faltan datos del multimedia'
+                error: 'Se requiere un archivo de foto o video válido'
             });
         }
  
@@ -70,6 +78,19 @@ export const borrarMultimedia = async (req, res) => {
  
         if (!data || data.length === 0) {
             return res.status(404).json({error: 'archivo no encontrado'});
+        }
+
+        const archivo = data[0];
+        const segmentos = archivo.url_archivo?.split('/upload/')[1]?.split('/') ?? [];
+        if (segmentos.length > 0) {
+            if (/^v\d+$/.test(segmentos[0])) segmentos.shift();
+            const nombre = segmentos.pop()?.replace(/\.[^.]+$/, '');
+            if (nombre) {
+                const publicId = [...segmentos, nombre].join('/');
+                await cloudinary.uploader.destroy(publicId, {
+                    resource_type: archivo.tipo_archivo === 'video' ? 'video' : 'image',
+                });
+            }
         }
  
         res.status(200).json({mensaje: 'archivo eliminado correctamente'});

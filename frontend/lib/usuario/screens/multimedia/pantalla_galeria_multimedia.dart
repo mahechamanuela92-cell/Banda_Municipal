@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:frontend/services/multimedia_api.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../themes/colores.dart';
 import '../../../widgets/fondos.dart';
 
-class PantallaGaleriaMultimedia extends StatelessWidget {
+class PantallaGaleriaMultimedia extends StatefulWidget {
   final String tituloSeccion; // Ej: "Fotos" o "Videos"
   final String tipoMultimedia; // Ej: "foto" o "video"
 
@@ -14,23 +14,35 @@ class PantallaGaleriaMultimedia extends StatelessWidget {
     required this.tipoMultimedia,
   });
 
-  // Consulta directa a Supabase filtrando por el tipo (foto o video)
-  Future<List<Map<String, dynamic>>> _obtenerMultimediaDeSupabase() async {
-    final response = await Supabase.instance.client
-        .from('multimedia') // Asegúrate de que tu tabla en Supabase se llame así
-        .select()
-        .eq('tipo', tipoMultimedia);
+  @override
+  State<PantallaGaleriaMultimedia> createState() =>
+      _PantallaGaleriaMultimediaState();
+}
 
-    return List<Map<String, dynamic>>.from(response);
+class _PantallaGaleriaMultimediaState extends State<PantallaGaleriaMultimedia> {
+  late Future<List<Map<String, dynamic>>> _archivos;
+
+  @override
+  void initState() {
+    super.initState();
+    _archivos = MultimediaApi.listar(tipo: widget.tipoMultimedia);
   }
 
-  // Función para abrir o descargar el archivo multimedia externo
-  Future<void> _descargarOVerArchivo(String urlString) async {
-    final Uri url = Uri.parse(urlString);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      debugPrint('No se pudo abrir la URL: $urlString');
+  Future<void> _recargar() async {
+    setState(() {
+      _archivos = MultimediaApi.listar(tipo: widget.tipoMultimedia);
+    });
+    await _archivos;
+  }
+
+  Future<void> _abrirArchivo(String urlString) async {
+    final url = Uri.tryParse(urlString);
+    if (url == null ||
+        !await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo abrir el archivo')),
+      );
     }
   }
 
@@ -43,26 +55,40 @@ class PantallaGaleriaMultimedia extends StatelessWidget {
             children: [
               // Barra superior con botón de retroceso y título
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 5.0,
+                ),
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colores.naranja,
+                        size: 30,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    Text(
-                      tituloSeccion,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        widget.tituloSeccion,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                    ),
+                    IconButton(
+                      tooltip: 'Actualizar',
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      onPressed: _recargar,
                     ),
                   ],
                 ),
               ),
 
-              // Contenedor principal con FutureBuilder conectado a Supabase
+              // Contenedor principal con FutureBuilder conectado al backend
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -73,12 +99,34 @@ class PantallaGaleriaMultimedia extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: FutureBuilder<List<Map<String, dynamic>>>(
-                    future: _obtenerMultimediaDeSupabase(),
+                    future: _archivos,
                     builder: (context, snapshot) {
                       // Estado de carga
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
-                          child: CircularProgressIndicator(color: Colores.amarillo),
+                          child: CircularProgressIndicator(
+                            color: Colores.amarillo,
+                          ),
+                        );
+                      }
+
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'No se pudo cargar el contenido multimedia.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              TextButton.icon(
+                                onPressed: _recargar,
+                                icon: const Icon(Icons.refresh),
+                                label: const Text('Reintentar'),
+                              ),
+                            ],
+                          ),
                         );
                       }
 
@@ -86,16 +134,18 @@ class PantallaGaleriaMultimedia extends StatelessWidget {
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(
                           child: Text(
-                            'No hay $tituloSeccion subidos por el administrador todavía.',
+                            'No hay ${widget.tituloSeccion.toLowerCase()} subidos por el administrador todavía.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white70, fontSize: 16),
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                            ),
                           ),
                         );
                       }
 
                       final listaMultimedia = snapshot.data!;
 
-                      // Cuadrícula de 2 columnas idéntica a tu diseño visual[cite: 3]
                       return GridView.builder(
                         itemCount: listaMultimedia.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -106,8 +156,28 @@ class PantallaGaleriaMultimedia extends StatelessWidget {
                         ),
                         itemBuilder: (context, index) {
                           final item = listaMultimedia[index];
-                          final archivoUrl = item['url'] ?? '';
-                          final esVideo = tipoMultimedia == 'video';
+                          final archivoUrl =
+                              item['url_archivo']?.toString() ?? '';
+                          final esVideo = widget.tipoMultimedia == 'video';
+                          final vistaPrevia = esVideo
+                              ? const Center(
+                                  child: Icon(
+                                    Icons.play_circle_outline,
+                                    color: Colors.white,
+                                    size: 56,
+                                  ),
+                                )
+                              : Image.network(
+                                  archivoUrl,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  errorBuilder: (_, _, _) => const Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: Colors.white54,
+                                    ),
+                                  ),
+                                );
 
                           return Container(
                             decoration: BoxDecoration(
@@ -117,50 +187,36 @@ class PantallaGaleriaMultimedia extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Vista previa de la imagen o miniatura de video
                                 Expanded(
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                                        child: Image.network(
-                                          item['miniatura_url'] ?? archivoUrl, // Si es video, ideal tener una miniatura; si no, usa la misma URL
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          errorBuilder: (context, error, stackTrace) =>
-                                              Center(child: Icon(Icons.broken_image, color: Colors.white54)),
-                                        ),
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(10),
+                                    ),
+                                    child: Material(
+                                      color: Colors.black26,
+                                      child: InkWell(
+                                        onTap: () => _abrirArchivo(archivoUrl),
+                                        child: vistaPrevia,
                                       ),
-                                      // Si es un video, mostrar icono de reproducción encima
-                                      if (esVideo)
-                                        Container(
-                                          padding: EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black54,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(
-                                            Icons.play_arrow,
-                                            color: Colors.white,
-                                            size: 30,
-                                          ),
-                                        ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                                // Botón Descargar / Ver
                                 TextButton.icon(
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colores.amarillo,
                                     backgroundColor: Colors.black26,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
+                                      borderRadius: BorderRadius.vertical(
+                                        bottom: Radius.circular(10),
+                                      ),
                                     ),
                                   ),
-                                  icon: Icon(Icons.download, size: 16),
-                                  label: Text('Descargar', style: TextStyle(fontSize: 12)),
-                                  onPressed: () => _descargarOVerArchivo(archivoUrl),
+                                  icon: const Icon(Icons.open_in_new, size: 16),
+                                  label: const Text(
+                                    'Abrir',
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  onPressed: () => _abrirArchivo(archivoUrl),
                                 ),
                               ],
                             ),
