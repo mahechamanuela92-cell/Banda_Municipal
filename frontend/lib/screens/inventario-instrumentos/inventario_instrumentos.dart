@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
+import '../../config/api.dart';
 import 'pantalla_editar.dart';
-import '../pantalla_inicio.dart'; // <-- ajusta la ruta a tu pantalla de inicio
+import 'listado_instrumentos.dart';
 
 class InventarioInstrumentos extends StatefulWidget {
   const InventarioInstrumentos({super.key});
@@ -12,6 +15,8 @@ class InventarioInstrumentos extends StatefulWidget {
 }
 
 class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
+  final TextEditingController _serialController = TextEditingController();
+  
   List<String> instrumentos = [
     'Flauta Traversa', 'Flauta Picolo', 'Clarinete', 'Saxófono',
     'Oboe', 'Fagot', 'Trompeta', 'Fliscorno', 'Trombón',
@@ -20,10 +25,19 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
     'Platillos', 'Batería', 'Glockenspiel', 'Timbales Sinfónicos',
     'Congas', 'Timbal',
   ];
-  List<String> estados = ['Mantenimiento', 'Buen Estado', 'Mal Estado', 'Préstamo'];
+  
+  // Nota: Asegúrate de que estos textos coincidan con lo que acepta tu base de datos (o minúsculas si el CHECK lo exige)
+  List<String> estados = ['Mantenimiento', 'Buen estado', 'Mal estado', 'Préstamo'];
   bool mostrarLista = false;
   String? estadoElegido;
-  // Abre la pantalla de editar y guarda la lista actualizada
+  String? instrumentoSeleccionado;
+
+  @override
+  void dispose() {
+    _serialController.dispose();
+    super.dispose();
+  }
+
   void irAEditar() async {
     final nuevaLista = await Navigator.push<List<String>>(
       context,
@@ -36,27 +50,72 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
     });
   }
 
-  Widget texto(String t, double size,
-          {bool negrita = false, Color color = Colors.white}) =>
-      Text(t,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: color,
-              fontSize: size,
-              fontWeight: negrita ? FontWeight.bold : FontWeight.normal));
+  Future<void> _guardarInstrumentoEnBackend() async {
+    final serial = _serialController.text.trim();
 
-  Widget cajaClara(Widget? hijo,
-          {double radio = 12, double? alto, EdgeInsets? pad}) =>
-      Container(
+    if (serial.isEmpty || estadoElegido == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor llena el serial y selecciona el estado')),
+      );
+      return;
+    }
+
+    try {
+      print('Enviando a: $apiUrl/instrumentos');
+
+      final response = await http.post(
+        Uri.parse('$apiUrl/instrumentos'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'numero_serial': serial,
+          'nombre_de_instrumento': instrumentoSeleccionado ?? instrumentos.first,
+          'instrumento_en': estadoElegido,
+        }),
+      );
+
+      if (!mounted) return;
+
+      print('Código de respuesta: ${response.statusCode}');
+      print('Respuesta del servidor: ${response.body}');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Guardado correctamente en la BD')),
+        );
+        
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ListadoInstrumentosScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error del servidor: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo conectar con el servidor: $e')),
+      );
+    }
+  }
+
+  Widget texto(String t, double size, {bool negrita = false, Color color = Colors.white}) => Text(
+        t,
+        textAlign: TextAlign.center,
+        style: TextStyle(color: color, fontSize: size, fontWeight: negrita ? FontWeight.bold : FontWeight.normal),
+      );
+
+  Widget cajaClara(Widget? hijo, {double radio = 12, double? alto, EdgeInsets? pad}) => Container(
         width: double.infinity,
         height: alto,
         padding: pad ?? const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-            color: Colores.botonClaro, borderRadius: BorderRadius.circular(radio)),
+        decoration: BoxDecoration(color: Colores.botonClaro, borderRadius: BorderRadius.circular(radio)),
         child: hijo,
       );
 
   Widget espacio(double h) => SizedBox(height: h);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +142,6 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
                   ),
                   child: Stack(
                     children: [
-                      // Foto atrás (más pequeña), oscurecida con el mismo color del bloque
                       Positioned(
                         top: 38, left: 20, right: 20,
                         child: Image.asset('assets/images/fondo_login.png', height: 180,
@@ -117,7 +175,24 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
                                     childAspectRatio: 5,
                                     children: [
                                       for (String n in instrumentos)
-                                        Text(n, style: const TextStyle(fontSize: 14, color: Colors.black)),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              instrumentoSeleccionado = n;
+                                            });
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('Seleccionado: $n')),
+                                            );
+                                          },
+                                          child: Text(
+                                            n,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: instrumentoSeleccionado == n ? Colores.naranja : Colors.black,
+                                              fontWeight: instrumentoSeleccionado == n ? FontWeight.bold : FontWeight.normal,
+                                            ),
+                                          ),
+                                        ),
                                     ],
                                   )
                                 : null,
@@ -143,20 +218,14 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
                           espacio(20),
                           texto('Serial', 18),
                           espacio(8),
-                          cajaClara(const TextField(
-                              decoration: InputDecoration(border: InputBorder.none))),
+                          cajaClara(TextField(
+                            controller: _serialController,
+                            style: const TextStyle(color: Colors.black),
+                            decoration: const InputDecoration(border: InputBorder.none),
+                          )),
                           espacio(28),
                           ElevatedButton(
-                            onPressed: () {
-                              // Mensajito de confirmación (se ve también en la pantalla de inicio)
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Guardado correctamente')));
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(builder: (_) => const Inicio()),
-                                (route) => false,
-                              );
-                            },
+                            onPressed: _guardarInstrumentoEnBackend,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colores.botonClaro,
                               foregroundColor: Colors.black,

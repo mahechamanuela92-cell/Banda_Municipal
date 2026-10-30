@@ -43,7 +43,7 @@ class _PantallaRecuperarPasswordState extends State<PantallaRecuperarPassword> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': correo}),
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 60));
 
       final data = jsonDecode(response.body);
 
