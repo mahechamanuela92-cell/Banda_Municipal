@@ -141,15 +141,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
                   const SizedBox(height: 20),
 
-                  // --- CAMPO NOMBRE COMPLETO ---
-                  _crearCampoTexto(
-                    controller: _nombreController,
-                    hintText: 'Nombre Completo',
-                    icon: Icons.person,
-                  ),
-
-                  const SizedBox(height: 14),
-
                   // --- CAMPO TIPO DE DOCUMENTO ---
                   Container(
                     width: double.infinity,
@@ -222,6 +213,15 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     hintText: 'Número de Documento',
                     icon: Icons.confirmation_number,
                     keyboardType: TextInputType.number,
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // --- CAMPO NOMBRE COMPLETO ---
+                  _crearCampoTexto(
+                    controller: _nombreController,
+                    hintText: 'Nombre Completo',
+                    icon: Icons.person,
                   ),
 
                   const SizedBox(height: 14),
