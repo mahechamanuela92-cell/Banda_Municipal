@@ -86,7 +86,15 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 10), 
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                        tooltip: 'Volver',
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const SizedBox(height: 10), 
                   
                   // Logo o imagen superior
                   Center(
@@ -272,7 +280,7 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
 
                   // --- TEXTO INFERIOR ---
                   const Text(
-                    'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                    'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,

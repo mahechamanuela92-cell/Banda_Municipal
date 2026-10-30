@@ -296,7 +296,7 @@ void dispose() {
 
                   // --- TEXTO INFERIOR ---
                   const Text(
-                    'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                    'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,

@@ -27,7 +27,7 @@ class MultimediaPantalla extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.orange, size: 26),
+                        icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
                         tooltip: "Volver",
                         onPressed: () => Navigator.pop(context),
                       ),
@@ -111,7 +111,7 @@ class MultimediaPantalla extends StatelessWidget {
                   // Pie de página
                   const Center(
                     child: Text(
-                      "BANDA SINFÓNICA SAN MIGUEL DE GARZÓN",
+                      "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFFD3A456),

@@ -243,7 +243,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                   child: Text(
-                    'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                    'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,

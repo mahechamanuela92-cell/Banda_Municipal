@@ -185,7 +185,7 @@ class _FotosPantallaState extends State<FotosPantalla> {
 
                   const SizedBox(height: 10),
                   const Text(
-                    "BANDA SINFÓNICA SAN MIGUEL DE GARZÓN",
+                    "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color(0xFFD3A456),

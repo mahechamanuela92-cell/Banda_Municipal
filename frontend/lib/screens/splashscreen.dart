@@ -45,7 +45,7 @@ class _SplashscreenState extends State<Splashscreen> {
                   
                   // Texto de la Banda
                   const Text(
-                    'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                    'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,

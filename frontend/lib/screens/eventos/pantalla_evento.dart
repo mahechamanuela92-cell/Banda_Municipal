@@ -59,6 +59,14 @@ class _PantallaEventosState extends State<PantallaEventos> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                    tooltip: 'Volver',
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
                 // 1. Recuadro oscuro con el formulario
                 Container(
                   margin: const EdgeInsets.all(12),
@@ -173,7 +181,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                   child: Text(
-                    'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                    'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,

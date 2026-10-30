@@ -66,6 +66,14 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
             padding: const EdgeInsets.all(12),
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                    tooltip: 'Volver',
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
@@ -163,7 +171,7 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
                   ),
                 ),
                 espacio(40),
-                texto('BANDA SINFONICA SAN MIGUEL DE GARZÓN', 20,
+                texto('BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA', 20,
                     negrita: true, color: Colores.colorLetra1),
                 espacio(16),
               ],

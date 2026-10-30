@@ -298,7 +298,7 @@ class _PantallaRecuperarPasswordState extends State<PantallaRecuperarPassword> {
                   const SizedBox(height: 25),
 
                   const Text(
-                    'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                    'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,

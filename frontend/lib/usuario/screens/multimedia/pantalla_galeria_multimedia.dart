@@ -176,7 +176,7 @@ class PantallaGaleriaMultimedia extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(15),
                 child: Text(
-                  'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                  'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,

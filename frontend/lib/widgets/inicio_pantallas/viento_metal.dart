@@ -74,7 +74,7 @@ class VientoMetalPantalla extends StatelessWidget {
 
                   const Center(
                     child: Text(
-                      "BANDA SINFÓNICA SAN MIGUEL DE GARZÓN",
+                      "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFFD3A456),

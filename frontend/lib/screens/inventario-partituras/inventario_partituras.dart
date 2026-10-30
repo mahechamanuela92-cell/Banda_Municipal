@@ -69,6 +69,14 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
         child: SafeArea(
           child: Column(
             children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                  tooltip: 'Volver',
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
               Expanded(
                 child: Stack(
                   children: [
@@ -255,7 +263,7 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                 child: Text(
-                  'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                  'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,

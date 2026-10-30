@@ -203,7 +203,7 @@ class _PantallaEditarState extends State<PantallaEditar> {
                 ),
                 _esp(24),
                 _texto(
-                  'BANDA SINFONICA SAN MIGUEL DE GARZÓN',
+                  'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                   20,
                   b: true,
                   col: Colores.colorLetra1,

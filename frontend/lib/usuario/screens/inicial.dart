@@ -55,7 +55,7 @@ class Inicio extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "BANDA SINFONICA MUNICIPAL DE GARZÓN",
+                      "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colores.colorLetra1,
