@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
+import '../../config/api.dart'; // Asegúrate de tener tu URL base configurada aquí
 
 class InventarioPartituras extends StatefulWidget {
   const InventarioPartituras({super.key});
@@ -11,7 +14,7 @@ class InventarioPartituras extends StatefulWidget {
 }
 
 class _InventarioPartiturasState extends State<InventarioPartituras> {
-  List<String> partituras = ['Himno de Colombia', 'Himno del Huila', 'Marcha Triunfal'];
+  List<dynamic> partiturasRegistradas = [];
   List<String> tipos = ['PDF', 'Imagen', 'Word'];
   
   // Listas para instrumentos y voces
@@ -32,6 +35,28 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
   String? instrumentoElegido;
   String? vozElegida;
 
+  @override
+  void initState() {
+    super.initState();
+    _obtenerPartiturasDesdeBackend();
+  }
+
+  // Función para obtener las partituras del backend
+  Future<void> _obtenerPartiturasDesdeBackend() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/partituras'));
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        setState(() {
+          partiturasRegistradas = jsonDecode(response.body);
+        });
+      }
+    } catch (e) {
+      print('Error al conectar con el servidor: $e');
+    }
+  }
+
   // Abre los documentos del celular según el tipo
   void elegirArchivo(String tipo) async {
     List<String> extensiones = ['pdf'];
@@ -47,19 +72,45 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
     }
   }
 
-  // Agrega el archivo y vuelve a la pantalla de inicio
-  void guardar() {
-    if (nombreArchivo == null) {
+  // Enviar partitura y categoría al backend
+  Future<void> guardarEnBackend() async {
+    if (nombreArchivo == null || instrumentoElegido == null || vozElegida == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Primero elige un archivo')),
+        const SnackBar(content: Text('Por favor elige un archivo, un instrumento y una voz')),
       );
       return;
     }
-    partituras.add(nombreArchivo!);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Partitura guardada')),
-    );
-    Navigator.pop(context);
+
+    try {
+      // 1. Guardamos la categoría de la partitura en el backend
+      final responseCategoria = await http.post(
+        Uri.parse('$apiUrl/partituras/categorias'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'nombre_partitura': '$nombreArchivo ($instrumentoElegido)',
+          'voz_partitura': vozElegida,
+        }),
+      );
+
+      if (!mounted) return;
+
+      if (responseCategoria.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Partitura guardada correctamente en la BD')),
+        );
+        Navigator.pop(context);
+      } else {
+        final errorData = jsonDecode(responseCategoria.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${errorData['error'] ?? 'No se pudo guardar'}')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error de conexión: $e')),
+      );
+    }
   }
 
   @override
@@ -80,7 +131,6 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
               Expanded(
                 child: Stack(
                   children: [
-                    // Imagen del ave (detrás)
                     Align(
                       alignment: Alignment.topCenter,
                       child: Padding(
@@ -88,7 +138,6 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                         child: Image.asset('assets/images/fondo_login.png', height: 180),
                       ),
                     ),
-                    // Bloque contenedor oscuro semitransparente extendido hacia abajo
                     Container(
                       margin: const EdgeInsets.all(12),
                       width: double.infinity,
@@ -105,8 +154,6 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                               textAlign: TextAlign.center,
                               style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                             ),
-                          
-                            // Espacio donde queda el ave expuesta
                             const SizedBox(height: 200),
 
                             TextButton(
@@ -117,7 +164,6 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                               ),
                             ),
 
-                            // Recuadro claro de la Lista
                             Container(
                               width: double.infinity,
                               height: 180,
@@ -127,23 +173,25 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: mostrarLista
-                                  ? GridView.count(
-                                      crossAxisCount: 2,
-                                      childAspectRatio: 5,
-                                      children: [
-                                        for (String nombre in partituras)
-                                          Text(nombre, style: const TextStyle(fontSize: 14, color: Colors.black)),
-                                      ],
+                                  ? ListView.builder(
+                                      itemCount: partiturasRegistradas.length,
+                                      itemBuilder: (context, index) {
+                                        final partitura = partiturasRegistradas[index];
+                                        final categoria = partitura['categorias_partituras'];
+                                        final nombre = categoria != null ? categoria['nombre_partitura'] : 'Sin nombre';
+                                        final voz = categoria != null ? categoria['voz_partitura'] : '';
+
+                                        return ListTile(
+                                          title: Text(nombre, style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold)),
+                                          subtitle: Text('Voz: $voz', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                                        );
+                                      },
                                     )
                                   : null,
                             ),
                             const SizedBox(height: 24),
                             
-                            // Sección Agregar Documento dentro del mismo fondo oscuro
-                            const Text(
-                              'Agregar Documento',
-                              style: TextStyle(color: Colors.white, fontSize: 18),
-                            ),
+                            const Text('Agregar Documento', style: TextStyle(color: Colors.white, fontSize: 18)),
                             const SizedBox(height: 16),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -179,11 +227,7 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
 
                             const SizedBox(height: 24),
 
-                            // --- NUEVO: SECCIÓN ELEGIR INSTRUMENTO ---
-                            const Text(
-                              'Elegir Instrumento',
-                              style: TextStyle(color: Colors.white, fontSize: 18),
-                            ),
+                            const Text('Elegir Instrumento', style: TextStyle(color: Colors.white, fontSize: 18)),
                             const SizedBox(height: 16),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -209,11 +253,7 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
 
                             const SizedBox(height: 24),
 
-                            // --- NUEVO: SECCIÓN SELECCIONAR VOZ ---
-                            const Text(
-                              'Seleccionar Voz',
-                              style: TextStyle(color: Colors.white, fontSize: 18),
-                            ),
+                            const Text('Seleccionar Voz', style: TextStyle(color: Colors.white, fontSize: 18)),
                             const SizedBox(height: 16),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -248,7 +288,7 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              onPressed: guardar,
+                              onPressed: guardarEnBackend,
                               child: const Text('Guardar', style: TextStyle(fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(height: 16),
@@ -259,7 +299,6 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                   ],
                 ),
               ),
-              // Texto inferior fuera del bloque
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                 child: Text(
