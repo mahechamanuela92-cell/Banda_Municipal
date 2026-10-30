@@ -22,6 +22,7 @@ class _InicioSesionState extends State<InicioSesion> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
   bool _cargando = false;
+  bool _mostrarPassword = false;
   @override
 void dispose() {
   _correoController.dispose();
@@ -169,7 +170,19 @@ void dispose() {
                   controller: _passwordController, // 👈 Agrégale esta línea
                   hintText: 'Contraseña',
                   icon: Icons.vpn_key,
-                  obscureText: true,
+                  obscureText: !_mostrarPassword,
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() => _mostrarPassword = !_mostrarPassword);
+                    },
+                    icon: Icon(
+                      _mostrarPassword ? Icons.visibility_off : Icons.visibility,
+                      color: const Color(0xFF0F4C5C),
+                    ),
+                    tooltip: _mostrarPassword
+                        ? 'Ocultar contraseña'
+                        : 'Mostrar contraseña',
+                  ),
                 ),
                   const SizedBox(height: 30),
 
@@ -322,6 +335,7 @@ void dispose() {
     required IconData icon,
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text, required TextEditingController controller,
+    Widget? suffixIcon,
   }) {
     return Container(
       width: double.infinity,
@@ -367,6 +381,7 @@ void dispose() {
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
+          suffixIcon: suffixIcon,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),

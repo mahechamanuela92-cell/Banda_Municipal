@@ -13,6 +13,7 @@ class _InicioSesionState extends State<InicioSesion> {
   // Variables para controlar el cambio de color al hacer clic
   Color _colorRegistrarse = Colors.white;
   Color _colorOlvido = Colors.white;
+  bool _mostrarPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,19 @@ class _InicioSesionState extends State<InicioSesion> {
                   _crearCampoTexto(
                     hintText: 'Contraseña',
                     icon: Icons.vpn_key,
-                    obscureText: true,
+                    obscureText: !_mostrarPassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() => _mostrarPassword = !_mostrarPassword);
+                      },
+                      icon: Icon(
+                        _mostrarPassword ? Icons.visibility_off : Icons.visibility,
+                        color: const Color(0xFF0F4C5C),
+                      ),
+                      tooltip: _mostrarPassword
+                          ? 'Ocultar contraseña'
+                          : 'Mostrar contraseña',
+                    ),
                   ),
 
                   const SizedBox(height: 30),
@@ -220,6 +233,7 @@ class _InicioSesionState extends State<InicioSesion> {
     required IconData icon,
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
+    Widget? suffixIcon,
   }) {
     return Container(
       width: double.infinity,
@@ -264,6 +278,7 @@ class _InicioSesionState extends State<InicioSesion> {
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
+          suffixIcon: suffixIcon,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),

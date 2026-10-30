@@ -19,6 +19,20 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _codigoController = TextEditingController();
+  bool _mostrarPassword = false;
+
+    static final RegExp _mayusculaRegex = RegExp(r'[A-ZÁÉÍÓÚÜÑ]');
+    static final RegExp _numeroRegex = RegExp(r'[0-9]');
+    static final RegExp _simboloRegex =
+      RegExp(r'[^A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ\s]');
+
+    bool get _cumpleLongitud => _passwordController.text.length >= 8;
+    bool get _cumpleMayuscula =>
+      _mayusculaRegex.hasMatch(_passwordController.text);
+    bool get _cumpleNumero => _numeroRegex.hasMatch(_passwordController.text);
+    bool get _cumpleSimbolo => _simboloRegex.hasMatch(_passwordController.text);
+    bool get _passwordValida =>
+      _cumpleLongitud && _cumpleMayuscula && _cumpleNumero && _cumpleSimbolo;
 
   // Variable para el tipo de documento seleccionado
   String? _tipoDocumentoElegido;
@@ -57,6 +71,15 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       print("¡Faltan campos por llenar!");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, completa todos los campos y el código')),
+      );
+      return;
+    }
+
+    if (!_passwordValida) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La contraseña debe cumplir todos los requisitos'),
+        ),
       );
       return;
     }
@@ -251,7 +274,37 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     controller: _passwordController,
                     hintText: 'Contraseña',
                     icon: Icons.vpn_key,
-                    obscureText: true,
+                    obscureText: !_mostrarPassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() => _mostrarPassword = !_mostrarPassword);
+                      },
+                      icon: Icon(
+                        _mostrarPassword ? Icons.visibility_off : Icons.visibility,
+                        color: const Color(0xFF0F4C5C),
+                      ),
+                      tooltip: _mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña',
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'La contraseña debe incluir:',
+                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                        const SizedBox(height: 4),
+                        _crearRequisito(_cumpleLongitud, 'Mínimo 8 caracteres'),
+                        _crearRequisito(_cumpleMayuscula, 'Una letra mayúscula'),
+                        _crearRequisito(_cumpleNumero, 'Un número'),
+                        _crearRequisito(_cumpleSimbolo, 'Un símbolo'),
+                      ],
+                    ),
                   ),
 
                   const SizedBox(height: 14),
@@ -378,6 +431,8 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     required IconData icon,
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
+    ValueChanged<String>? onChanged,
+    Widget? suffixIcon,
   }) {
     return Container(
       width: double.infinity,
@@ -406,6 +461,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
+        onChanged: onChanged,
         style: const TextStyle(
           color: Color(0xFF0F4C5C),
           fontSize: 16,
@@ -423,9 +479,28 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
+          suffixIcon: suffixIcon,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
+      ),
+    );
+  }
+
+  Widget _crearRequisito(bool cumple, String texto) {
+    final Color color = cumple ? Colors.greenAccent : Colors.white70;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Icon(
+            cumple ? Icons.check_circle : Icons.circle_outlined,
+            color: color,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Text(texto, style: TextStyle(color: color, fontSize: 13)),
+        ],
       ),
     );
   }
