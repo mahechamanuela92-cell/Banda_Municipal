@@ -22,13 +22,19 @@ const responderErrorCarga = (error, req, res, next) => {
     });
 };
 
+const cargarArchivo = (req, res, next) => {
+    upload.single('archivo')(req, res, (error) => {
+        if (error) return responderErrorCarga(error, req, res, next);
+        next();
+    });
+};
+
 router.post(
     '/',
     verificarToken,
     verificarAdmin,
-    upload.single('archivo'),
+    cargarArchivo,
     crearMultimedia,
-    responderErrorCarga,
 );
 router.get('/', listarMultimedia);       //?id_evento= o ?tipo_archivo= opcional
 router.delete('/:id', verificarToken, verificarAdmin, borrarMultimedia);
