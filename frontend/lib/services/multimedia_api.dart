@@ -15,7 +15,10 @@ class MultimediaApi {
             .toString();
       }
     } on FormatException {
-      return 'Respuesta inválida del servidor';
+      final contentType = response.headers['content-type'] ?? 'desconocido';
+      final body = response.body.replaceAll(RegExp(r'\s+'), ' ').trim();
+      final snippet = body.length > 180 ? '${body.substring(0, 180)}…' : body;
+      return 'Respuesta no JSON (HTTP ${response.statusCode}, $contentType): $snippet';
     }
     return 'Error de multimedia (${response.statusCode})';
   }
