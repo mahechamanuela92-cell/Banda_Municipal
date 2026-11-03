@@ -1,8 +1,7 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'dart:io' show Platform;
 
-// Cambia a true para probar contra tu backend local
-const bool usarLocal = true;
+const bool usarLocal = !kReleaseMode;
 
 const String urlProduccion = 'https://banda-municipal-garzon.onrender.com';
 
