@@ -10,16 +10,24 @@ import {
 //guardar evento (fecha de concierto)
 export const guardarEvento = async (req, res) => {
     try {
-        const {user_id, nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion} = req.body;
+        const {nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion} = req.body;
+        const user_id = req.usuario.id;
 
         //validamos los datos
-        if (!user_id || !nombre_evento || !fecha_evento) {
+        if (!nombre_evento?.trim() || !fecha_evento) {
             return res.status(400).json({
                 error: 'faltan datos del evento'
             });
         }
 
-        const {data, error} = await crearEvento(user_id, nombre_evento, fecha_evento, hora_evento, lugar_evento, descripcion);
+        const {data, error} = await crearEvento(
+            user_id,
+            nombre_evento.trim(),
+            fecha_evento,
+            hora_evento || null,
+            lugar_evento?.trim() || null,
+            descripcion?.trim() || null
+        );
 
         if (error) {
             return res.status(400).json({error: error.message});

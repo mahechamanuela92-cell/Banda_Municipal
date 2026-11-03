@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/eventos_api.dart';
 import '../../servicios/servicios_noti.dart';
 import '../../../themes/colores.dart';
 import '../../../widgets/fondos.dart';
@@ -52,9 +53,9 @@ class _PantallaEventosState extends State<PantallaEventos> {
     final String mensaje =
         '${nombreController.text} ${fechaElegida.day}/${fechaElegida.month}/${fechaElegida.year} '
         'a las ${horaElegida.format(context)} en ${lugarController.text}';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(mensaje)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(mensaje)));
     Navigator.pop(context);
   }
 
@@ -79,9 +80,11 @@ class _PantallaEventosState extends State<PantallaEventos> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(ok
-            ? 'Listo, te recordaremos un día antes 🔔'
-            : 'El evento es en menos de un día, ya no se puede programar el recordatorio'),
+        content: Text(
+          ok
+              ? 'Listo, te recordaremos un día antes 🔔'
+              : 'El evento es en menos de un día, ya no se puede programar el recordatorio',
+        ),
       ),
     );
   }
@@ -103,17 +106,17 @@ class _PantallaEventosState extends State<PantallaEventos> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: Colores.naranja,
-                        size: 30,
-                      ),
-                      onPressed: () => Navigator.pop(context),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colores.naranja,
+                      size: 30,
                     ),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                ),
 
                 // Recuadro oscuro con la información
                 Container(
@@ -145,8 +148,11 @@ class _PantallaEventosState extends State<PantallaEventos> {
                           hintText: 'Nombre del evento',
                           hintStyle: const TextStyle(color: Colors.white),
                           suffixIcon: admin
-                              ? const Icon(Icons.edit,
-                                  color: Colors.white, size: 18)
+                              ? const Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 18,
+                                )
                               : null,
                         ),
                       ),
@@ -185,13 +191,18 @@ class _PantallaEventosState extends State<PantallaEventos> {
                           Text(
                             'Hora: ${horaElegida.format(context)}',
                             style: const TextStyle(
-                                color: Colors.white, fontSize: 16),
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
                           ),
                           if (admin)
                             IconButton(
                               onPressed: elegirHora,
-                              icon: const Icon(Icons.edit,
-                                  color: Colors.white, size: 18),
+                              icon: const Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 18,
+                              ),
                             ),
                         ],
                       ),
@@ -201,8 +212,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                         children: [
                           const Text(
                             'Lugar: ',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                           Expanded(
                             child: TextField(
@@ -211,8 +221,11 @@ class _PantallaEventosState extends State<PantallaEventos> {
                               style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
                                 suffixIcon: admin
-                                    ? const Icon(Icons.edit,
-                                        color: Colors.white, size: 18)
+                                    ? const Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                        size: 18,
+                                      )
                                     : null,
                               ),
                             ),
@@ -228,11 +241,12 @@ class _PantallaEventosState extends State<PantallaEventos> {
                             backgroundColor: Colores.botonClaro,
                           ),
                           onPressed: admin ? guardarEvento : recordarme,
-                          icon: Icon(admin
-                              ? Icons.save
-                              : Icons.notifications_active),
+                          icon: Icon(
+                            admin ? Icons.save : Icons.notifications_active,
+                          ),
                           label: Text(
-                              admin ? 'Guardar' : 'Recuérdame un día antes'),
+                            admin ? 'Guardar' : 'Recuérdame un día antes',
+                          ),
                         ),
                       ),
                     ],
@@ -254,6 +268,262 @@ class _PantallaEventosState extends State<PantallaEventos> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ListaEventosUsuario extends StatefulWidget {
+  const ListaEventosUsuario({super.key});
+
+  @override
+  State<ListaEventosUsuario> createState() => _ListaEventosUsuarioState();
+}
+
+class _ListaEventosUsuarioState extends State<ListaEventosUsuario> {
+  late Future<List<Map<String, dynamic>>> _eventos;
+
+  @override
+  void initState() {
+    super.initState();
+    _eventos = EventosApi.listar();
+  }
+
+  Future<void> _recargar() async {
+    setState(() => _eventos = EventosApi.listar());
+    await _eventos;
+  }
+
+  DateTime _fecha(Map<String, dynamic> evento) =>
+      DateTime.tryParse(evento['fecha_evento']?.toString() ?? '') ??
+      DateTime.now();
+
+  TimeOfDay _hora(Map<String, dynamic> evento) {
+    final partes = (evento['hora_evento']?.toString() ?? '').split(':');
+    if (partes.length < 2) return const TimeOfDay(hour: 20, minute: 0);
+    return TimeOfDay(
+      hour: int.tryParse(partes[0]) ?? 20,
+      minute: int.tryParse(partes[1]) ?? 0,
+    );
+  }
+
+  Future<void> _recordarme(Map<String, dynamic> evento) async {
+    final fecha = _fecha(evento);
+    final hora = _hora(evento);
+    final fechaHora = DateTime(
+      fecha.year,
+      fecha.month,
+      fecha.day,
+      hora.hour,
+      hora.minute,
+    );
+    final nombre = evento['nombre_evento']?.toString() ?? 'Evento';
+    final lugar = evento['lugar_evento']?.toString() ?? 'Lugar por confirmar';
+
+    final programado = await ServicioNotificaciones.programarRecordatorio(
+      id: fechaHora.millisecondsSinceEpoch.hashCode & 0x7FFFFFFF,
+      titulo: 'Mañana: $nombre',
+      cuerpo: '${hora.format(context)} en $lugar. ¡No te lo pierdas!',
+      fechaEvento: fechaHora,
+    );
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          programado
+              ? 'Listo, te recordaremos un día antes'
+              : 'No se pudo programar el recordatorio para este evento',
+        ),
+      ),
+    );
+  }
+
+  String _fechaLegible(DateTime fecha) =>
+      '${fecha.day}/${fecha.month}/${fecha.year}';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: FondoBase(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      tooltip: 'Volver',
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colores.naranja,
+                        size: 30,
+                      ),
+                    ),
+                    const Expanded(
+                      child: Text(
+                        'Eventos y presentaciones',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Actualizar eventos',
+                      onPressed: _recargar,
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colores.bloqueOscuro,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _eventos,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: Colores.amarillo,
+                          ),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                'No se pudieron cargar los eventos.',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              TextButton.icon(
+                                onPressed: _recargar,
+                                icon: const Icon(Icons.refresh),
+                                label: const Text('Reintentar'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      final eventos = snapshot.data ?? [];
+                      if (eventos.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'Aún no hay eventos publicados.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        );
+                      }
+
+                      return ListView.separated(
+                        itemCount: eventos.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final evento = eventos[index];
+                          final fecha = _fecha(evento);
+                          final hora = _hora(evento);
+                          final lugar =
+                              evento['lugar_evento']?.toString() ??
+                              'Lugar por confirmar';
+                          final fechaHora = DateTime(
+                            fecha.year,
+                            fecha.month,
+                            fecha.day,
+                            hora.hour,
+                            hora.minute,
+                          );
+                          final puedeRecordar = fechaHora.isAfter(
+                            DateTime.now(),
+                          );
+
+                          return Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  evento['nombre_evento']?.toString() ??
+                                      'Evento',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${_fechaLegible(fecha)} · ${hora.format(context)}',
+                                  style: const TextStyle(color: Colors.white70),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  lugar,
+                                  style: const TextStyle(color: Colors.white70),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton.icon(
+                                    onPressed: puedeRecordar
+                                        ? () => _recordarme(evento)
+                                        : null,
+                                    icon: const Icon(
+                                      Icons.notifications_active_outlined,
+                                    ),
+                                    label: Text(
+                                      puedeRecordar
+                                          ? 'Recuérdame'
+                                          : 'Evento finalizado',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                child: Text(
+                  'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colores.colorLetra1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

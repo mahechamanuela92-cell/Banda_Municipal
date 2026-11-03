@@ -58,18 +58,20 @@ class MenuUsuario extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    opcionMenu(context, 'Partituras', const PantallaPartitura()),
-                    opcionMenu(context, 'multimedia', const PantallaMultimedia()),
+                    opcionMenu(
+                      context,
+                      'Partituras',
+                      const PantallaPartitura(),
+                    ),
+                    opcionMenu(
+                      context,
+                      'multimedia',
+                      const PantallaMultimedia(),
+                    ),
                     opcionMenu(
                       context,
                       'Eventos - presentaciones',
-                      PantallaEventos(
-                        esAdmin: false,
-                        nombreEvento: 'Concierto de Gala',
-                        fechaEvento: DateTime(2026, 11, 15),
-                        horaEvento: const TimeOfDay(hour: 19, minute: 30),
-                        lugarEvento: 'Parque Principal',
-                      ),
+                      const ListaEventosUsuario(),
                     ),
                     opcionMenu(context, 'Perfil', const PantallaPerfil()),
                   ],
