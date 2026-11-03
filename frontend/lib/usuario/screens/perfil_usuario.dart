@@ -135,7 +135,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     setState(() => _guardando = true);
     try {
       final response = await http.put(
-        Uri.parse('$apiUrl/perfil/me'),
+        Uri.parse('$urlProduccion/perfil/me'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
       if (_foto != null) {
         final request = http.MultipartRequest(
           'PUT',
-          Uri.parse('$apiUrl/perfil/foto'),
+          Uri.parse('$urlProduccion/perfil/foto'),
         )..headers['Authorization'] = 'Bearer $token';
         request.files.add(
           http.MultipartFile.fromBytes(
