@@ -488,7 +488,7 @@ class _ListaEventosUsuarioState extends State<ListaEventosUsuario> {
                                 ),
                                 Align(
                                   alignment: Alignment.centerRight,
-                                  child: TextButton.icon(
+                                  child: ElevatedButton.icon(
                                     onPressed: puedeRecordar
                                         ? () => _recordarme(evento)
                                         : null,
@@ -499,6 +499,17 @@ class _ListaEventosUsuarioState extends State<ListaEventosUsuario> {
                                       puedeRecordar
                                           ? 'Recuérdame'
                                           : 'Evento finalizado',
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colores.botonClaro,
+                                      foregroundColor: Colores.bloqueOscuro,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 10,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
                                     ),
                                   ),
                                 ),

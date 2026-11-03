@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +17,8 @@ class PantallaPerfil extends StatefulWidget {
 }
 
 class _PantallaPerfilState extends State<PantallaPerfil> {
-  File? _foto;
+  XFile? _foto;
+  Uint8List? _fotoBytes;
   String? _fotoUrl;
   bool _cargandoPerfil = true;
   bool _modoEdicion = false;
@@ -111,6 +112,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
       _telefono.text = _telefonoOriginal;
       _correo.text = _correoOriginal;
       _foto = null;
+      _fotoBytes = null;
       _modoEdicion = false;
     });
   }
@@ -154,7 +156,13 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
           'PUT',
           Uri.parse('$apiUrl/perfil/foto'),
         )..headers['Authorization'] = 'Bearer $token';
-        request.files.add(await http.MultipartFile.fromPath('foto', _foto!.path));
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'foto',
+            _fotoBytes!,
+            filename: _foto!.name,
+          ),
+        );
         final streamedResponse = await request.send().timeout(
           const Duration(seconds: 30),
         );
@@ -166,6 +174,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
         final perfil = body['perfil'] as Map<String, dynamic>?;
         _fotoUrl = perfil?['foto_perfil']?.toString();
         _foto = null;
+        _fotoBytes = null;
       }
 
       _nombre.text = _nombre.text.trim();
@@ -193,9 +202,13 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
 
   Future<void> _elegirFoto() async {
     final imagen = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (imagen != null) {
-      setState(() => _foto = File(imagen.path));
-    }
+    if (imagen == null) return;
+    final bytes = await imagen.readAsBytes();
+    if (!mounted) return;
+    setState(() {
+      _foto = imagen;
+      _fotoBytes = bytes;
+    });
   }
 
   Widget _campo(String titulo, TextEditingController controlador) {
@@ -350,12 +363,13 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                       child: CircleAvatar(
                                         radius: 60,
                                         backgroundColor: Colors.white,
-                                        backgroundImage: _foto != null
-                                            ? FileImage(_foto!)
-                                            : _fotoUrl != null
+                                        backgroundImage: _fotoBytes != null
+                                            ? MemoryImage(_fotoBytes!)
+                                            : _fotoUrl != null && _fotoUrl!.isNotEmpty
                                                 ? NetworkImage(_fotoUrl!)
                                                 : null,
-                                        child: _foto == null && _fotoUrl == null
+                                        child: _fotoBytes == null &&
+                                                (_fotoUrl == null || _fotoUrl!.isEmpty)
                                             ? const Icon(Icons.person,
                                                 size: 70, color: Colors.grey)
                                             : null,
