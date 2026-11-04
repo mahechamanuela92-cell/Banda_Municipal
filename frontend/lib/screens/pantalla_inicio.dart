@@ -1,21 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/pantalla_menuusuario.dart';
-import 'package:frontend/themes/colores.dart';
-import 'package:frontend/widgets/inicio_pantallas/contactenos_pantalla.dart';
+import 'package:frontend/components/chat/chat_banda_modal.dart';
+import 'package:frontend/components/chat/boton_chat_flotante.dart';
+import 'package:frontend/usuario/screens/menu_usuario.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_pantallas.dart';
 import 'package:frontend/widgets/inicio_pantallas/nuestra_historia_pantalla.dart';
-import '../widgets/fondos.dart';
+import 'package:frontend/widgets/inicio_pantallas/contactenos_pantalla.dart';
+import '../../themes/colores.dart';
+import '../../widgets/fondos.dart';
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
 
+  void _abrirAsistenteIA(BuildContext context) {
+    showDialog(context: context, builder: (_) => const ChatBandaModal());
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Configuración de las tarjetas principales
-    final tarjetas = [
-      {'titulo': 'NUESTRA HISTORIA', 'img': 'assets/images/libro.png', 'der': false},
-      {'titulo': 'INSTRUMENTOS CON LOS QUE CONTAMOS', 'img': 'assets/images/instrumentos.png', 'der': true},
-      {'titulo': 'CONTÁCTENOS', 'img': 'assets/images/contacto.png', 'der': false},
+    final List<Map<String, Object>> tarjetas = [
+      {
+        'titulo': 'NUESTRA HISTORIA',
+        'img': 'assets/images/libro.png',
+        'der': false,
+        'destino': const NuestraHistoriaPantalla(),
+      },
+      {
+        'titulo': 'INSTRUMENTOS CON LOS QUE CONTAMOS',
+        'img': 'assets/images/instrumentos.png',
+        'der': false,
+        'destino': const InstrumentosPantalla(),
+      },
+      {
+        'titulo': 'CONTÁCTENOS',
+        'img': 'assets/images/contacto.png',
+        'der': false,
+        'destino': const PantallaContacto(),
+      },
     ];
 
     return Scaffold(
@@ -24,7 +44,10 @@ class Inicio extends StatelessWidget {
           child: Stack(
             children: [
               SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 10.0,
+                ),
                 child: Column(
                   children: [
                     const SizedBox(height: 50),
@@ -50,40 +73,35 @@ class Inicio extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Tarjetas con navegación
-                    ...tarjetas.map((t) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: _crearTarjeta(
-                            titulo: t['titulo'] as String,
-                            rutaImagen: t['img'] as String,
-                            imagenALaDerecha: t['der'] as bool,
-                            onTap: () {
-                              final titulo = t['titulo'] as String;
-
-                              if (titulo == 'NUESTRA HISTORIA') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const NuestraHistoriaPantalla(),
+                    ...tarjetas.map(
+                      (t) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: _crearTarjeta(
+                          titulo: t['titulo'] as String,
+                          rutaImagen: t['img'] as String,
+                          imagenALaDerecha: t['der'] as bool,
+                          onTap: () {
+                            final destino = t['destino'] as Widget?;
+                            if (destino != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => destino,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${t['titulo']}: pantalla no disponible',
                                   ),
-                                );
-                              } else if (titulo == 'INSTRUMENTOS CON LOS QUE CONTAMOS') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const InstrumentosPantalla(),
-                                  ),
-                                );
-                              } else if (titulo == 'CONTÁCTENOS') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const PantallaContacto(),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        )),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ),
 
                     const SizedBox(height: 4),
                   ],
@@ -99,8 +117,8 @@ class Inicio extends StatelessWidget {
                     Navigator.push(
                       context,
                       PageRouteBuilder(
-                        opaque: false,            
-                        barrierColor: Colors.transparent, 
+                        opaque: false,
+                        barrierColor: Colors.transparent,
                         pageBuilder: (context, animation, secondaryAnimation) =>
                             const MenuUsuario(),
                       ),
@@ -108,6 +126,9 @@ class Inicio extends StatelessWidget {
                   },
                 ),
               ),
+
+              // Chatbot flotante arrastrable
+              BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),
         ),
@@ -123,10 +144,7 @@ Widget _buildBotonMenuIcono({required VoidCallback onTap}) {
     width: 48,
     decoration: BoxDecoration(
       gradient: const LinearGradient(
-        colors: [
-          Color(0xFFB3F0EC),
-          Color(0xFF8AE1DC),
-        ],
+        colors: [Color(0xFFB3F0EC), Color(0xFF8AE1DC)],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ),
@@ -144,24 +162,25 @@ Widget _buildBotonMenuIcono({required VoidCallback onTap}) {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(24.0),
-        child: const Icon(
-          Icons.menu,
-          color: Color(0xFF0F4C5C),
-          size: 26,
-        ),
+        child: const Icon(Icons.menu, color: Color(0xFF0F4C5C), size: 26),
       ),
     ),
   );
 }
 
-// Método auxiliar que faltaba para crear las tarjetas principales
+// Método auxiliar para crear las tarjetas principales
 Widget _crearTarjeta({
   required String titulo,
   required String rutaImagen,
   required bool imagenALaDerecha,
   required VoidCallback onTap,
 }) {
-  final imgWidget = Image.asset(rutaImagen, height: 48, width: 48, fit: BoxFit.contain);
+  final imgWidget = Image.asset(
+    rutaImagen,
+    height: 48,
+    width: 48,
+    fit: BoxFit.contain,
+  );
 
   return Container(
     width: double.infinity,
@@ -184,10 +203,7 @@ Widget _crearTarjeta({
         child: Ink(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [
-                Color(0xFFB3F0EC),
-                Color(0xFF8AE1DC),
-              ],
+              colors: [Color(0xFFB3F0EC), Color(0xFF8AE1DC)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -197,7 +213,10 @@ Widget _crearTarjeta({
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
-                if (!imagenALaDerecha) ...[imgWidget, const SizedBox(width: 14)],
+                if (!imagenALaDerecha) ...[
+                  imgWidget,
+                  const SizedBox(width: 14),
+                ],
                 Expanded(
                   child: Text(
                     titulo,
