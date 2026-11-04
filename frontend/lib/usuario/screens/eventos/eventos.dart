@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/eventos_api.dart';
-import '../../servicios/servicios_noti.dart';
 import '../../../themes/colores.dart';
 import '../../../widgets/fondos.dart';
 
@@ -57,36 +56,6 @@ class _PantallaEventosState extends State<PantallaEventos> {
       context,
     ).showSnackBar(SnackBar(content: Text(mensaje)));
     Navigator.pop(context);
-  }
-
-  // SOLO USUARIO: programa la notificación un día antes
-  Future<void> recordarme() async {
-    final DateTime fechaHora = DateTime(
-      fechaElegida.year,
-      fechaElegida.month,
-      fechaElegida.day,
-      horaElegida.hour,
-      horaElegida.minute,
-    );
-
-    final bool ok = await ServicioNotificaciones.programarRecordatorio(
-      id: fechaHora.millisecondsSinceEpoch.hashCode & 0x7FFFFFFF,
-      titulo: 'Mañana: ${nombreController.text}',
-      cuerpo:
-          '${horaElegida.format(context)} en ${lugarController.text}. ¡No te lo pierdas!',
-      fechaEvento: fechaHora,
-    );
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          ok
-              ? 'Listo, te recordaremos un día antes 🔔'
-              : 'El evento es en menos de un día, ya no se puede programar el recordatorio',
-        ),
-      ),
-    );
   }
 
   @override
@@ -232,23 +201,21 @@ class _PantallaEventosState extends State<PantallaEventos> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
 
-                      // Botón: Guardar (admin) / Recuérdame (usuario)
-                      Center(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colores.botonClaro,
-                          ),
-                          onPressed: admin ? guardarEvento : recordarme,
-                          icon: Icon(
-                            admin ? Icons.save : Icons.notifications_active,
-                          ),
-                          label: Text(
-                            admin ? 'Guardar' : 'Recuérdame un día antes',
+                      // Botón: solo Guardar (admin)
+                      if (admin) ...[
+                        const SizedBox(height: 20),
+                        Center(
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colores.botonClaro,
+                            ),
+                            onPressed: guardarEvento,
+                            icon: const Icon(Icons.save),
+                            label: const Text('Guardar'),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -306,38 +273,6 @@ class _ListaEventosUsuarioState extends State<ListaEventosUsuario> {
     return TimeOfDay(
       hour: int.tryParse(partes[0]) ?? 20,
       minute: int.tryParse(partes[1]) ?? 0,
-    );
-  }
-
-  Future<void> _recordarme(Map<String, dynamic> evento) async {
-    final fecha = _fecha(evento);
-    final hora = _hora(evento);
-    final fechaHora = DateTime(
-      fecha.year,
-      fecha.month,
-      fecha.day,
-      hora.hour,
-      hora.minute,
-    );
-    final nombre = evento['nombre_evento']?.toString() ?? 'Evento';
-    final lugar = evento['lugar_evento']?.toString() ?? 'Lugar por confirmar';
-
-    final programado = await ServicioNotificaciones.programarRecordatorio(
-      id: fechaHora.millisecondsSinceEpoch.hashCode & 0x7FFFFFFF,
-      titulo: 'Mañana: $nombre',
-      cuerpo: '${hora.format(context)} en $lugar. ¡No te lo pierdas!',
-      fechaEvento: fechaHora,
-    );
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          programado
-              ? 'Listo, te recordaremos un día antes'
-              : 'No se pudo programar el recordatorio para este evento',
-        ),
-      ),
     );
   }
 
@@ -447,18 +382,9 @@ class _ListaEventosUsuarioState extends State<ListaEventosUsuario> {
                           final lugar =
                               evento['lugar_evento']?.toString() ??
                               'Lugar por confirmar';
-                          final fechaHora = DateTime(
-                            fecha.year,
-                            fecha.month,
-                            fecha.day,
-                            hora.hour,
-                            hora.minute,
-                          );
-                          final puedeRecordar = fechaHora.isAfter(
-                            DateTime.now(),
-                          );
 
                           return Container(
+                            width: double.infinity,
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.08),
@@ -485,33 +411,6 @@ class _ListaEventosUsuarioState extends State<ListaEventosUsuario> {
                                 Text(
                                   lugar,
                                   style: const TextStyle(color: Colors.white70),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: ElevatedButton.icon(
-                                    onPressed: puedeRecordar
-                                        ? () => _recordarme(evento)
-                                        : null,
-                                    icon: const Icon(
-                                      Icons.notifications_active_outlined,
-                                    ),
-                                    label: Text(
-                                      puedeRecordar
-                                          ? 'Recuérdame'
-                                          : 'Evento finalizado',
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colores.botonClaro,
-                                      foregroundColor: Colores.bloqueOscuro,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 10,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),
