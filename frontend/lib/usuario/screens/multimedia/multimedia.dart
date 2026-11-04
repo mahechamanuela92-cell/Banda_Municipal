@@ -26,7 +26,6 @@ class PantallaMultimedia extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  // Flecha para volver
                   Align(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
@@ -40,8 +39,6 @@ class PantallaMultimedia extends StatelessWidget {
                       },
                     ),
                   ),
-
-                  // Título "Multimedia"
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20.0,
@@ -60,8 +57,6 @@ class PantallaMultimedia extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // Caja oscura con las opciones de Fotos y Videos
                   Expanded(
                     child: Container(
                       width: double.infinity,
@@ -111,8 +106,6 @@ class PantallaMultimedia extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // Título inferior institucional
                   Padding(
                     padding: EdgeInsets.all(15),
                     child: Text(
@@ -127,8 +120,6 @@ class PantallaMultimedia extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // Chatbot flotante arrastrable
               BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),

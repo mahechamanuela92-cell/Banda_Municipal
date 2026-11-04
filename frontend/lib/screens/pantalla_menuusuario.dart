@@ -4,12 +4,9 @@ import 'package:frontend/screens/eventos/pantalla_evento.dart';
 import 'package:frontend/screens/multimedia/multimedia.dart';
 import 'package:frontend/screens/pantalla_generar_codigo.dart';
 import 'package:frontend/themes/colores.dart';
-// Importaciones de tus pantallas
 import 'inventario-partituras/inventario_partituras.dart';
 import 'inventario-instrumentos/inventario_instrumentos.dart';
 import 'pantalla_perfil.dart';
-
-// import 'generar_codigo_pantalla.dart';
 
 class MenuUsuario extends StatelessWidget {
   const MenuUsuario({super.key});
@@ -28,7 +25,7 @@ class MenuUsuario extends StatelessWidget {
       ),
       onTap: () {
         final navegador = Navigator.of(context);
-        navegador.pop(); // cierra el menú
+        navegador.pop(); 
         if (pantalla != null) {
           navegador.push(
             MaterialPageRoute(builder: (context) => pantalla),
@@ -67,7 +64,6 @@ class MenuUsuario extends StatelessWidget {
                     opcionMenu(context, 'Inventario- Partituras', const InventarioPartituras()),
                     opcionMenu(context, 'Multimedia', const MultimediaPantalla()),
                     opcionMenu(context, 'Eventos', const PantallaEventos()),
-                    // --- OPCIÓN SOLO PARA EL ADMIN ---
                     if (Sesion.rol == 'admin')
                       opcionMenu(context, 'Generar Código de Registro', const PantallaGenerarCodigo()),
                     opcionMenu(context, 'Perfil', const PantallaPerfil()),

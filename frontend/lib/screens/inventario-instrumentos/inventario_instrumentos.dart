@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/chat/boton_chat_flotante.dart';
+import 'package:frontend/components/chat/chat_banda_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../themes/colores.dart';
@@ -26,7 +28,6 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
     'Congas', 'Timbal',
   ];
   
-  // Nota: Asegúrate de que estos textos coincidan con lo que acepta tu base de datos (o minúsculas si el CHECK lo exige)
   List<String> estados = ['Mantenimiento', 'Buen estado', 'Mal estado', 'Préstamo'];
   bool mostrarLista = false;
   String? estadoElegido;
@@ -50,6 +51,13 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
     });
   }
 
+  void _abrirAsistenteIA(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => const ChatBandaModal(),
+    );
+  }
+
   Future<void> _guardarInstrumentoEnBackend() async {
     final serial = _serialController.text.trim();
 
@@ -61,8 +69,6 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
     }
 
     try {
-      print('Enviando a: $apiUrl/instrumentos');
-
       final response = await http.post(
         Uri.parse('$apiUrl/instrumentos'),
         headers: {'Content-Type': 'application/json'},
@@ -74,9 +80,6 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
       );
 
       if (!mounted) return;
-
-      print('Código de respuesta: ${response.statusCode}');
-      print('Respuesta del servidor: ${response.body}');
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -121,130 +124,139 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
     return Scaffold(
       body: FondoBase(
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
-                    tooltip: 'Volver',
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colores.bloqueOscuro,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        top: 38, left: 20, right: 20,
-                        child: Image.asset('assets/images/fondo_login.png', height: 180,
-                            color: Colores.bloqueOscuro, colorBlendMode: BlendMode.srcATop),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                        tooltip: 'Volver',
+                        onPressed: () => Navigator.pop(context),
                       ),
-                      Column(
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colores.bloqueOscuro,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Stack(
                         children: [
-                          texto('Inventario de Instrumentos', 24, negrita: true),
-                          espacio(200),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Positioned(
+                            top: 38, left: 20, right: 20,
+                            child: Image.asset('assets/images/fondo_login.png', height: 180,
+                                color: Colores.bloqueOscuro, colorBlendMode: BlendMode.srcATop),
+                          ),
+                          Column(
                             children: [
-                              TextButton(
-                                onPressed: () => setState(() => mostrarLista = !mostrarLista),
-                                child: texto('Lista ▾', 22),
+                              texto('Inventario de Instrumentos', 24, negrita: true),
+                              espacio(200),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TextButton(
+                                    onPressed: () => setState(() => mostrarLista = !mostrarLista),
+                                    child: texto('Lista ▾', 22),
+                                  ),
+                                  OutlinedButton(
+                                    onPressed: irAEditar,
+                                    style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        side: const BorderSide(color: Colors.white)),
+                                    child: const Text('Editar Lista'),
+                                  ),
+                                ],
                               ),
-                              OutlinedButton(
-                                onPressed: irAEditar,
-                                style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    side: const BorderSide(color: Colors.white)),
-                                child: const Text('Editar Lista'),
+                              espacio(8),
+                              cajaClara(
+                                mostrarLista
+                                    ? GridView.count(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 5,
+                                        children: [
+                                          for (String n in instrumentos)
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  instrumentoSeleccionado = n;
+                                                });
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(content: Text('Seleccionado: $n')),
+                                                );
+                                              },
+                                              child: Text(
+                                                n,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: instrumentoSeleccionado == n ? Colores.naranja : Colors.black,
+                                                  fontWeight: instrumentoSeleccionado == n ? FontWeight.bold : FontWeight.normal,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      )
+                                    : null,
+                                radio: 20,
+                                alto: 250,
+                                pad: const EdgeInsets.all(12),
+                              ),
+                              espacio(24),
+                              texto('Instrumento en', 18),
+                              espacio(8),
+                              cajaClara(
+                                DropdownButton<String>(
+                                  value: estadoElegido,
+                                  hint: const Text('Seleccionar estado'),
+                                  isExpanded: true,
+                                  underline: const SizedBox(),
+                                  dropdownColor: Colores.botonClaro,
+                                  style: const TextStyle(color: Colors.black),
+                                  items: [for (String e in estados) DropdownMenuItem(value: e, child: Text(e))],
+                                  onChanged: (v) => setState(() => estadoElegido = v),
+                                ),
+                              ),
+                              espacio(20),
+                              texto('Serial', 18),
+                              espacio(8),
+                              cajaClara(TextField(
+                                controller: _serialController,
+                                style: const TextStyle(color: Colors.black),
+                                decoration: const InputDecoration(border: InputBorder.none),
+                              )),
+                              espacio(28),
+                              ElevatedButton(
+                                onPressed: _guardarInstrumentoEnBackend,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colores.botonClaro,
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                ),
+                                child: const Text('Guardar'),
                               ),
                             ],
                           ),
-                          espacio(8),
-                          cajaClara(
-                            mostrarLista
-                                ? GridView.count(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 5,
-                                    children: [
-                                      for (String n in instrumentos)
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              instrumentoSeleccionado = n;
-                                            });
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text('Seleccionado: $n')),
-                                            );
-                                          },
-                                          child: Text(
-                                            n,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: instrumentoSeleccionado == n ? Colores.naranja : Colors.black,
-                                              fontWeight: instrumentoSeleccionado == n ? FontWeight.bold : FontWeight.normal,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  )
-                                : null,
-                            radio: 20,
-                            alto: 250,
-                            pad: const EdgeInsets.all(12),
-                          ),
-                          espacio(24),
-                          texto('Instrumento en', 18),
-                          espacio(8),
-                          cajaClara(
-                            DropdownButton<String>(
-                              value: estadoElegido,
-                              hint: const Text('Seleccionar estado'),
-                              isExpanded: true,
-                              underline: const SizedBox(),
-                              dropdownColor: Colores.botonClaro,
-                              style: const TextStyle(color: Colors.black),
-                              items: [for (String e in estados) DropdownMenuItem(value: e, child: Text(e))],
-                              onChanged: (v) => setState(() => estadoElegido = v),
-                            ),
-                          ),
-                          espacio(20),
-                          texto('Serial', 18),
-                          espacio(8),
-                          cajaClara(TextField(
-                            controller: _serialController,
-                            style: const TextStyle(color: Colors.black),
-                            decoration: const InputDecoration(border: InputBorder.none),
-                          )),
-                          espacio(28),
-                          ElevatedButton(
-                            onPressed: _guardarInstrumentoEnBackend,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colores.botonClaro,
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            ),
-                            child: const Text('Guardar'),
-                          ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    espacio(40),
+                    texto('BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA', 20,
+                        negrita: true, color: Colores.colorLetra1),
+                    espacio(16),
+                  ],
                 ),
-                espacio(40),
-                texto('BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA', 20,
-                    negrita: true, color: Colores.colorLetra1),
-                espacio(16),
-              ],
-            ),
+              ),
+
+              // Chatbot flotante arrastrable
+              BotonChatFlotante(
+                onPressed: () => _abrirAsistenteIA(context),
+              ),
+            ],
           ),
         ),
       ),

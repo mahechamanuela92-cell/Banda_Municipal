@@ -119,8 +119,6 @@ class PartiturasUsuario extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // Chatbot flotante arrastrable
               BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),
