@@ -30,8 +30,8 @@ class _BotonChatFlotanteState extends State<BotonChatFlotante> {
             _right -= details.delta.dx;
 
             // Opcional: Limitar para que no se salga completamente de la pantalla
-            if (_bottom < 10) _bottom = 10;
-            if (_right < 10) _right = 10;
+            if (_bottom < 0) _bottom = 0;
+            if (_right < 0) _right = 0;
           });
         },
         child: Container(
