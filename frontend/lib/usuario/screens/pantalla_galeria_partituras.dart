@@ -130,7 +130,6 @@ class PantallaGaleriaPartituras extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final item = partituras[index];
                           final imageUrl = item['imagen_url'] ?? '';
-                          final titulo = item['titulo_partitura'] ?? 'Partitura';
 
                           return Container(
                             decoration: BoxDecoration(

@@ -61,7 +61,7 @@ class MenuUsuario extends StatelessWidget {
                     opcionMenu(
                       context,
                       'Partituras',
-                      const PantallaPartitura(),
+                      const PartiturasUsuario(),
                     ),
                     opcionMenu(
                       context,

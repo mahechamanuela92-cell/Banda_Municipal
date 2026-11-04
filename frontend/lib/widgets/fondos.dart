@@ -149,9 +149,6 @@ class FondoMusicalPainter extends CustomPainter {
     final double width = size.width;
     final double height = size.height;
 
-    // Desplazamiento dinámico para el degradado
-    final double shift = progress * width;
-
     final Gradient gradient = LinearGradient(
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
