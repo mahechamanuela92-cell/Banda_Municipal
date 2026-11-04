@@ -46,8 +46,8 @@ class _BotonChatFlotanteState extends State<BotonChatFlotante> {
             ],
           ),
           child: SizedBox(
-            width: 65,
-            height: 65,
+            width: 80, // Cambiado de 65 a 80
+            height: 80, // Cambiado de 65 a 80
             child: FloatingActionButton(
               onPressed: widget.onPressed,
               backgroundColor: Colors.transparent,
@@ -55,8 +55,8 @@ class _BotonChatFlotanteState extends State<BotonChatFlotante> {
               child: ClipOval(
                 child: Image.asset(
                   'assets/images/chatbot.jpg',
-                  width: 65,
-                  height: 65,
+                  width: 80,
+                  height: 80,
                   fit: BoxFit.cover,
                 ),
               ),
