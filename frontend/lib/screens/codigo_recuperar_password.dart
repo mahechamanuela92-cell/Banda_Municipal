@@ -55,7 +55,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'email': email,          // usa el campo de email
+          'email': email,           // usa el campo de email
           'code': code,            // el backend espera 'code'
           'newPassword': newPassword,
         }),
@@ -101,7 +101,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 children: [
                   const SizedBox(height: 10),
 
-                  // Logo o imagen superior idéntica
+                  // Logo o imagen superior
                   Center(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
@@ -138,25 +138,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 35),
+                  const SizedBox(height: 30),
 
                   // --- CAJA DE TEXTO: CÓDIGO DE VERIFICACIÓN ---
                   Container(
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFB3F0EC),
-                          Color(0xFF8AE1DC),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                      color: const Color(0xFF0F4C5C).withValues(alpha: 0.75), // Fondo translúcido
                       borderRadius: BorderRadius.circular(30.0),
+                      border: Border.all(
+                        color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde dorado
+                        width: 1.2,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -170,7 +167,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       maxLength: 6,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: Color(0xFF0F4C5C),
+                        color: Color(0xFFE2BC65), // Código en tono dorado destacado
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 6,
@@ -179,7 +176,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         counterText: "",
                         hintText: '123456',
                         hintStyle: TextStyle(
-                          color: Color(0x880F4C5C),
+                          color: Color(0x66E2BC65),
                           letterSpacing: 6,
                           fontWeight: FontWeight.bold,
                         ),
@@ -189,25 +186,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // --- CAJA DE TEXTO: EMAIL ---
                   Container(
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFB3F0EC),
-                          Color(0xFF8AE1DC),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                      color: const Color(0xFF0F4C5C).withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(30.0),
+                      border: Border.all(
+                        color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
+                        width: 1.2,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -219,47 +213,44 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(
-                        color: Color(0xFF0F4C5C),
+                        color: Colors.white,
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
-                      decoration: const InputDecoration(
-                        icon: Icon(
+                      decoration: InputDecoration(
+                        icon: const Icon(
                           Icons.email,
-                          color: Color(0xFF0F4C5C),
+                          color: Color(0xFFE2BC65),
                           size: 22,
                         ),
                         hintText: 'Email',
                         hintStyle: TextStyle(
-                          color: Color(0xFF0F4C5C),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // --- CAJA DE TEXTO: NUEVA CONTRASEÑA ---
                   Container(
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFB3F0EC),
-                          Color(0xFF8AE1DC),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                      color: const Color(0xFF0F4C5C).withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(30.0),
+                      border: Border.all(
+                        color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
+                        width: 1.2,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -271,98 +262,102 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       controller: _passwordController,
                       obscureText: true,
                       style: const TextStyle(
-                        color: Color(0xFF0F4C5C),
+                        color: Colors.white,
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
-                      decoration: const InputDecoration(
-                        icon: Icon(
+                      decoration: InputDecoration(
+                        icon: const Icon(
                           Icons.lock,
-                          color: Color(0xFF0F4C5C),
+                          color: Color(0xFFE2BC65),
                           size: 22,
                         ),
                         hintText: 'Nueva Contraseña',
                         hintStyle: TextStyle(
-                          color: Color(0xFF0F4C5C),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 35),
+                  const SizedBox(height: 30),
 
-                  // --- BOTÓN RESTABLECER CONTRASEÑA ---
-                  Container(
-                    width: double.infinity,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _resetPassword,
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Ink(
+                  // --- BOTÓN RESTABLECER CONTRASEÑA (Centrado y elegante) ---
+                  Center(
+                    child: SizedBox(
+                      width: 280,
+                      height: 55,
+                      child: Container(
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFB3F0EC),
-                              Color(0xFF8AE1DC),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
                           borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                        child: Container(
-                          alignment: Alignment.center,
-                          constraints: const BoxConstraints(minHeight: 55),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Color(0xFF0F4C5C),
-                                    strokeWidth: 3,
-                                  ),
-                                )
-                              : const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.lock_reset,
-                                      color: Color(0xFF0F4C5C),
-                                      size: 22,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'RESTABLECER CONTRASEÑA',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF0F4C5C),
-                                        letterSpacing: 0.5,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _resetPassword,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFE2BC65),
+                                  Color(0xFFC29B45),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              constraints: const BoxConstraints(minHeight: 55),
+                              child: _isLoading
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Color.fromARGB(255, 23, 30, 32),
+                                        strokeWidth: 3,
                                       ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Icon(
+                                          Icons.lock_reset,
+                                          color: Color.fromARGB(255, 23, 30, 32),
+                                          size: 22,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          'RESTABLECER CONTRASEÑA',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color.fromARGB(255, 23, 30, 32),
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

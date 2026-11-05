@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:frontend/themes/colores.dart';
 import '../fondos.dart';
@@ -11,18 +12,44 @@ class NuestraHistoriaPantalla extends StatefulWidget {
 
 class _NuestraHistoriaPantallaState extends State<NuestraHistoriaPantalla> {
   final PageController _pageController = PageController(viewportFraction: 0.9);
+  int _paginaActual = 0;
+  Timer? _timer;
 
-final List<String> imagenesAssets = const [
-  'assets/images/foto1-carrusel.jpg',
-  'assets/images/foto2-carrusel.jpg',
-  'assets/images/foto3-carrusel.jpg',
-  'assets/images/foto4-carrusel.jpg',
-  'assets/images/foto5-carrusel.jpg',
-  'assets/images/foto6-carrusel.jpg',
-];
+  final List<String> imagenesAssets = const [
+    'assets/images/foto1-carrusel.jpg',
+    'assets/images/foto2-carrusel.jpg',
+    'assets/images/foto3-carrusel.jpg',
+    'assets/images/foto4-carrusel.jpg',
+    'assets/images/foto5-carrusel.jpg',
+    'assets/images/foto6-carrusel.jpg',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // ⏱️ Carrusel automático que cambia de foto cada 3 segundos
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (imagenesAssets.isNotEmpty) {
+        if (_paginaActual < imagenesAssets.length - 1) {
+          _paginaActual++;
+        } else {
+          _paginaActual = 0;
+        }
+
+        if (_pageController.hasClients) {
+          _pageController.animateToPage(
+            _paginaActual,
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _timer?.cancel(); // Cancelamos el timer para evitar fugas de memoria
     _pageController.dispose();
     super.dispose();
   }
@@ -37,86 +64,112 @@ final List<String> imagenesAssets = const [
             child: Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colores.bloqueOscuro,
-                borderRadius: BorderRadius.circular(20.0),
+                color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                borderRadius: BorderRadius.circular(24.0),
+                border: Border.all(
+                  color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Botón de regresar
+                  // Botón de regresar unificado en dorado
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.orange, size: 30),
+                    icon: const Icon(Icons.arrow_back, color: Color(0xFFE2BC65), size: 28),
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(height: 10),
 
-                  // Título
-                Container(
-                  width: double.infinity,
-                  height: 55,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFB3F0EC),
-                        Color(0xFF8AE1DC),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    borderRadius: BorderRadius.circular(30.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
+                  // Título con degradado dorado unificado
+                  Container(
+                    width: double.infinity,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFFE2BC65),
+                          Color(0xFFC29B45),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
-                    ],
-                  ),
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      SizedBox(width: 10),
-                      Text(
-                        'NUESTRA HISTORIA',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F4C5C),
-                          letterSpacing: 0.5,
+                      borderRadius: BorderRadius.circular(30.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.menu_book, color: Color.fromARGB(255, 23, 30, 32), size: 22),
+                        SizedBox(width: 10),
+                        Text(
+                          'NUESTRA HISTORIA',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Color.fromARGB(255, 23, 30, 32),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                   const SizedBox(height: 15),
 
-                  // Carrusel de 6 fotos redondeadas
+                  // Carrusel automático de 6 fotos redondeadas con marco sutil
                   SizedBox(
                     height: 180,
                     child: PageView.builder(
                       controller: _pageController,
                       itemCount: imagenesAssets.length,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _paginaActual = index;
+                        });
+                      },
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(18.0), // Bordes redondeados
-                            child: Image.asset(
-                              imagenesAssets[index],
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: Colors.white10,
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.image,
-                                      color: Colors.white38,
-                                      size: 40,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18.0),
+                              border: Border.all(
+                                color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                                width: 1.0,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18.0),
+                              child: Image.asset(
+                                imagenesAssets[index],
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.white10,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.image,
+                                        color: Colors.white38,
+                                        size: 40,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         );
@@ -144,15 +197,16 @@ final List<String> imagenesAssets = const [
                   ),
                   const SizedBox(height: 10),
 
-                  // Pie de página
+                  // Pie de página institucional dorado unificado
                   const Center(
                     child: Text(
                       "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xFFD3A456),
-                        fontSize: 14,
+                        color: Color(0xFFE2BC65),
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
+                        height: 1.3,
                       ),
                     ),
                   )

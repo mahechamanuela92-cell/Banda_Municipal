@@ -30,20 +30,44 @@ class _PantallaEditarState extends State<PantallaEditar> {
   }
 
   void _abrirAsistenteIA(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => const ChatBandaModal(),
-    );
+    showDialog(context: context, builder: (_) => const ChatBandaModal());
   }
 
-  Future<T?> _dialogo<T>(String t, Widget c, String s, T Function() v) => showDialog<T>(
+  Future<T?> _dialogo<T>(String t, Widget c, String s, T Function() v) =>
+      showDialog<T>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text(t),
+          backgroundColor: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Color(0xFFE2BC65), width: 1.2),
+          ),
+          title: Text(
+            t,
+            style: const TextStyle(
+              color: Color(0xFFE2BC65),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           content: c,
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
-            TextButton(onPressed: () => Navigator.pop(ctx, v()), child: Text(s)),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.white70),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, v()),
+              child: Text(
+                s,
+                style: const TextStyle(
+                  color: Color(0xFFE2BC65),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
       );
@@ -52,7 +76,19 @@ class _PantallaEditarState extends State<PantallaEditar> {
     final c = TextEditingController(text: _lista[i]);
     final n = await _dialogo<String>(
       'Editar instrumento',
-      TextField(controller: c, autofocus: true),
+      TextField(
+        controller: c,
+        autofocus: true,
+        style: const TextStyle(color: Colors.white),
+        decoration: const InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFFE2BC65)),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFFE2BC65), width: 2),
+          ),
+        ),
+      ),
       'Aceptar',
       () => c.text.trim(),
     );
@@ -63,7 +99,10 @@ class _PantallaEditarState extends State<PantallaEditar> {
   Future<void> _eliminar(int i) async {
     if (await _dialogo<bool>(
           'Eliminar',
-          Text('¿Eliminar "${_lista[i]}" de la lista?'),
+          Text(
+            '¿Eliminar "${_lista[i]}" de la lista?',
+            style: const TextStyle(color: Colors.white70),
+          ),
           'Eliminar',
           () => true,
         ) ==
@@ -71,14 +110,6 @@ class _PantallaEditarState extends State<PantallaEditar> {
       setState(() => _lista.removeAt(i));
     }
   }
-
-  Widget _texto(String t, double sz, {bool b = false, Color col = Colors.white}) => Text(
-        t,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: col, fontSize: sz, fontWeight: b ? FontWeight.bold : FontWeight.normal),
-      );
-
-  Widget _esp(double h) => SizedBox(height: h);
 
   @override
   Widget build(BuildContext context) {
@@ -88,146 +119,236 @@ class _PantallaEditarState extends State<PantallaEditar> {
           child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colores.bloqueOscuro,
-                          borderRadius: BorderRadius.circular(24),
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(
+                      color: const Color(
+                        0xFFE2BC65,
+                      ).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Botón de regresar unificado
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Color(0xFFE2BC65),
+                            size: 28,
+                          ),
+                          onPressed: () => Navigator.pop(context),
                         ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: 38,
-                              left: 20,
-                              right: 20,
-                              child: Image.asset(
-                                'assets/images/fondo_login1.png',
-                                height: 150,
-                                color: Colores.bloqueOscuro,
-                                colorBlendMode: BlendMode.srcATop,
-                                errorBuilder: (context, error, stackTrace) => const SizedBox(),
-                              ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Título principal con degradado dorado unificado
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
-                            Positioned.fill(
-                              child: Column(
-                                children: [
-                                  _texto('Editar Lista', 24, b: true),
-                                  _esp(170),
-                                  _texto('Agregar Instrumento a la Lista', 18),
-                                  _esp(10),
-
-                                  // --- CUADRO DE TEXTO CON EL BOTÓN + ADENTRO ---
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colores.botonClaro,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                                    child: TextField(
-                                      controller: _nombre,
-                                      onSubmitted: (_) => _agregar(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      decoration: InputDecoration(
-                                        hintText: 'Nombre del instrumento...',
-                                        hintStyle: const TextStyle(color: Colors.black54),
-                                        border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                                        suffixIcon: IconButton(
-                                          icon: const Icon(
-                                            Icons.add_circle,
-                                            color: Color(0xFF0F4C5C), // Color oscuro para hacer bonito contraste
-                                            size: 28,
-                                          ),
-                                          onPressed: _agregar,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                  _esp(16),
-                                  Expanded(
-                                    child: ListView.builder(
-                                      itemCount: _lista.length,
-                                      itemBuilder: (context, i) => Card(
-                                        color: Colores.botonClaro,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: ListTile(
-                                          title: Text(
-                                            _lista[i],
-                                            style: const TextStyle(fontWeight: FontWeight.w600),
-                                          ),
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(Icons.edit, color: Color(0xFF0F4C5C)),
-                                                onPressed: () => _editar(i),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(Icons.delete, color: Colors.red),
-                                                onPressed: () => _eliminar(i),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  _esp(12),
-
-                                  // Botón Guardar con estilo Píldora
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colores.botonClaro,
-                                      foregroundColor: const Color(0xFF0F4C5C),
-                                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      elevation: 3,
-                                    ),
-                                    onPressed: () => Navigator.pop(context, _lista),
-                                    child: const Text(
-                                      'Guardar',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.edit_note,
+                              color: Color.fromARGB(255, 23, 30, 32),
+                              size: 22,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'EDITAR LISTA',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    _esp(24),
-                    _texto(
-                      'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                      20,
-                      b: true,
-                      col: Colores.colorLetra1,
-                    ),
-                    _esp(16),
-                  ],
+                      const SizedBox(height: 20),
+
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Agregar Instrumento a la Lista',
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // --- CUADRO DE TEXTO CON EL BOTÓN + ADENTRO ---
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 83, 89, 90).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        child: TextField(
+                          controller: _nombre,
+                          onSubmitted: (_) => _agregar(),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Nombre del instrumento...',
+                            hintStyle: const TextStyle(color: Color.fromARGB(137, 255, 254, 254)),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: const Icon(
+                                Icons.add_circle,
+                                color: const Color(0xFFE2BC65),
+                                size: 28,
+                              ),
+                              onPressed: _agregar,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _lista.length,
+                          itemBuilder: (context, i) => Card(
+                            color: const Color.fromARGB(255, 90, 91, 92).withValues(alpha: 0.75),
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              side: BorderSide(
+                                color: const Color(
+                                  0xFFE2BC65,
+                                ).withValues(alpha: 0.3),
+                                width: 1.0,
+                              ),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                _lista[i],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromARGB(137, 255, 254, 254),
+                                ),
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: const Color(0xFFE2BC65),
+                                    ),
+                                    onPressed: () => _editar(i),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
+                                    ),
+                                    onPressed: () => _eliminar(i),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Botón Guardar con estilo Píldora
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE2BC65),
+                          foregroundColor: const Color.fromARGB(
+                            255,
+                            23,
+                            30,
+                            32,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 40,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          elevation: 3,
+                        ),
+                        onPressed: () => Navigator.pop(context, _lista),
+                        child: const Text(
+                          'Guardar Cambios',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Pie de página institucional unificado
+                      const Center(
+                        child: Text(
+                          "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
               // Chatbot flotante arrastrable
-              BotonChatFlotante(
-                onPressed: () => _abrirAsistenteIA(context),
-              ),
+              BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),
         ),

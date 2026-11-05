@@ -79,154 +79,302 @@ class _PantallaEventosState extends State<PantallaEventos> {
           child: Stack(
             children: [
               SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        icon: Icon(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(
+                      color: const Color(
+                        0xFFE2BC65,
+                      ).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Botón de regresar unificado
+                      IconButton(
+                        icon: const Icon(
                           Icons.arrow_back,
-                          color: Colores.naranja,
-                          size: 30,
+                          color: Color(0xFFE2BC65),
+                          size: 28,
                         ),
+                        tooltip: 'Volver',
                         onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(12),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colores.bloqueOscuro,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Eventos',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                      const SizedBox(height: 10),
+
+                      // Título principal con degradado dorado unificado
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: nombreController,
-                            readOnly: !admin,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: 'Nombre del evento',
-                              hintStyle: const TextStyle(color: Colors.white),
-                              suffixIcon: admin
-                                  ? const Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                      size: 18,
-                                    )
-                                  : null,
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.event,
+                              color: Color.fromARGB(255, 23, 30, 32),
+                              size: 22,
                             ),
-                          ),
-                          Center(
-                            child: Image.asset(
-                              'assets/images/fondo_login.png',
-                              height: 150,
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: IgnorePointer(
-                              ignoring: !admin,
-                              child: CalendarDatePicker(
-                                initialDate: fechaElegida,
-                                firstDate: DateTime(2020),
-                                lastDate: DateTime(2035),
-                                onDateChanged: (DateTime fecha) {
-                                  setState(() => fechaElegida = fecha);
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Text(
-                                'Hora: ${horaElegida.format(context)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              if (admin)
-                                IconButton(
-                                  onPressed: elegirHora,
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                'Lugar: ',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: lugarController,
-                                  readOnly: !admin,
-                                  style: const TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                    suffixIcon: admin
-                                        ? const Icon(
-                                            Icons.edit,
-                                            color: Colors.white,
-                                            size: 18,
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (admin) ...[
-                            const SizedBox(height: 20),
-                            Center(
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colores.botonClaro,
-                                ),
-                                onPressed: guardarEvento,
-                                icon: const Icon(Icons.save),
-                                label: const Text('Guardar'),
+                            SizedBox(width: 10),
+                            Text(
+                              'DETALLE DE EVENTO',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ],
-                        ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                      child: Text(
-                        'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                        textAlign: TextAlign.center,
+                      const SizedBox(height: 20),
+
+                      // Nombre del evento
+                      const Text(
+                        'Nombre del evento',
                         style: TextStyle(
-                          fontSize: 20,
-                          color: Colores.colorLetra1,
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 79, 83, 83).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: nombreController,
+                          readOnly: !admin,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Nombre del evento',
+                            hintStyle: const TextStyle(color: Colors.black54),
+                            border: InputBorder.none,
+                            suffixIcon: admin
+                                ? const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF0F4C5C),
+                                    size: 18,
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      Center(
+                        child: Image.asset(
+                          'assets/images/fondo_login.png',
+                          height: 120,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Calendario estilizado
+                      const Text(
+                        'Fecha del evento',
+                        style: TextStyle(
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: IgnorePointer(
+                          ignoring: !admin,
+                          child: CalendarDatePicker(
+                            initialDate: fechaElegida,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2035),
+                            onDateChanged: (DateTime fecha) {
+                              setState(() => fechaElegida = fecha);
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Hora
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Hora: ${horaElegida.format(context)}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          if (admin)
+                            OutlinedButton.icon(
+                              onPressed: elegirHora,
+                              icon: const Icon(
+                                Icons.access_time,
+                                color: Color(0xFFE2BC65),
+                                size: 18,
+                              ),
+                              label: const Text(
+                                'Cambiar Hora',
+                                style: TextStyle(color: Color(0xFFE2BC65)),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: Color(0xFFE2BC65),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Lugar
+                      const Text(
+                        'Lugar del evento',
+                        style: TextStyle(
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 73, 76, 77).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: lugarController,
+                          readOnly: !admin,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            suffixIcon: admin
+                                ? const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF0F4C5C),
+                                    size: 18,
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+
+                      if (admin) ...[
+                        const SizedBox(height: 25),
+                        Center(
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE2BC65),
+                              foregroundColor: const Color.fromARGB(
+                                255,
+                                23,
+                                30,
+                                32,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 40,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 3,
+                            ),
+                            onPressed: guardarEvento,
+                            icon: const Icon(Icons.save),
+                            label: const Text(
+                              'Guardar',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 25),
+
+                      // Pie de página institucional unificado
+                      const Center(
+                        child: Text(
+                          "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
@@ -286,162 +434,227 @@ class _ListaEventosUsuarioState extends State<ListaEventosUsuario> {
         child: SafeArea(
           child: Stack(
             children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(
+                      color: const Color(
+                        0xFFE2BC65,
+                      ).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      width: 1.2,
                     ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          tooltip: 'Volver',
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colores.naranja,
-                            size: 30,
-                          ),
-                        ),
-                        const Expanded(
-                          child: Text(
-                            'Eventos y presentaciones',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            tooltip: 'Volver',
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Color(0xFFE2BC65),
+                              size: 28,
                             ),
                           ),
-                        ),
-                        IconButton(
-                          tooltip: 'Actualizar eventos',
-                          onPressed: _recargar,
-                          icon: const Icon(Icons.refresh, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                          const Spacer(),
+                          IconButton(
+                            tooltip: 'Actualizar eventos',
+                            onPressed: _recargar,
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Color(0xFFE2BC65),
+                            ),
+                          ),
+                        ],
                       ),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colores.bloqueOscuro,
-                        borderRadius: BorderRadius.circular(16),
+                      const SizedBox(height: 5),
+
+                      // Título principal con degradado dorado unificado
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.event_note,
+                              color: Color.fromARGB(255, 23, 30, 32),
+                              size: 22,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'EVENTOS Y PRESENTACIONES',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: FutureBuilder<List<Map<String, dynamic>>>(
-                        future: _eventos,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: Colores.amarillo,
-                              ),
-                            );
-                          }
-                          if (snapshot.hasError) {
-                            return Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text(
-                                    'No se pudieron cargar los eventos.',
-                                    style: TextStyle(color: Colors.white70),
-                                  ),
-                                  TextButton.icon(
-                                    onPressed: _recargar,
-                                    icon: const Icon(Icons.refresh),
-                                    label: const Text('Reintentar'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
+                      const SizedBox(height: 15),
 
-                          final eventos = snapshot.data ?? [];
-                          if (eventos.isEmpty) {
-                            return const Center(
-                              child: Text(
-                                'Aún no hay eventos publicados.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.white70),
-                              ),
-                            );
-                          }
-
-                          return ListView.separated(
-                            itemCount: eventos.length,
-                            separatorBuilder: (_, _) =>
-                                const SizedBox(height: 10),
-                            itemBuilder: (context, index) {
-                              final evento = eventos[index];
-                              final fecha = _fecha(evento);
-                              final hora = _hora(evento);
-                              final lugar =
-                                  evento['lugar_evento']?.toString() ??
-                                  'Lugar por confirmar';
-
-                              return Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.08),
-                                  borderRadius: BorderRadius.circular(10),
+                      Expanded(
+                        child: FutureBuilder<List<Map<String, dynamic>>>(
+                          future: _eventos,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFFE2BC65),
                                 ),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(
-                                      evento['nombre_evento']?.toString() ??
-                                          'Evento',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    const Text(
+                                      'No se pudieron cargar los eventos.',
+                                      style: TextStyle(color: Colors.white70),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      '${_fechaLegible(fecha)} · ${hora.format(context)}',
-                                      style: const TextStyle(
-                                        color: Colors.white70,
+                                    TextButton.icon(
+                                      onPressed: _recargar,
+                                      icon: const Icon(
+                                        Icons.refresh,
+                                        color: Color(0xFFE2BC65),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      lugar,
-                                      style: const TextStyle(
-                                        color: Colors.white70,
+                                      label: const Text(
+                                        'Reintentar',
+                                        style: TextStyle(
+                                          color: Color(0xFFE2BC65),
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               );
-                            },
-                          );
-                        },
+                            }
+
+                            final eventos = snapshot.data ?? [];
+                            if (eventos.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  'Aún no hay eventos publicados.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              );
+                            }
+
+                            return ListView.separated(
+                              itemCount: eventos.length,
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(height: 10),
+                              itemBuilder: (context, index) {
+                                final evento = eventos[index];
+                                final fecha = _fecha(evento);
+                                final hora = _hora(evento);
+                                final lugar =
+                                    evento['lugar_evento']?.toString() ??
+                                    'Lugar por confirmar';
+
+                                return Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(255, 129, 133, 133).withValues(alpha: 0.75),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: const Color(
+                                        0xFFE2BC65,
+                                      ).withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        evento['nombre_evento']?.toString() ??
+                                            'Evento',
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(221, 253, 250, 250),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        '📅 ${_fechaLegible(fecha)} · ⏰ ${hora.format(context)}',
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(137, 241, 240, 240),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '📍 $lugar',
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(137, 250, 247, 247),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                    child: Text(
-                      'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colores.colorLetra1,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: 15),
+
+                      // Pie de página institucional unificado
+                      const Center(
+                        child: Text(
+                          "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
               BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],

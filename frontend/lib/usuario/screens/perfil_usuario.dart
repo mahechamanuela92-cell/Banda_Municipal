@@ -219,20 +219,23 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
 
   Widget _campo(String titulo, TextEditingController controlador) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (titulo.isNotEmpty)
-          Text(titulo, style: const TextStyle(color: Colors.white, fontSize: 18)),
+          Text(titulo, style: const TextStyle(color: Color(0xFFE2BC65), fontSize: 14, fontWeight: FontWeight.bold)),
         TextField(
           controller: controlador,
           readOnly: !_modoEdicion,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
           decoration: InputDecoration(
             suffixIcon: _modoEdicion
-                ? const Icon(Icons.edit, color: Colors.white, size: 16)
+                ? const Icon(Icons.edit, color: Color(0xFFE2BC65), size: 18)
                 : null,
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFE2BC65), width: 0.8),
+            ),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFE2BC65), width: 1.5),
             ),
           ),
         ),
@@ -241,23 +244,32 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
   }
 
   Widget _opcionMenu(BuildContext context, String texto, VoidCallback onTap) {
+    bool esGuardar = texto == 'Guardar';
     return SizedBox(
       width: double.infinity,
-      height: 60,
+      height: 48,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colores.botonClaro,
-          foregroundColor: Colores.bloqueOscuro,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: esGuardar ? const Color(0xFFE2BC65) : const Color(0xFFE2BC65),
+          foregroundColor: esGuardar ? const Color.fromARGB(255, 23, 30, 32) : Colors.redAccent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          elevation: 3,
         ),
         onPressed: _guardando ? null : onTap,
-        child: _guardando && texto == 'Guardar'
+        child: _guardando && esGuardar
             ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Color.fromARGB(255, 23, 30, 32)),
               )
-            : Text(texto, style: const TextStyle(fontSize: 20)),
+            : Text(
+                texto,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: esGuardar ? const Color.fromARGB(255, 23, 30, 32) : const Color.fromARGB(255, 7, 7, 7),
+                ),
+              ),
       ),
     );
   }
@@ -269,53 +281,105 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
         child: SafeArea(
           child: Stack(
             children: [
-              // CAPA 1: el ave, arriba y detrás del bloque oscuro
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Image.asset(
-                  'assets/images/fondo_login1.png',
-                  height: 260,
-                  fit: BoxFit.contain,
-                ),
-              ),
-
-              // CAPA 2: bloque del perfil + texto de abajo
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colores.naranja,
-                            size: 30,
-                          ),
-                          tooltip: _modoEdicion ? 'Volver al perfil' : 'Volver',
-                          onPressed: _modoEdicion
-                              ? _cancelarEdicion
-                              : () => Navigator.pop(context),
-                        ),
-                      ],
+              // Contenido principal dentro de un contenedor unificado
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(
+                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      width: 1.2,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Center(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.all(12),
-                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 40),
-                          decoration: BoxDecoration(
-                            color: Colores.bloqueOscuro,
-                            borderRadius: BorderRadius.circular(28),
+                  child: Column(
+                    children: [
+                      // Barra superior (Volver y Botón Editar)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Color(0xFFE2BC65),
+                              size: 28,
+                            ),
+                            tooltip: _modoEdicion ? 'Volver al perfil' : 'Volver',
+                            onPressed: _modoEdicion
+                                ? _cancelarEdicion
+                                : () => Navigator.pop(context),
                           ),
+                          if (!_modoEdicion)
+                            OutlinedButton.icon(
+                              onPressed: _iniciarEdicion,
+                              icon: const Icon(Icons.edit, size: 16, color: Color(0xFFE2BC65)),
+                              label: const Text('Editar perfil', style: TextStyle(color: Color(0xFFE2BC65))),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Color(0xFFE2BC65)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+
+                      // Título principal unificado con degradado dorado
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFE2BC65),
+                              Color(0xFFC29B45),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.person, color: Color.fromARGB(255, 23, 30, 32), size: 22),
+                            SizedBox(width: 10),
+                            Text(
+                              'PERFIL DE USUARIO',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      Expanded(
+                        child: SingleChildScrollView(
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
                               if (_cargandoPerfil)
                                 const Padding(
@@ -323,89 +387,69 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                   child: SizedBox(
                                     width: 24,
                                     height: 24,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFE2BC65)),
                                   ),
                                 ),
-                              const Center(
-                                child: Text(
-                                  'Perfil',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              if (!_modoEdicion)
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: ElevatedButton.icon(
-                                    onPressed: _iniciarEdicion,
-                                    icon: const Icon(Icons.edit, size: 18),
-                                    label: const Text('Editar perfil'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colores.botonClaro,
-                                      foregroundColor: Colores.bloqueOscuro,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 10,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(height: 20),
 
+                              // Avatar de Perfil
                               SizedBox(
-                                width: 170,
-                                height: 130,
+                                width: 120,
+                                height: 120,
                                 child: Stack(
                                   children: [
                                     Align(
                                       alignment: Alignment.center,
-                                      child: CircleAvatar(
-                                        radius: 60,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: _fotoBytes != null
-                                            ? MemoryImage(_fotoBytes!)
-                                            : _fotoUrl != null && _fotoUrl!.isNotEmpty
-                                                ? NetworkImage(_fotoUrl!)
-                                                : null,
-                                        child: _fotoBytes == null &&
-                                                (_fotoUrl == null || _fotoUrl!.isEmpty)
-                                            ? const Icon(Icons.person,
-                                                size: 70, color: Colors.grey)
-                                            : null,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: const Color(0xFFE2BC65), width: 2),
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: 56,
+                                          backgroundColor: Colors.white,
+                                          backgroundImage: _fotoBytes != null
+                                              ? MemoryImage(_fotoBytes!)
+                                              : _fotoUrl != null && _fotoUrl!.isNotEmpty
+                                                  ? NetworkImage(_fotoUrl!)
+                                                  : null,
+                                          child: _fotoBytes == null &&
+                                                  (_fotoUrl == null || _fotoUrl!.isEmpty)
+                                              ? const Icon(Icons.person,
+                                                  size: 60, color: Colors.grey)
+                                              : null,
+                                        ),
                                       ),
                                     ),
                                     if (_modoEdicion)
                                       Positioned(
                                         right: 0,
-                                        top: 0,
-                                        child: IconButton(
-                                          onPressed: _elegirFoto,
-                                          icon: const Icon(Icons.edit,
-                                              color: Colors.white),
-                                          tooltip: 'Cambiar foto',
+                                        bottom: 0,
+                                        child: CircleAvatar(
+                                          backgroundColor: const Color(0xFFE2BC65),
+                                          radius: 18,
+                                          child: IconButton(
+                                            onPressed: _elegirFoto,
+                                            icon: const Icon(Icons.camera_alt,
+                                                color: Color.fromARGB(255, 23, 30, 32), size: 16),
+                                            tooltip: 'Cambiar foto',
+                                          ),
                                         ),
                                       ),
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 20),
 
-                              const SizedBox(height: 16),
                               _campo('Nombre', _nombre),
-                              const SizedBox(height: 28),
-                              _campo('Telefono', _telefono),
-                              const SizedBox(height: 28),
-                              _campo('Correo', _correo),
-                              const SizedBox(height: 32),
+                              const SizedBox(height: 16),
+                              _campo('Teléfono', _telefono),
+                              const SizedBox(height: 16),
+                              _campo('Correo electrónico', _correo),
+                              const SizedBox(height: 25),
 
                               if (_modoEdicion) ...[
                                 _opcionMenu(context, 'Guardar', _guardarPerfil),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 12),
                               ],
 
                               if (!_modoEdicion)
@@ -423,23 +467,24 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                      const SizedBox(height: 15),
 
-                  // Texto de abajo
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                    child: Text(
-                      'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colores.colorLetra1,
-                        fontWeight: FontWeight.bold,
+                      // Pie de página institucional unificado
+                      const Center(
+                        child: Text(
+                          "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
 
               // Botón flotante del chatbot de la IA

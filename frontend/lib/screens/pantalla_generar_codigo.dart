@@ -138,7 +138,7 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colores.bloqueOscuro,
+                      color: const Color.fromARGB(255, 74, 78, 78).withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: const Color(0xFFE2BC65), width: 1.5),
                       boxShadow: [
@@ -159,7 +159,7 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
                         Text(
                           _codigoGenerado ?? '------',
                           style: const TextStyle(
-                            color: Color(0xFFB3F0EC),
+                            color: Color(0xFFE2BC65),
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 6,
@@ -214,8 +214,8 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
-                              Color(0xFFB3F0EC),
-                              Color(0xFF8AE1DC),
+                              Color(0xFFE2BC65),
+                              Color(0xFFE2BC65),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -230,7 +230,7 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
                                   width: 24,
                                   height: 24,
                                   child: CircularProgressIndicator(
-                                    color: Color(0xFF0F4C5C),
+                                    color: Color.fromARGB(255, 51, 52, 53),
                                     strokeWidth: 3,
                                   ),
                                 )
@@ -239,7 +239,7 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
                                   children: [
                                     Icon(
                                       Icons.vpn_key,
-                                      color: Color(0xFF0F4C5C),
+                                      color: Color.fromARGB(255, 0, 0, 0),
                                       size: 24,
                                     ),
                                     SizedBox(width: 10),
@@ -248,7 +248,7 @@ class _PantallaGenerarCodigoState extends State<PantallaGenerarCodigo> {
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w800,
-                                        color: Color(0xFF0F4C5C),
+                                        color: Color.fromARGB(255, 0, 0, 0),
                                         letterSpacing: 0.5,
                                       ),
                                     ),

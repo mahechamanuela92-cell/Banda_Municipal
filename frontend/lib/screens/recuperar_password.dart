@@ -129,23 +129,20 @@ class _PantallaRecuperarPasswordState extends State<PantallaRecuperarPassword> {
 
                   const SizedBox(height: 35),
 
-                  // Caja de texto para el correo con diseño unificado
+                  // Caja de texto para el correo con diseño unificado elegante
                   Container(
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFB3F0EC),
-                          Color(0xFF8AE1DC),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                      color: const Color(0xFF0F4C5C).withValues(alpha: 0.75), // Fondo oscuro translúcido
                       borderRadius: BorderRadius.circular(30.0),
+                      border: Border.all(
+                        color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde sutil dorado
+                        width: 1.2,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -157,98 +154,102 @@ class _PantallaRecuperarPasswordState extends State<PantallaRecuperarPassword> {
                       controller: _correoController,
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(
-                        color: Color(0xFF0F4C5C),
+                        color: Colors.white, // Texto en blanco para alta visibilidad
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
-                      decoration: const InputDecoration(
-                        icon: Icon(
+                      decoration: InputDecoration(
+                        icon: const Icon(
                           Icons.email,
-                          color: Color(0xFF0F4C5C),
+                          color: Color(0xFFE2BC65), // Icono dorado unificado
                           size: 22,
                         ),
                         hintText: 'Correo electrónico',
                         hintStyle: TextStyle(
-                          color: Color(0xFF0F4C5C),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
                         ),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 35),
 
-                  // --- BOTÓN ENVIAR INSTRUCCIONES ---
-                  Container(
-                    width: double.infinity,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: _cargando ? null : _enviarCorreoRecuperacion,
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Ink(
+                  // --- BOTÓN ENVIAR INSTRUCCIONES (Centrado y menos alargado) ---
+                  Center(
+                    child: SizedBox(
+                      width: 280, // Ancho equilibrado
+                      height: 55,
+                      child: Container(
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFB3F0EC),
-                              Color(0xFF8AE1DC),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
                           borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                        child: Container(
-                          alignment: Alignment.center,
-                          constraints: const BoxConstraints(minHeight: 55),
-                          child: _cargando
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Color(0xFF0F4C5C),
-                                    strokeWidth: 3,
-                                  ),
-                                )
-                              : const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.send,
-                                      color: Color(0xFF0F4C5C),
-                                      size: 22,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'ENVIAR INSTRUCCIONES',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF0F4C5C),
-                                        letterSpacing: 0.5,
+                        child: ElevatedButton(
+                          onPressed: _cargando ? null : _enviarCorreoRecuperacion,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFE2BC65),
+                                  Color(0xFFC29B45),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              constraints: const BoxConstraints(minHeight: 55),
+                              child: _cargando
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Color.fromARGB(255, 23, 30, 32),
+                                        strokeWidth: 3,
                                       ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Icon(
+                                          Icons.send,
+                                          color: Color.fromARGB(255, 23, 30, 32),
+                                          size: 22,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          'ENVIAR INSTRUCCIONES',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color.fromARGB(255, 23, 30, 32),
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

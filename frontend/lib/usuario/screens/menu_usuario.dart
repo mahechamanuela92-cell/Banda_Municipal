@@ -5,8 +5,8 @@ import 'perfil_usuario.dart';
 import 'partituras/partituras_usuario.dart';
 import '../../themes/colores.dart';
 
-class MenuUsuario extends StatelessWidget {
-  const MenuUsuario({super.key});
+class MenuUsuarios extends StatelessWidget {
+  const MenuUsuarios({super.key});
 
   Widget opcionMenu(BuildContext context, String texto, Widget? pantalla) {
     return ListTile(

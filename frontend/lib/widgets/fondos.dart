@@ -96,7 +96,7 @@ class FondoMusicalPainter extends CustomPainter {
 
     // Notas musicales (oro)
     final Paint paintNotas = Paint()
-      ..color = Colores.oro.withValues(alpha: 0.55)
+      ..color = const Color.fromARGB(255, 235, 216, 50).withValues(alpha: 0.55)
       ..style = PaintingStyle.fill;
 
     // --- 1. Formas circulares de fondo (más sutiles) ---
@@ -153,10 +153,10 @@ class FondoMusicalPainter extends CustomPainter {
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
       colors: const [
-        Color(0xFFD4AF37), // Oro
-        Color(0xFFE2BC65), // Oro suave
-        Color(0xFFF59E0B), // Ámbar
-        Color(0xFFD4AF37), // Oro
+        Color.fromARGB(255, 238, 234, 9), // Amarillo
+        Color.fromARGB(255, 235, 156, 10), // Naranja
+        Color.fromARGB(255, 245, 11, 214), // Rosa
+        Color.fromARGB(255, 78, 21, 236), // Morado
       ],
       transform: GradientRotation(progress * 2 * math.pi),
     );

@@ -7,6 +7,7 @@ import 'package:frontend/widgets/inicio_pantallas/instrumentos-cuerda/violonchel
 
 // Importación de componentes de instrumentos de cuerda
 import 'instrumentos-cuerda/violin.dart';
+
 class CuerdasPantalla extends StatelessWidget {
   const CuerdasPantalla({super.key});
 
@@ -18,45 +19,105 @@ class CuerdasPantalla extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                color: Colores.bloqueOscuro,
-                borderRadius: BorderRadius.circular(20.0),
+                color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                borderRadius: BorderRadius.circular(24.0),
+                border: Border.all(
+                  color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Botón de regresar unificado en dorado
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.orange, size: 30),
+                    icon: const Icon(Icons.arrow_back, color: Color(0xFFE2BC65), size: 28),
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
                   const SizedBox(height: 10),
 
+                  // Título superior con degradado unificado
+                  Container(
+                    width: double.infinity,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFFE2BC65),
+                          Color(0xFFC29B45),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(30.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.music_note, color: Color.fromARGB(255, 23, 30, 32), size: 22),
+                        SizedBox(width: 10),
+                        Text(
+                          'CUERDAS',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Color.fromARGB(255, 23, 30, 32),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Contenido con ExpansionTile estilizado
                   Expanded(
                     child: SingleChildScrollView(
                       child: Theme(
                         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                        child: const ExpansionTile(
-                          iconColor: Colors.white,
-                          collapsedIconColor: Colors.white,
-                          title: Text(
-                            "Cuerdas",
+                        child: ExpansionTile(
+                          iconColor: const Color(0xFFE2BC65),
+                          collapsedIconColor: const Color(0xFFE2BC65),
+                          title: const Text(
+                            "Ver Instrumentos",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 22,
-                              fontFamily: 'Serif',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
                             ),
                           ),
-                          children: [
+                          children: const [
+                            SizedBox(height: 10),
                             // 1. Violín
                             ViolinItem(),
+                            SizedBox(height: 8),
                             // 2. Viola
                             ViolaItem(),
-                            //3. violonvhelo
+                            SizedBox(height: 8),
+                            // 3. Violonchelo
                             VioloncheloItem(),
-                            //4. Contrabajo
+                            SizedBox(height: 8),
+                            // 4. Contrabajo
                             ContrabajoItem(),
                           ],
                         ),
@@ -64,14 +125,18 @@ class CuerdasPantalla extends StatelessWidget {
                     ),
                   ),
 
+                  const SizedBox(height: 15),
+
+                  // Pie de página institucional unificado
                   const Center(
                     child: Text(
                       "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xFFD3A456),
-                        fontSize: 13,
+                        color: Color(0xFFE2BC65),
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
+                        height: 1.3,
                       ),
                     ),
                   ),

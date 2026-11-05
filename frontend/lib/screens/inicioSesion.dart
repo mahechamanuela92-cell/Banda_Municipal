@@ -17,24 +17,23 @@ class InicioSesion extends StatefulWidget {
 }
 
 class _InicioSesionState extends State<InicioSesion> {
-  // 👈 AGREGA ESTOS CONTROLADORES AQUÍ ARRIBA
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
   bool _cargando = false;
   bool _mostrarPassword = false;
+
   @override
-void dispose() {
-  _correoController.dispose();
-  _passwordController.dispose();
-  _nombreController.dispose();
-  super.dispose();
-}
-  // Variables para controlar el cambio de color al hacer clic
+  void dispose() {
+    _correoController.dispose();
+    _passwordController.dispose();
+    _nombreController.dispose();
+    super.dispose();
+  }
+
   Color _colorRegistrarse = Colors.white;
   Color _colorOlvido = Colors.white;
 
-  // Pantalla a la que se envía al usuario según su rol
   Widget? _pantallaSegunRol(String? rol) {
     switch (rol) {
       case 'admin':
@@ -140,110 +139,114 @@ void dispose() {
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 226, 188, 101),
+                      color: Color(0xFFE2BC65),
                     ),
                   ),
 
                   const SizedBox(height: 25),
 
                   // --- CAMPO NOMBRE ---
-                _crearCampoTexto(
-                  controller: _nombreController, // 👈 Agrégale esta línea aquí también
-                  hintText: 'Nombre',
-                  icon: Icons.people,
-                ),
+                  _crearCampoTexto(
+                    controller: _nombreController,
+                    hintText: 'Nombre',
+                    icon: Icons.person,
+                  ),
 
                   const SizedBox(height: 16),
 
                   // --- CAMPO CORREO ---
-                _crearCampoTexto(
-                  controller: _correoController, // 👈 Agrégale esta línea
-                  hintText: 'Correo',
-                  icon: Icons.email,
-                  keyboardType: TextInputType.emailAddress,
-                ),
+                  _crearCampoTexto(
+                    controller: _correoController,
+                    hintText: 'Correo electrónico',
+                    icon: Icons.email,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
 
                   const SizedBox(height: 16),
 
                   // --- CAMPO CONTRASEÑA ---
                   _crearCampoTexto(
-                  controller: _passwordController, // 👈 Agrégale esta línea
-                  hintText: 'Contraseña',
-                  icon: Icons.vpn_key,
-                  obscureText: !_mostrarPassword,
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() => _mostrarPassword = !_mostrarPassword);
-                    },
-                    icon: Icon(
-                      _mostrarPassword ? Icons.visibility_off : Icons.visibility,
-                      color: const Color(0xFF0F4C5C),
+                    controller: _passwordController,
+                    hintText: 'Contraseña',
+                    icon: Icons.vpn_key,
+                    obscureText: !_mostrarPassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() => _mostrarPassword = !_mostrarPassword);
+                      },
+                      icon: Icon(
+                        _mostrarPassword ? Icons.visibility_off : Icons.visibility,
+                        color: const Color(0xFFE2BC65),
+                      ),
+                      tooltip: _mostrarPassword
+                          ? 'Ocultar contraseña'
+                          : 'Mostrar contraseña',
                     ),
-                    tooltip: _mostrarPassword
-                        ? 'Ocultar contraseña'
-                        : 'Mostrar contraseña',
                   ),
-                ),
                   const SizedBox(height: 30),
 
                   // --- BOTÓN INICIAR SESIÓN ---
-                  Container(
-                    width: double.infinity,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: _cargando ? null : _iniciarSesion, // 👈 Un solo onPressed limpio
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Ink(
+                  Center(
+                    child: SizedBox(
+                      width: 250, // 👈 Controla qué tan alargado es el botón (puedes subirlo o bajarlo)
+                      height: 55,
+                      child: Container(
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFB3F0EC),
-                              Color(0xFF8AE1DC),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
                           borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                        child: Container(
-                          alignment: Alignment.center,
-                          constraints: const BoxConstraints(minHeight: 55),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(
-                                Icons.music_note,
-                                color: Color(0xFF0F4C5C),
-                                size: 24,
+                        child: ElevatedButton(
+                          onPressed: _cargando ? null : _iniciarSesion,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFE2BC65),
+                                  Color(0xFFC29B45),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
                               ),
-                              SizedBox(width: 10),
-                              Text(
-                                'INICIAR SESION',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF0F4C5C),
-                                  letterSpacing: 0.5,
-                                ),
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              constraints: const BoxConstraints(minHeight: 55),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.music_note,
+                                    color: Color.fromARGB(255, 23, 30, 32),
+                                    size: 24,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Iniciar Sesion',
+                                    style: TextStyle(
+                                      fontSize: 16, // Ligeramente ajustado para que luzca proporcionado
+                                      fontWeight: FontWeight.w800,
+                                      color: Color.fromARGB(255, 23, 30, 32),
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -252,11 +255,10 @@ void dispose() {
 
                   const SizedBox(height: 25),
 
-                  // --- OPCIONES INFERIORES: REGISTRO Y RECUPERAR CONTRASEÑA (CORREGIDO EN COLUMN) ---
+                  // --- OPCIONES INFERIORES ---
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // ¿No tienes cuenta? Regístrate (Cambia a verde)
                       TextButton(
                         onPressed: () {
                           setState(() {
@@ -278,14 +280,12 @@ void dispose() {
                       ),
                       const SizedBox(height: 2),
 
-                      // ¿Olvidaste tu contraseña?
                       TextButton(
                         onPressed: () {
                           setState(() {
-                            _colorOlvido = Colors.red; // Mantiene tu efecto visual si lo deseas
+                            _colorOlvido = Colors.red;
                           });
 
-                          // Navegar a la pantalla de recuperación de contraseña
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -307,14 +307,13 @@ void dispose() {
 
                   const SizedBox(height: 30),
 
-                  // --- TEXTO INFERIOR ---
                   const Text(
                     'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFE2BC65), // Dorado/Amarillo
+                      color: Color(0xFFE2BC65),
                       height: 1.3,
                     ),
                   ),
@@ -329,30 +328,28 @@ void dispose() {
     );
   }
 
-  // Método reutilizable para los inputs de texto
+  // Método reutilizable para los inputs de texto con estilo elegante y oscuro/translúcido
   Widget _crearCampoTexto({
     required String hintText,
     required IconData icon,
     bool obscureText = false,
-    TextInputType keyboardType = TextInputType.text, required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+    required TextEditingController controller,
     Widget? suffixIcon,
   }) {
     return Container(
       width: double.infinity,
       height: 55,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFFB3F0EC),
-            Color(0xFF8AE1DC),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // Fondo elegante oscuro que combina con el fondo base
         borderRadius: BorderRadius.circular(30.0),
+        border: Border.all(
+          color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde sutil dorado elegante
+          width: 1.2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -365,21 +362,21 @@ void dispose() {
         obscureText: obscureText,
         keyboardType: keyboardType,
         style: const TextStyle(
-          color: Color(0xFF0F4C5C),
+          color: Colors.white, // Texto que escribe el usuario en blanco para alta visibilidad
           fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           icon: Icon(
             icon,
-            color: const Color(0xFF0F4C5C),
+            color: const Color(0xFFE2BC65), // 🌟 Icono principal dorado
             size: 22,
           ),
           hintText: hintText,
-          hintStyle: const TextStyle(
-            color: Color(0xFF0F4C5C),
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          hintStyle: TextStyle(
+            color: Colors.white.withValues(alpha: 0.6), // Hint sutil y elegante
+            fontSize: 15,
+            fontWeight: FontWeight.normal,
           ),
           suffixIcon: suffixIcon,
           border: InputBorder.none,

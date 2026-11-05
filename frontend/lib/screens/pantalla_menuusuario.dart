@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/components/chat/chat_banda_modal.dart';
-import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/eventos/pantalla_evento.dart';
 import 'package:frontend/screens/multimedia/multimedia.dart';
@@ -13,29 +11,28 @@ import 'pantalla_perfil.dart';
 class MenuUsuario extends StatelessWidget {
   const MenuUsuario({super.key});
 
-  void _abrirAsistenteIA(BuildContext context) {
-    showDialog(context: context, builder: (_) => const ChatBandaModal());
-  }
-
-  Widget opcionMenu(BuildContext context, String texto, Widget? pantalla) {
+  Widget opcionMenu(BuildContext context, String texto, Widget? pantalla, IconData icono) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      leading: const Icon(Icons.music_note, color: Colors.white, size: 28),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      leading: Icon(
+        icono, 
+        color: const Color(0xFFE2BC65), // Iconos en tono dorado elegante
+        size: 26,
+      ),
       title: Text(
         texto,
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 16,
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
       ),
       onTap: () {
         final navegador = Navigator.of(context);
-        navegador.pop(); 
+        navegador.pop();
         if (pantalla != null) {
-          navegador.push(
-            MaterialPageRoute(builder: (context) => pantalla),
-          );
+          navegador.push(MaterialPageRoute(builder: (context) => pantalla));
         }
       },
     );
@@ -57,22 +54,63 @@ class MenuUsuario extends StatelessWidget {
             child: Align(
               alignment: Alignment.topCenter,
               child: Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colores.bloqueOscuro,
+                  color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // Fondo oscuro translúcido unificado
                   borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde dorado sutil
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.4),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    opcionMenu(context, 'Inventario- Instrumentos', const InventarioInstrumentos()),
-                    opcionMenu(context, 'Inventario- Partituras', const InventarioPartituras()),
-                    opcionMenu(context, 'Multimedia', const MultimediaPantalla()),
-                    opcionMenu(context, 'Eventos', const PantallaEventos()),
+                    opcionMenu(
+                      context,
+                      'Inventario - Instrumentos',
+                      const InventarioInstrumentos(),
+                      Icons.piano, // Icono representativo de instrumentos
+                    ),
+                    opcionMenu(
+                      context,
+                      'Inventario - Partituras',
+                      const InventarioPartituras(),
+                      Icons.library_music, // Icono representativo de partituras/música
+                    ),
+                    opcionMenu(
+                      context,
+                      'Multimedia',
+                      const MultimediaPantalla(),
+                      Icons.perm_media, // Icono multimedia / videos / fotos
+                    ),
+                    opcionMenu(
+                      context,
+                      'Eventos',
+                      const PantallaEventos(),
+                      Icons.event, // Icono de calendario / eventos
+                    ),
                     if (Sesion.rol == 'admin')
-                      opcionMenu(context, 'Generar Código de Registro', const PantallaGenerarCodigo()),
-                    opcionMenu(context, 'Perfil', const PantallaPerfil()),
+                      opcionMenu(
+                        context,
+                        'Generar Código de Registro',
+                        const PantallaGenerarCodigo(),
+                        Icons.qr_code_rounded, // Icono de códigos QR / registro
+                      ),
+                    opcionMenu(
+                      context,
+                      'Perfil',
+                      const PantallaPerfil(),
+                      Icons.person_outline, // Icono de perfil de usuario
+                    ),
                   ],
                 ),
               ),

@@ -61,14 +61,6 @@ class _ListadoInstrumentosScreenState extends State<ListadoInstrumentosScreen> {
     );
   }
 
-  Widget texto(String t, double size, {bool negrita = false, Color color = Colors.white}) => Text(
-        t,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: color, fontSize: size, fontWeight: negrita ? FontWeight.bold : FontWeight.normal),
-      );
-
-  Widget espacio(double h) => SizedBox(height: h);
-
   @override
   Widget build(BuildContext context) {
     // Aplanamos la estructura que viene del INNER JOIN del backend
@@ -102,109 +94,184 @@ class _ListadoInstrumentosScreenState extends State<ListadoInstrumentosScreen> {
         child: SafeArea(
           child: Stack(
             children: [
-              Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
-                      tooltip: 'Volver',
-                      onPressed: () => Navigator.pop(context),
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(
+                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      width: 1.2,
                     ),
-                  ),
-                  texto('Listado de Instrumentos', 24, negrita: true),
-                  espacio(16),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colores.bloqueOscuro,
-                        borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
                       ),
-                      child: isLoading
-                          ? const Center(child: CircularProgressIndicator(color: Colors.white))
-                          : instrumentosAgrupados.isEmpty
-                              ? const Center(
-                                  child: Text(
-                                    'No hay instrumentos registrados aún.',
-                                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              : ListView(
-                                  children: instrumentosAgrupados.entries.map((entry) {
-                                    final nombreInstrumento = entry.key;
-                                    final listaDetalles = entry.value;
-
-                                    return Theme(
-                                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                                      child: ExpansionTile(
-                                        title: Text(
-                                          nombreInstrumento,
-                                          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-                                        ),
-                                        iconColor: Colores.naranja,
-                                        collapsedIconColor: Colors.white70,
-                                        children: listaDetalles.map((detalle) {
-                                          final estado = detalle['instrumento_en'] ?? 'N/A';
-                                          final serial = detalle['numero_serial'] ?? 'N/A';
-                                          
-                                          String fechaFormateada = 'N/A';
-                                          if (detalle['fecha_registro'] != null) {
-                                            final fecha = DateTime.parse(detalle['fecha_registro']);
-                                            fechaFormateada = "${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}";
-                                          }
-
-                                          return Container(
-                                            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: Colores.botonClaro,
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    estado,
-                                                    style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    serial,
-                                                    style: const TextStyle(color: Colors.black54),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    fechaFormateada,
-                                                    style: const TextStyle(color: Colors.black54, fontSize: 12),
-                                                    textAlign: TextAlign.end,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                    ),
+                    ],
                   ),
-                  espacio(20),
-                  texto('BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA', 18,
-                      negrita: true, color: Colores.colorLetra1),
-                  espacio(16),
-                ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Botón de regresar unificado en dorado
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Color(0xFFE2BC65), size: 28),
+                        tooltip: 'Volver',
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Título principal con degradado dorado unificado
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFE2BC65),
+                              Color(0xFFC29B45),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color.fromARGB(255, 99, 96, 96).withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.list_alt, color: Color.fromARGB(255, 23, 30, 32), size: 22),
+                            SizedBox(width: 10),
+                            Text(
+                              'LISTADO DE INSTRUMENTOS',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Contenedor interno para la lista
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.55,
+                        child: isLoading
+                            ? const Center(child: CircularProgressIndicator(color: Color(0xFFE2BC65)))
+                            : instrumentosAgrupados.isEmpty
+                                ? const Center(
+                                    child: Text(
+                                      'No hay instrumentos registrados aún.',
+                                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
+                                : ListView(
+                                    children: instrumentosAgrupados.entries.map((entry) {
+                                      final nombreInstrumento = entry.key;
+                                      final listaDetalles = entry.value;
+
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(dividerColor: const Color.fromARGB(0, 148, 144, 144)),
+                                        child: ExpansionTile(
+                                          title: Text(
+                                            nombreInstrumento,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.3,
+                                            ),
+                                          ),
+                                          iconColor: const Color(0xFFE2BC65),
+                                          collapsedIconColor: const Color(0xFFE2BC65),
+                                          children: listaDetalles.map((detalle) {
+                                            final estado = detalle['instrumento_en'] ?? 'N/A';
+                                            final serial = detalle['numero_serial'] ?? 'N/A';
+                                            
+                                            String fechaFormateada = 'N/A';
+                                            if (detalle['fecha_registro'] != null) {
+                                              final fecha = DateTime.parse(detalle['fecha_registro']);
+                                              fechaFormateada = "${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}";
+                                            }
+
+                                            return Container(
+                                              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
+                                                borderRadius: BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: const Color(0xFFE2BC65).withValues(alpha: 0.3),
+                                                  width: 1.0,
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      estado,
+                                                      style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      serial,
+                                                      style: const TextStyle(color: Colors.black54),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      fechaFormateada,
+                                                      style: const TextStyle(color: Colors.black54, fontSize: 12),
+                                                      textAlign: TextAlign.end,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Pie de página institucional unificado
+                      const Center(
+                        child: Text(
+                          "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
 
               // Chatbot flotante arrastrable

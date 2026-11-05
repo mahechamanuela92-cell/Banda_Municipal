@@ -113,18 +113,39 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Eliminar archivo'),
+        backgroundColor: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFE2BC65), width: 1.2),
+        ),
+        title: const Text(
+          'Eliminar archivo',
+          style: TextStyle(
+            color: Color(0xFFE2BC65),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Text(
           '¿Quieres eliminar "${archivo['titulo'] ?? 'este archivo'}"?',
+          style: const TextStyle(color: Colors.white70),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar'),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -162,7 +183,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
     final url = archivo['url_archivo']?.toString() ?? '';
     final esFoto = widget.tipoMultimedia == 'foto';
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(12),
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -181,7 +202,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                   : const Center(
                       child: Icon(
                         Icons.play_circle_fill,
-                        color: Colors.white,
+                        color: Color(0xFFE2BC65),
                         size: 56,
                       ),
                     ),
@@ -196,7 +217,11 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
               child: IconButton(
                 tooltip: 'Eliminar',
                 onPressed: _subiendo ? null : () => _eliminarArchivo(archivo),
-                icon: const Icon(Icons.delete_outline, color: Colors.white),
+                icon: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -211,7 +236,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                 archivo['titulo']?.toString() ?? widget.titulo,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           ),
@@ -228,81 +253,150 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colores.bloqueOscuro,
-                borderRadius: BorderRadius.circular(20),
+                color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: const Color(
+                    0xFFE2BC65,
+                  ).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
+                  // Cabecera con botón de regresar y botón de actualizar
                   Row(
                     children: [
                       IconButton(
                         tooltip: 'Volver',
                         onPressed: () => Navigator.pop(context),
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.arrow_back,
-                          color: Colores.naranja,
-                          size: 30,
+                          color: Color(0xFFE2BC65),
+                          size: 28,
                         ),
                       ),
-                      Expanded(
-                        child: Text(
-                          widget.titulo,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      const Spacer(),
                       IconButton(
                         tooltip: 'Actualizar',
                         onPressed: _cargando || _subiendo ? null : _cargarDatos,
-                        icon: const Icon(Icons.refresh, color: Colors.white),
+                        icon: const Icon(
+                          Icons.refresh,
+                          color: Color(0xFFE2BC65),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    initialValue: _idEvento,
-                    dropdownColor: Colores.bloqueOscuro,
-                    decoration: const InputDecoration(
-                      labelText: 'Evento (opcional)',
-                      labelStyle: TextStyle(color: Colors.white70),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white54),
+                  const SizedBox(height: 5),
+
+                  // Título principal con degradado dorado unificado
+                  Container(
+                    width: double.infinity,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                       ),
+                      borderRadius: BorderRadius.circular(30.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    style: const TextStyle(color: Colors.white),
-                    items: [
-                      const DropdownMenuItem(
-                        value: '',
-                        child: Text('Sin asociar a evento'),
-                      ),
-                      for (final evento in _eventos)
-                        DropdownMenuItem(
-                          value: evento['id_evento'].toString(),
-                          child: Text(
-                            evento['nombre_evento']?.toString() ?? 'Evento',
-                            overflow: TextOverflow.ellipsis,
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          widget.tipoMultimedia == 'foto'
+                              ? Icons.photo_library
+                              : Icons.video_library,
+                          color: const Color.fromARGB(255, 23, 30, 32),
+                          size: 22,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          widget.titulo.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Color.fromARGB(255, 23, 30, 32),
+                            letterSpacing: 0.5,
                           ),
                         ),
-                    ],
-                    onChanged: _subiendo
-                        ? null
-                        : (value) => setState(
-                            () => _idEvento = value?.isEmpty == true
-                                ? null
-                                : value,
-                          ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 15),
+
+                  // Selector de Evento (opcional)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 76, 79, 80).withValues(alpha: 0.75),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      value: _idEvento,
+                      dropdownColor: const Color.fromARGB(255, 76, 79, 80).withValues(alpha: 0.75),
+                      decoration: const InputDecoration(
+                        labelText: 'Evento (opcional)',
+                        labelStyle: TextStyle(color: Color.fromARGB(137, 247, 245, 245)),
+                        border: InputBorder.none,
+                      ),
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      items: [
+                        const DropdownMenuItem(
+                          value: '',
+                          child: Text('Sin asociar a evento'),
+                        ),
+                        for (final evento in _eventos)
+                          DropdownMenuItem(
+                            value: evento['id_evento'].toString(),
+                            child: Text(
+                              evento['nombre_evento']?.toString() ?? 'Evento',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
+                      onChanged: _subiendo
+                          ? null
+                          : (value) => setState(
+                              () => _idEvento = value?.isEmpty == true
+                                  ? null
+                                  : value,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Grid de archivos
                   Expanded(
                     child: _cargando
-                        ? Center(
+                        ? const Center(
                             child: CircularProgressIndicator(
-                              color: Colores.amarillo,
+                              color: Color(0xFFE2BC65),
                             ),
                           )
                         : _error != null
@@ -332,7 +426,9 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                                 _tarjetaArchivo(_archivos[index]),
                           ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
+
+                  // Botón de selección / subida con estilo píldora
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -345,7 +441,10 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                              ),
                             )
                           : Icon(
                               widget.tipoMultimedia == 'foto'
@@ -356,11 +455,34 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                         _subiendo
                             ? 'Subiendo...'
                             : 'Seleccionar ${widget.tipoMultimedia == 'foto' ? 'fotos' : 'video'}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFA1E3D8),
-                        foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: const Color(0xFFE2BC65),
+                        foregroundColor: const Color.fromARGB(255, 23, 30, 32),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Pie de página institucional unificado
+                  const Center(
+                    child: Text(
+                      "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFFE2BC65),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        height: 1.3,
                       ),
                     ),
                   ),

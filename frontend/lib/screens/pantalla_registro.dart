@@ -21,17 +21,17 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   final TextEditingController _codigoController = TextEditingController();
   bool _mostrarPassword = false;
 
-    static final RegExp _mayusculaRegex = RegExp(r'[A-ZÁÉÍÓÚÜÑ]');
-    static final RegExp _numeroRegex = RegExp(r'[0-9]');
-    static final RegExp _simboloRegex =
+  static final RegExp _mayusculaRegex = RegExp(r'[A-ZÁÉÍÓÚÜÑ]');
+  static final RegExp _numeroRegex = RegExp(r'[0-9]');
+  static final RegExp _simboloRegex =
       RegExp(r'[^A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ\s]');
 
-    bool get _cumpleLongitud => _passwordController.text.length >= 8;
-    bool get _cumpleMayuscula =>
+  bool get _cumpleLongitud => _passwordController.text.length >= 8;
+  bool get _cumpleMayuscula =>
       _mayusculaRegex.hasMatch(_passwordController.text);
-    bool get _cumpleNumero => _numeroRegex.hasMatch(_passwordController.text);
-    bool get _cumpleSimbolo => _simboloRegex.hasMatch(_passwordController.text);
-    bool get _passwordValida =>
+  bool get _cumpleNumero => _numeroRegex.hasMatch(_passwordController.text);
+  bool get _cumpleSimbolo => _simboloRegex.hasMatch(_passwordController.text);
+  bool get _passwordValida =>
       _cumpleLongitud && _cumpleMayuscula && _cumpleNumero && _cumpleSimbolo;
 
   // Variable para el tipo de documento seleccionado
@@ -55,8 +55,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   }
 
   Future<void> _registrarUsuario() async {
-    print("¡Botón presionado correctamente!");
-
     final nombre = _nombreController.text.trim();
     final tipoDoc = _tipoDocumentoElegido;
     final numDoc = _numDocumentoController.text.trim();
@@ -65,10 +63,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     final password = _passwordController.text.trim();
     final codigo = _codigoController.text.trim();
 
-    print("Intentando registrar a: $nombre, Correo: $correo, Código: $codigo");
-
     if (nombre.isEmpty || tipoDoc == null || numDoc.isEmpty || telefono.isEmpty || correo.isEmpty || password.isEmpty || codigo.isEmpty) {
-      print("¡Faltan campos por llenar!");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, completa todos los campos y el código')),
       );
@@ -86,7 +81,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
     try {
       final url = Uri.parse('$apiUrl/api/auth/register');
-      print("Conectando a la URL: $url");
 
       final response = await http.post(
         url,
@@ -102,9 +96,6 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         }),
       ).timeout(const Duration(seconds: 5));
 
-      print("Código de respuesta del servidor: ${response.statusCode}");
-      print("Respuesta: ${response.body}");
-
       final data = jsonDecode(response.body);
 
       if (!mounted) return;
@@ -113,7 +104,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('¡Registro exitoso! Ya puedes iniciar sesión.')),
         );
-        Navigator.pop(context); // Vuelve al login
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['error'] ?? 'Error al registrarse')),
@@ -169,18 +160,15 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFB3F0EC),
-                          Color(0xFF8AE1DC),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+                      color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(30.0),
+                      border: Border.all(
+                        color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
+                        width: 1.2,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -191,32 +179,32 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _tipoDocumentoElegido,
-                        hint: const Row(
-                          children: [
-                            Icon(Icons.badge, color: Color(0xFF0F4C5C), size: 22),
+                        hint: Row(
+                          children: const [
+                            Icon(Icons.badge, color: Color(0xFFE2BC65), size: 22),
                             SizedBox(width: 15),
                             Text(
                               'Tipo de Documento',
                               style: TextStyle(
-                                color: Color(0xFF0F4C5C),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                color: Colors.white60,
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal,
                               ),
                             ),
                           ],
                         ),
-                        icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF0F4C5C)),
+                        icon: const Icon(Icons.arrow_drop_down, color: Color(0xFFE2BC65)),
                         isExpanded: true,
-                        dropdownColor: const Color(0xFFB3F0EC),
+                        dropdownColor: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
                         style: const TextStyle(
-                          color: Color(0xFF0F4C5C),
+                          color: Colors.white,
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                         items: _tiposDocumento.map((String tipo) {
                           return DropdownMenuItem<String>(
                             value: tipo,
-                            child: Text(tipo),
+                            child: Text(tipo, style: const TextStyle(color: Colors.white)),
                           );
                         }).toList(),
                         onChanged: (String? nuevoValor) {
@@ -262,7 +250,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                   // --- CAMPO CORREO ---
                   _crearCampoTexto(
                     controller: _correoController,
-                    hintText: 'Correo',
+                    hintText: 'Correo electrónico',
                     icon: Icons.email,
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -281,7 +269,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                       },
                       icon: Icon(
                         _mostrarPassword ? Icons.visibility_off : Icons.visibility,
-                        color: const Color(0xFF0F4C5C),
+                        color: const Color(0xFFE2BC65),
                       ),
                       tooltip: _mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña',
                     ),
@@ -319,64 +307,68 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
                   const SizedBox(height: 25),
 
-                  // --- BOTÓN REGISTRARSE ---
-                  Container(
-                    width: double.infinity,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: _registrarUsuario,
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Ink(
+                  // --- BOTÓN REGISTRARSE (Centrado y elegante) ---
+                  Center(
+                    child: SizedBox(
+                      width: 250,
+                      height: 55,
+                      child: Container(
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFB3F0EC),
-                              Color(0xFF8AE1DC),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
                           borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                        child: Container(
-                          alignment: Alignment.center,
-                          constraints: const BoxConstraints(minHeight: 55),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.person_add,
-                                color: Color(0xFF0F4C5C),
-                                size: 24,
+                        child: ElevatedButton(
+                          onPressed: _registrarUsuario,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFE2BC65),
+                                  Color(0xFFC29B45),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
                               ),
-                              SizedBox(width: 10),
-                              Text(
-                                'REGISTRARSE',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF0F4C5C),
-                                  letterSpacing: 0.5,
-                                ),
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              constraints: const BoxConstraints(minHeight: 55),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.person_add,
+                                    color: Color.fromARGB(255, 23, 30, 32),
+                                    size: 22,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'REGISTRARSE',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color.fromARGB(255, 23, 30, 32),
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -424,7 +416,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     );
   }
 
-  // Método auxiliar reutilizable para los inputs de texto
+  // Método auxiliar reutilizable para los inputs de texto con estilo unificado
   Widget _crearCampoTexto({
     required TextEditingController controller,
     required String hintText,
@@ -438,18 +430,15 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       width: double.infinity,
       height: 55,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFFB3F0EC),
-            Color(0xFF8AE1DC),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // Fondo oscuro translúcido
         borderRadius: BorderRadius.circular(30.0),
+        border: Border.all(
+          color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde sutil dorado
+          width: 1.2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -463,21 +452,21 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         keyboardType: keyboardType,
         onChanged: onChanged,
         style: const TextStyle(
-          color: Color(0xFF0F4C5C),
+          color: Colors.white, // Texto en blanco para mayor visibilidad
           fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           icon: Icon(
             icon,
-            color: const Color(0xFF0F4C5C),
+            color: const Color(0xFFE2BC65), // Icono dorado unificado
             size: 22,
           ),
           hintText: hintText,
-          hintStyle: const TextStyle(
-            color: Color(0xFF0F4C5C),
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          hintStyle: TextStyle(
+            color: Colors.white.withValues(alpha: 0.6),
+            fontSize: 15,
+            fontWeight: FontWeight.normal,
           ),
           suffixIcon: suffixIcon,
           border: InputBorder.none,

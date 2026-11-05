@@ -3,7 +3,6 @@ import 'package:frontend/config/sesion.dart';
 import 'package:frontend/services/eventos_api.dart';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
-// Asegúrate de ajustar estas rutas según la ubicación de tus componentes de chat:
 import '../../components/chat/boton_chat_flotante.dart';
 import '../../components/chat/chat_banda_modal.dart';
 
@@ -15,7 +14,6 @@ class PantallaEventos extends StatefulWidget {
 }
 
 class _PantallaEventosState extends State<PantallaEventos> {
-  // Aquí guardamos lo que el usuario escribe o elige
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController lugarController = TextEditingController(
     text: 'Parque Principal',
@@ -71,7 +69,6 @@ class _PantallaEventosState extends State<PantallaEventos> {
     }
   }
 
-  // Abre el reloj para escoger la hora
   Future<void> elegirHora() async {
     final TimeOfDay? hora = await showTimePicker(
       context: context,
@@ -154,16 +151,39 @@ class _PantallaEventosState extends State<PantallaEventos> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Eliminar evento'),
-        content: Text('¿Quieres eliminar "${evento['nombre_evento']}"?'),
+        backgroundColor: const Color(0xFF0F4C5C),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFE2BC65), width: 1.2),
+        ),
+        title: const Text(
+          'Eliminar evento',
+          style: TextStyle(
+            color: Color(0xFFE2BC65),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          '¿Quieres eliminar "${evento['nombre_evento']}"?',
+          style: const TextStyle(color: Colors.white70),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar'),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -219,278 +239,430 @@ class _PantallaEventosState extends State<PantallaEventos> {
           FondoBase(
             child: SafeArea(
               child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        icon: Icon(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(
+                      color: const Color(
+                        0xFFE2BC65,
+                      ).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Flecha para volver unificada
+                      IconButton(
+                        icon: const Icon(
                           Icons.arrow_back,
-                          color: Colores.naranja,
-                          size: 30,
+                          color: Color(0xFFE2BC65),
+                          size: 28,
                         ),
                         tooltip: 'Volver',
                         onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                    // Formulario para crear o editar eventos
-                    Container(
-                      margin: const EdgeInsets.all(12),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colores.bloqueOscuro,
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(height: 10),
+
+                      // Título principal con degradado dorado unificado
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.event,
+                              color: Color.fromARGB(255, 23, 30, 32),
+                              size: 22,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'ADMINISTRAR EVENTOS',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Administrar eventos',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
+                      const SizedBox(height: 20),
 
-                          // Nombre del evento
-                          TextField(
-                            controller: nombreController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
-                              hintText: 'Nombre del evento',
-                              hintStyle: TextStyle(color: Colors.white),
-                              suffixIcon: Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-
-                          // Logo
-                          Center(
-                            child: Image.asset(
-                              'assets/images/fondo_login.png',
-                              height: 150,
-                            ),
-                          ),
-
-                          // Calendario
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: CalendarDatePicker(
-                              initialDate: fechaElegida,
-                              firstDate: primeraFecha,
-                              lastDate: DateTime(2035),
-                              onDateChanged: (DateTime fecha) {
-                                setState(() => fechaElegida = fecha);
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Hora
-                          Row(
-                            children: [
-                              Text(
-                                'Hora: ${horaElegida.format(context)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: elegirHora,
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          // Lugar
-                          Row(
-                            children: [
-                              const Text(
-                                'Lugar: ',
-                                style: TextStyle(color: Colors.white, fontSize: 16),
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  controller: lugarController,
-                                  style: const TextStyle(color: Colors.white),
-                                  decoration: const InputDecoration(
-                                    suffixIcon: Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Guardar o cancelar
-                          Center(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colores.botonClaro,
-                              ),
-                              onPressed: guardando ? null : guardarEvento,
-                              child: guardando
-                                  ? const SizedBox(
-                                      width: 22,
-                                      height: 22,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : Text(
-                                      idEventoEditando == null
-                                          ? 'Guardar evento'
-                                          : 'Actualizar evento',
-                                    ),
-                            ),
-                          ),
-                          if (idEventoEditando != null)
-                            Center(
-                              child: TextButton(
-                                onPressed: guardando ? null : cancelarEdicion,
-                                child: const Text('Cancelar edición'),
-                              ),
-                            ),
-                          const Divider(color: Colors.white30, height: 36),
-                          Row(
-                            children: [
-                              const Expanded(
-                                child: Text(
-                                  'Eventos guardados',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                tooltip: 'Actualizar lista',
-                                onPressed: cargandoEventos ? null : cargarEventos,
-                                icon: const Icon(
-                                  Icons.refresh,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (cargandoEventos)
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16),
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          else if (eventos.isEmpty)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Text(
-                                'Todavía no hay eventos registrados.',
-                                style: TextStyle(color: Colors.white70),
-                              ),
-                            )
-                          else
-                            for (final evento in eventos)
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.08),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            evento['nombre_evento']?.toString() ??
-                                                'Evento',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            '${etiquetaFecha(evento['fecha_evento'])} · ${parsearHora(evento['hora_evento']).format(context)} · ${evento['lugar_evento'] ?? 'Lugar por confirmar'}',
-                                            style: const TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Editar evento',
-                                      onPressed: guardando
-                                          ? null
-                                          : () => editarEvento(evento),
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Eliminar evento',
-                                      onPressed: guardando
-                                          ? null
-                                          : () => eliminarEvento(evento),
-                                      icon: const Icon(
-                                        Icons.delete_outline,
-                                        color: Colors.redAccent,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                        ],
-                      ),
-                    ),
-
-                    // Texto ubicado POR FUERA del bloque oscuro
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                      child: Text(
-                        'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                        textAlign: TextAlign.center,
+                      // Nombre del evento
+                      const Text(
+                        'Nombre del evento',
                         style: TextStyle(
-                          fontSize: 20,
-                          color: Colores.colorLetra1,
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 72, 74, 75).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: nombreController,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: const InputDecoration(
+                            hintText: 'Ej. Concierto de Gala',
+                            hintStyle: TextStyle(color: Color.fromARGB(137, 255, 255, 255)),
+                            border: InputBorder.none,
+                            suffixIcon: Icon(
+                              Icons.edit,
+                              color: Color(0xFF0F4C5C),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Logo opcional
+                      Center(
+                        child: Image.asset(
+                          'assets/images/fondo_login.png',
+                          height: 120,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Calendario estilizado
+                      const Text(
+                        'Fecha del evento',
+                        style: TextStyle(
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: CalendarDatePicker(
+                          initialDate: fechaElegida,
+                          firstDate: primeraFecha,
+                          lastDate: DateTime(2035),
+                          onDateChanged: (DateTime fecha) {
+                            setState(() => fechaElegida = fecha);
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Hora
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Hora: ${horaElegida.format(context)}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: elegirHora,
+                            icon: const Icon(
+                              Icons.access_time,
+                              color: Color(0xFFE2BC65),
+                              size: 18,
+                            ),
+                            label: const Text(
+                              'Cambiar Hora',
+                              style: TextStyle(color: Color(0xFFE2BC65)),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xFFE2BC65)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+
+                      // Lugar
+                      const Text(
+                        'Lugar del evento',
+                        style: TextStyle(
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 76, 78, 78).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: lugarController,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            suffixIcon: Icon(
+                              Icons.edit,
+                              color: Color(0xFF0F4C5C),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+
+                      // Botones de Guardar / Cancelar Edición
+                      Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE2BC65),
+                            foregroundColor: const Color.fromARGB(
+                              255,
+                              23,
+                              30,
+                              32,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 3,
+                          ),
+                          onPressed: guardando ? null : guardarEvento,
+                          child: guardando
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color.fromARGB(255, 23, 30, 32),
+                                  ),
+                                )
+                              : Text(
+                                  idEventoEditando == null
+                                      ? 'Guardar evento'
+                                      : 'Actualizar evento',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      if (idEventoEditando != null)
+                        Center(
+                          child: TextButton(
+                            onPressed: guardando ? null : cancelarEdicion,
+                            child: const Text(
+                              'Cancelar edición',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ),
+                        ),
+
+                      const Divider(
+                        color: Color(0xFFE2BC65),
+                        height: 40,
+                        thickness: 0.5,
+                      ),
+
+                      // Lista de Eventos Guardados
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'Eventos guardados',
+                              style: TextStyle(
+                                color: Color(0xFFE2BC65),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: 'Actualizar lista',
+                            onPressed: cargandoEventos ? null : cargarEventos,
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Color(0xFFE2BC65),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      if (cargandoEventos)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: CircularProgressIndicator(
+                              color: Color(0xFFE2BC65),
+                            ),
+                          ),
+                        )
+                      else if (eventos.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Text(
+                            'Todavía no hay eventos registrados.',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        )
+                      else
+                        for (final evento in eventos)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 68, 71, 71).withValues(alpha: 0.75),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(
+                                  0xFFE2BC65,
+                                ).withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        evento['nombre_evento']?.toString() ??
+                                            'Evento',
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(221, 255, 255, 255),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${etiquetaFecha(evento['fecha_evento'])} · ${parsearHora(evento['hora_evento']).format(context)} · ${evento['lugar_evento'] ?? 'Lugar por confirmar'}',
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(137, 255, 255, 255),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: 'Editar evento',
+                                  onPressed: guardando
+                                      ? null
+                                      : () => editarEvento(evento),
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFFE2BC65),
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: 'Eliminar evento',
+                                  onPressed: guardando
+                                      ? null
+                                      : () => eliminarEvento(evento),
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      const SizedBox(height: 25),
+
+                      // Pie de página institucional unificado
+                      const Center(
+                        child: Text(
+                          "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-          
-          // Botón flotante de la IA integrado correctamente aquí
+
+          // Botón flotante de la IA
           BotonChatFlotante(
             onPressed: () {
               showDialog(

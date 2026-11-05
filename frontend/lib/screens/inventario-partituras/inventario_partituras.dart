@@ -101,174 +101,221 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
         child: SafeArea(
           child: Stack(
             children: [
-              Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
-                      tooltip: 'Volver',
-                      onPressed: () => Navigator.pop(context),
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    borderRadius: BorderRadius.circular(24.0),
+                    border: Border.all(
+                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      width: 1.2,
                     ),
-                  ),
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 80),
-                            child: Image.asset('assets/images/fondo_login.png', height: 180),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.all(12),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colores.bloqueOscuro,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                            child: Column(
-                              children: [
-                                const Text(
-                                  'Subir Partitura (Admin)',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 40),
-
-                                const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('Tipo de archivo', style: TextStyle(color: Colors.white, fontSize: 16)),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colores.botonClaro,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: DropdownButton<String>(
-                                    value: tipoElegido,
-                                    hint: const Text('Subir archivo', style: TextStyle(color: Colors.black54)),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    dropdownColor: Colores.botonClaro,
-                                    items: [
-                                      for (String tipo in tipos)
-                                        DropdownMenuItem(value: tipo, child: Text(tipo)),
-                                    ],
-                                    onChanged: (valor) {
-                                      setState(() => tipoElegido = valor);
-                                      elegirArchivo(valor!);
-                                    },
-                                  ),
-                                ),
-                                if (nombreArchivo != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: Text(
-                                      'Archivo: $nombreArchivo',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-
-                                const SizedBox(height: 20),
-
-                                const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('Elegir Instrumento', style: TextStyle(color: Colors.white, fontSize: 16)),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colores.botonClaro,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: DropdownButton<String>(
-                                    value: instrumentoElegido,
-                                    hint: const Text('Seleccionar instrumento', style: TextStyle(color: Colors.black54)),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    dropdownColor: Colores.botonClaro,
-                                    items: [
-                                      for (String instrumento in instrumentos)
-                                        DropdownMenuItem(value: instrumento, child: Text(instrumento)),
-                                    ],
-                                    onChanged: (valor) {
-                                      setState(() => instrumentoElegido = valor);
-                                    },
-                                  ),
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('Seleccionar Voz', style: TextStyle(color: Colors.white, fontSize: 16)),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colores.botonClaro,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: DropdownButton<String>(
-                                    value: vozElegida,
-                                    hint: const Text('Seleccionar voz', style: TextStyle(color: Colors.black54)),
-                                    isExpanded: true,
-                                    underline: const SizedBox(),
-                                    dropdownColor: Colores.botonClaro,
-                                    items: [
-                                      for (String voz in voces)
-                                        DropdownMenuItem(value: voz, child: Text(voz)),
-                                    ],
-                                    onChanged: (valor) {
-                                      setState(() => vozElegida = valor);
-                                    },
-                                  ),
-                                ),
-
-                                const SizedBox(height: 35),
-
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colores.botonClaro,
-                                    foregroundColor: Colores.bloqueOscuro,
-                                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                  onPressed: guardarEnBackend,
-                                  child: const Text('Guardar Partitura', style: TextStyle(fontWeight: FontWeight.bold)),
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                    child: Text(
-                      'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colores.colorLetra1,
-                        fontWeight: FontWeight.bold,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Botón de regresar unificado en dorado
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Color(0xFFE2BC65), size: 28),
+                        tooltip: 'Volver',
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Título principal con degradado dorado unificado
+                      Container(
+                        width: double.infinity,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFE2BC65),
+                              Color(0xFFC29B45),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.library_music, color: Color.fromARGB(255, 23, 30, 32), size: 22),
+                            SizedBox(width: 10),
+                            Text(
+                              'SUBIR PARTITURA (ADMIN)',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                color: Color.fromARGB(255, 23, 30, 32),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+
+                      // Tipo de archivo
+                      const Text('Tipo de archivo', style: TextStyle(color: Color(0xFFE2BC65), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: DropdownButton<String>(
+                          value: tipoElegido,
+                          hint: const Text('Subir archivo', style: TextStyle(color: Color.fromARGB(137, 247, 246, 246))),
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          dropdownColor: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          style: const TextStyle(color: Color.fromARGB(255, 250, 250, 250), fontSize: 15),
+                          items: [
+                            for (String tipo in tipos)
+                              DropdownMenuItem(value: tipo, child: Text(tipo)),
+                          ],
+                          onChanged: (valor) {
+                            setState(() => tipoElegido = valor);
+                            elegirArchivo(valor!);
+                          },
+                        ),
+                      ),
+                      if (nombreArchivo != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            'Archivo: $nombreArchivo',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white70, fontSize: 13),
+                          ),
+                        ),
+
+                      const SizedBox(height: 20),
+
+                      // Elegir Instrumento
+                      const Text('Elegir Instrumento', style: TextStyle(color: Color(0xFFE2BC65), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: DropdownButton<String>(
+                          value: instrumentoElegido,
+                          hint: const Text('Seleccionar instrumento', style: TextStyle(color: Color.fromARGB(137, 250, 250, 250))),
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          dropdownColor: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
+                          style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 15),
+                          items: [
+                            for (String instrumento in instrumentos)
+                              DropdownMenuItem(value: instrumento, child: Text(instrumento)),
+                          ],
+                          onChanged: (valor) {
+                            setState(() => instrumentoElegido = valor);
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Seleccionar Voz
+                      const Text('Seleccionar Voz', style: TextStyle(color: Color(0xFFE2BC65), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: DropdownButton<String>(
+                          value: vozElegida,
+                          hint: const Text('Seleccionar voz', style: TextStyle(color: Color.fromARGB(137, 250, 250, 250))),
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          dropdownColor: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          style: const TextStyle(color: Color.fromARGB(255, 253, 253, 253), fontSize: 15),
+                          items: [
+                            for (String voz in voces)
+                              DropdownMenuItem(value: voz, child: Text(voz)),
+                          ],
+                          onChanged: (valor) {
+                            setState(() => vozElegida = valor);
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Botón Guardar con estilo píldora
+                      Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE2BC65),
+                            foregroundColor: const Color.fromARGB(255, 23, 30, 32),
+                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 3,
+                          ),
+                          onPressed: guardarEnBackend,
+                          child: const Text(
+                            'Guardar Partitura',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+
+                      // Pie de página institucional unificado
+                      const Center(
+                        child: Text(
+                          "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFE2BC65),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
 
               // Chatbot flotante arrastrable
