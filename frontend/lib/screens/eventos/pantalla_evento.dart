@@ -3,6 +3,9 @@ import 'package:frontend/config/sesion.dart';
 import 'package:frontend/services/eventos_api.dart';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
+// Asegúrate de ajustar estas rutas según la ubicación de tus componentes de chat:
+import '../../components/chat/boton_chat_flotante.dart';
+import '../../components/chat/chat_banda_modal.dart';
 
 class PantallaEventos extends StatefulWidget {
   const PantallaEventos({super.key});
@@ -211,278 +214,292 @@ class _PantallaEventosState extends State<PantallaEventos> {
         ? DateUtils.dateOnly(fechaElegida)
         : hoy;
     return Scaffold(
-      body: FondoBase(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colores.naranja,
-                      size: 30,
+      body: Stack(
+        children: [
+          FondoBase(
+            child: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colores.naranja,
+                          size: 30,
+                        ),
+                        tooltip: 'Volver',
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
-                    tooltip: 'Volver',
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                // Formulario para crear o editar eventos
-                Container(
-                  margin: const EdgeInsets.all(12),
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colores.bloqueOscuro,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Administrar eventos',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    // Formulario para crear o editar eventos
+                    Container(
+                      margin: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colores.bloqueOscuro,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      const SizedBox(height: 10),
-
-                      // Nombre del evento
-                      TextField(
-                        controller: nombreController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
-                          hintText: 'Nombre del evento',
-                          hintStyle: TextStyle(color: Colors.white),
-                          suffixIcon: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-
-                      // Logo
-                      Center(
-                        child: Image.asset(
-                          'assets/images/fondo_login.png',
-                          height: 150,
-                        ),
-                      ),
-
-                      // Calendario
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: CalendarDatePicker(
-                          initialDate: fechaElegida,
-                          firstDate: primeraFecha,
-                          lastDate: DateTime(2035),
-                          onDateChanged: (DateTime fecha) {
-                            setState(() => fechaElegida = fecha);
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Hora
-                      Row(
-                        children: [
-                          Text(
-                            'Hora: ${horaElegida.format(context)}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: elegirHora,
-                            icon: const Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // Lugar
-                      Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Lugar: ',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            'Administrar eventos',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          Expanded(
-                            child: TextField(
-                              controller: lugarController,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: const InputDecoration(
-                                suffixIcon: Icon(
+                          const SizedBox(height: 10),
+
+                          // Nombre del evento
+                          TextField(
+                            controller: nombreController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              hintText: 'Nombre del evento',
+                              hintStyle: TextStyle(color: Colors.white),
+                              suffixIcon: Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+
+                          // Logo
+                          Center(
+                            child: Image.asset(
+                              'assets/images/fondo_login.png',
+                              height: 150,
+                            ),
+                          ),
+
+                          // Calendario
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: CalendarDatePicker(
+                              initialDate: fechaElegida,
+                              firstDate: primeraFecha,
+                              lastDate: DateTime(2035),
+                              onDateChanged: (DateTime fecha) {
+                                setState(() => fechaElegida = fecha);
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Hora
+                          Row(
+                            children: [
+                              Text(
+                                'Hora: ${horaElegida.format(context)}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: elegirHora,
+                                icon: const Icon(
                                   Icons.edit,
                                   color: Colors.white,
                                   size: 18,
                                 ),
                               ),
+                            ],
+                          ),
+
+                          // Lugar
+                          Row(
+                            children: [
+                              const Text(
+                                'Lugar: ',
+                                style: TextStyle(color: Colors.white, fontSize: 16),
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: lugarController,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: const InputDecoration(
+                                    suffixIcon: Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Guardar o cancelar
+                          Center(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colores.botonClaro,
+                              ),
+                              onPressed: guardando ? null : guardarEvento,
+                              child: guardando
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      idEventoEditando == null
+                                          ? 'Guardar evento'
+                                          : 'Actualizar evento',
+                                    ),
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Guardar o cancelar
-                      Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colores.botonClaro,
-                          ),
-                          onPressed: guardando ? null : guardarEvento,
-                          child: guardando
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  idEventoEditando == null
-                                      ? 'Guardar evento'
-                                      : 'Actualizar evento',
-                                ),
-                        ),
-                      ),
-                      if (idEventoEditando != null)
-                        Center(
-                          child: TextButton(
-                            onPressed: guardando ? null : cancelarEdicion,
-                            child: const Text('Cancelar edición'),
-                          ),
-                        ),
-                      const Divider(color: Colors.white30, height: 36),
-                      Row(
-                        children: [
-                          const Expanded(
-                            child: Text(
-                              'Eventos guardados',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          if (idEventoEditando != null)
+                            Center(
+                              child: TextButton(
+                                onPressed: guardando ? null : cancelarEdicion,
+                                child: const Text('Cancelar edición'),
                               ),
                             ),
+                          const Divider(color: Colors.white30, height: 36),
+                          Row(
+                            children: [
+                              const Expanded(
+                                child: Text(
+                                  'Eventos guardados',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: 'Actualizar lista',
+                                onPressed: cargandoEventos ? null : cargarEventos,
+                                icon: const Icon(
+                                  Icons.refresh,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            tooltip: 'Actualizar lista',
-                            onPressed: cargandoEventos ? null : cargarEventos,
-                            icon: const Icon(
-                              Icons.refresh,
-                              color: Colors.white,
-                            ),
-                          ),
+                          if (cargandoEventos)
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          else if (eventos.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                'Todavía no hay eventos registrados.',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            )
+                          else
+                            for (final evento in eventos)
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            evento['nombre_evento']?.toString() ??
+                                                'Evento',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '${etiquetaFecha(evento['fecha_evento'])} · ${parsearHora(evento['hora_evento']).format(context)} · ${evento['lugar_evento'] ?? 'Lugar por confirmar'}',
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                      tooltip: 'Editar evento',
+                                      onPressed: guardando
+                                          ? null
+                                          : () => editarEvento(evento),
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      tooltip: 'Eliminar evento',
+                                      onPressed: guardando
+                                          ? null
+                                          : () => eliminarEvento(evento),
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.redAccent,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                         ],
                       ),
-                      if (cargandoEventos)
-                        const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16),
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      else if (eventos.isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Text(
-                            'Todavía no hay eventos registrados.',
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                        )
-                      else
-                        for (final evento in eventos)
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        evento['nombre_evento']?.toString() ??
-                                            'Evento',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '${etiquetaFecha(evento['fecha_evento'])} · ${parsearHora(evento['hora_evento']).format(context)} · ${evento['lugar_evento'] ?? 'Lugar por confirmar'}',
-                                        style: const TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  tooltip: 'Editar evento',
-                                  onPressed: guardando
-                                      ? null
-                                      : () => editarEvento(evento),
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                                IconButton(
-                                  tooltip: 'Eliminar evento',
-                                  onPressed: guardando
-                                      ? null
-                                      : () => eliminarEvento(evento),
-                                  icon: const Icon(
-                                    Icons.delete_outline,
-                                    color: Colors.redAccent,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                    ],
-                  ),
-                ),
-
-                // 2. Texto ubicado POR FUERA del bloque oscuro
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  child: Text(
-                    'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colores.colorLetra1,
-                      fontWeight: FontWeight.bold,
                     ),
-                  ),
+
+                    // Texto ubicado POR FUERA del bloque oscuro
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      child: Text(
+                        'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colores.colorLetra1,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          
+          // Botón flotante de la IA integrado correctamente aquí
+          BotonChatFlotante(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => const ChatBandaModal(),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

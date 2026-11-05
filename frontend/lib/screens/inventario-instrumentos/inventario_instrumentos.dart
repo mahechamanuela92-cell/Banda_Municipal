@@ -104,10 +104,10 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
   }
 
   Widget texto(String t, double size, {bool negrita = false, Color color = Colors.white}) => Text(
-        t,
-        textAlign: TextAlign.center,
-        style: TextStyle(color: color, fontSize: size, fontWeight: negrita ? FontWeight.bold : FontWeight.normal),
-      );
+      t,
+      textAlign: TextAlign.center,
+      style: TextStyle(color: color, fontSize: size, fontWeight: negrita ? FontWeight.bold : FontWeight.normal),
+    );
 
   Widget cajaClara(Widget? hijo, {double radio = 12, double? alto, EdgeInsets? pad}) => Container(
         width: double.infinity,

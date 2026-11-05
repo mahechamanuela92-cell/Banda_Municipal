@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/chat/chat_banda_modal.dart';
+import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/eventos/pantalla_evento.dart';
 import 'package:frontend/screens/multimedia/multimedia.dart';
@@ -10,6 +12,10 @@ import 'pantalla_perfil.dart';
 
 class MenuUsuario extends StatelessWidget {
   const MenuUsuario({super.key});
+
+  void _abrirAsistenteIA(BuildContext context) {
+    showDialog(context: context, builder: (_) => const ChatBandaModal());
+  }
 
   Widget opcionMenu(BuildContext context, String texto, Widget? pantalla) {
     return ListTile(
@@ -72,6 +78,9 @@ class MenuUsuario extends StatelessWidget {
               ),
             ),
           ),
+
+          // Chatbot flotante arrastrable integrado también en el menú
+          BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
         ],
       ),
     );

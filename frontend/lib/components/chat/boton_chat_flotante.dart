@@ -1,69 +1,94 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/themes/colores.dart';
-
+import 'chat_banda_modal.dart'; // Asegúrate de que la ruta a tu modal sea correcta
 
 class BotonChatFlotante extends StatefulWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
-  const BotonChatFlotante({super.key, required this.onPressed});
+  const BotonChatFlotante({super.key, this.onPressed});
 
   @override
   State<BotonChatFlotante> createState() => _BotonChatFlotanteState();
 }
 
 class _BotonChatFlotanteState extends State<BotonChatFlotante> {
-  // Posición inicial del botón en la esquina inferior derecha
-  double _bottom = 30.0;
-  double _right = 30.0;
+  static const double _tamanoBurbuja = 65.0; // Tamaño de tu burbuja flotante
+  static const double _margen = 16.0;
+  
+  // Posiciones iniciales flotantes
+  double _posicionX = 20.0;
+  double _posicionY = 30.0;
+
+  void _abrirChat() {
+    if (widget.onPressed != null) {
+      widget.onPressed!();
+    } else {
+      showDialog(
+        context: context,
+        builder: (_) => const ChatBandaModal(),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: _bottom,
-      right: _right,
-      child: GestureDetector(
-        // Permite arrastrar el botón por toda la pantalla
-        onPanUpdate: (details) {
-          setState(() {
-            // Restamos el delta para moverlo fluidamente con el dedo
-            _bottom -= details.delta.dy;
-            _right -= details.delta.dx;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final ancho = constraints.maxWidth;
+        final alto = constraints.maxHeight;
 
-            // Opcional: Limitar para que no se salga completamente de la pantalla
-            if (_bottom < 0) _bottom = 0;
-            if (_right < 0) _right = 0;
-          });
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colores.naranja.withOpacity(0.6),
-                blurRadius: 12,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: SizedBox(
-            width: 80, // Cambiado de 65 a 80
-            height: 80, // Cambiado de 65 a 80
-            child: FloatingActionButton(
-              onPressed: widget.onPressed,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/images/chatbot.jpg',
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
+        // Límites dinámicos exactos basados en la estructura de tu compañera
+        final maxX = (ancho - _tamanoBurbuja - _margen).clamp(_margen, ancho).toDouble();
+        final maxY = (alto - _tamanoBurbuja - _margen).clamp(_margen, alto).toDouble();
+        
+        _posicionX = _posicionX.clamp(_margen, maxX).toDouble();
+        _posicionY = _posicionY.clamp(_margen, maxY).toDouble();
+
+        return Stack(
+          children: [
+            Positioned(
+              right: _posicionX,
+              bottom: _posicionY,
+              child: GestureDetector(
+                onPanUpdate: (details) {
+                  setState(() {
+                    // Movimiento fluido en cualquier dirección (arriba, abajo, costados)
+                    _posicionX = (_posicionX - details.delta.dx).clamp(_margen, maxX).toDouble();
+                    _posicionY = (_posicionY - details.delta.dy).clamp(_margen, maxY).toDouble();
+                  });
+                },
+                onTap: _abrirChat,
+                child: Container(
+                  width: _tamanoBurbuja,
+                  height: _tamanoBurbuja,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colores.naranja.withOpacity(0.5),
+                        blurRadius: 12,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/chatbot.jpg',
+                      width: _tamanoBurbuja,
+                      height: _tamanoBurbuja,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colores.naranja,
+                        child: const Icon(Icons.chat, color: Colors.white, size: 30),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
+          ],
+        );
+      },
     );
   }
 }

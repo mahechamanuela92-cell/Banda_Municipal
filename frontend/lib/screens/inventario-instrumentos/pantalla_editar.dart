@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/chat/boton_chat_flotante.dart';
+import 'package:frontend/components/chat/chat_banda_modal.dart';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
 
@@ -25,6 +27,13 @@ class _PantallaEditarState extends State<PantallaEditar> {
     if (texto.isEmpty) return;
     setState(() => _lista.add(texto));
     _nombre.clear();
+  }
+
+  void _abrirAsistenteIA(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => const ChatBandaModal(),
+    );
   }
 
   Future<T?> _dialogo<T>(String t, Widget c, String s, T Function() v) => showDialog<T>(
@@ -76,141 +85,150 @@ class _PantallaEditarState extends State<PantallaEditar> {
     return Scaffold(
       body: FondoBase(
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colores.bloqueOscuro,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 38,
-                          left: 20,
-                          right: 20,
-                          child: Image.asset(
-                            'assets/images/fondo_login1.png',
-                            height: 150,
-                            color: Colores.bloqueOscuro,
-                            colorBlendMode: BlendMode.srcATop,
-                            errorBuilder: (context, error, stackTrace) => const SizedBox(),
-                          ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colores.bloqueOscuro,
+                          borderRadius: BorderRadius.circular(24),
                         ),
-                        Positioned.fill(
-                          child: Column(
-                            children: [
-                              _texto('Editar Lista', 24, b: true),
-                              _esp(170),
-                              _texto('Agregar Instrumento a la Lista', 18),
-                              _esp(10),
-
-                              // --- CUADRO DE TEXTO CON EL BOTÓN + ADENTRO ---
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colores.botonClaro,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: const EdgeInsets.symmetric(horizontal: 14),
-                                child: TextField(
-                                  controller: _nombre,
-                                  onSubmitted: (_) => _agregar(),
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  decoration: InputDecoration(
-                                    hintText: 'Nombre del instrumento...',
-                                    hintStyle: const TextStyle(color: Colors.black54),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                                    suffixIcon: IconButton(
-                                      icon: const Icon(
-                                        Icons.add_circle,
-                                        color: Color(0xFF0F4C5C), // Color oscuro para hacer bonito contraste
-                                        size: 28,
-                                      ),
-                                      onPressed: _agregar,
-                                    ),
-                                  ),
-                                ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 38,
+                              left: 20,
+                              right: 20,
+                              child: Image.asset(
+                                'assets/images/fondo_login1.png',
+                                height: 150,
+                                color: Colores.bloqueOscuro,
+                                colorBlendMode: BlendMode.srcATop,
+                                errorBuilder: (context, error, stackTrace) => const SizedBox(),
                               ),
+                            ),
+                            Positioned.fill(
+                              child: Column(
+                                children: [
+                                  _texto('Editar Lista', 24, b: true),
+                                  _esp(170),
+                                  _texto('Agregar Instrumento a la Lista', 18),
+                                  _esp(10),
 
-                              _esp(16),
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount: _lista.length,
-                                  itemBuilder: (context, i) => Card(
-                                    color: Colores.botonClaro,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                  // --- CUADRO DE TEXTO CON EL BOTÓN + ADENTRO ---
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colores.botonClaro,
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: ListTile(
-                                      title: Text(
-                                        _lista[i],
-                                        style: const TextStyle(fontWeight: FontWeight.w600),
+                                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                                    child: TextField(
+                                      controller: _nombre,
+                                      onSubmitted: (_) => _agregar(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit, color: Color(0xFF0F4C5C)),
-                                            onPressed: () => _editar(i),
+                                      decoration: InputDecoration(
+                                        hintText: 'Nombre del instrumento...',
+                                        hintStyle: const TextStyle(color: Colors.black54),
+                                        border: InputBorder.none,
+                                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                                        suffixIcon: IconButton(
+                                          icon: const Icon(
+                                            Icons.add_circle,
+                                            color: Color(0xFF0F4C5C), // Color oscuro para hacer bonito contraste
+                                            size: 28,
                                           ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete, color: Colors.red),
-                                            onPressed: () => _eliminar(i),
-                                          ),
-                                        ],
+                                          onPressed: _agregar,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              _esp(12),
 
-                              // Botón Guardar con estilo Píldora
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colores.botonClaro,
-                                  foregroundColor: const Color(0xFF0F4C5C),
-                                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
+                                  _esp(16),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: _lista.length,
+                                      itemBuilder: (context, i) => Card(
+                                        color: Colores.botonClaro,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: ListTile(
+                                          title: Text(
+                                            _lista[i],
+                                            style: const TextStyle(fontWeight: FontWeight.w600),
+                                          ),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.edit, color: Color(0xFF0F4C5C)),
+                                                onPressed: () => _editar(i),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.delete, color: Colors.red),
+                                                onPressed: () => _eliminar(i),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                  elevation: 3,
-                                ),
-                                onPressed: () => Navigator.pop(context, _lista),
-                                child: const Text(
-                                  'Guardar',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                  _esp(12),
+
+                                  // Botón Guardar con estilo Píldora
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colores.botonClaro,
+                                      foregroundColor: const Color(0xFF0F4C5C),
+                                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25),
+                                      ),
+                                      elevation: 3,
+                                    ),
+                                    onPressed: () => Navigator.pop(context, _lista),
+                                    child: const Text(
+                                      'Guardar',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    _esp(24),
+                    _texto(
+                      'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
+                      20,
+                      b: true,
+                      col: Colores.colorLetra1,
+                    ),
+                    _esp(16),
+                  ],
                 ),
-                _esp(24),
-                _texto(
-                  'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
-                  20,
-                  b: true,
-                  col: Colores.colorLetra1,
-                ),
-                _esp(16),
-              ],
-            ),
+              ),
+
+              // Chatbot flotante arrastrable
+              BotonChatFlotante(
+                onPressed: () => _abrirAsistenteIA(context),
+              ),
+            ],
           ),
         ),
       ),

@@ -11,13 +11,15 @@ import '../../widgets/fondos.dart';
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
 
+  get tarjetas => null;
+
   void _abrirAsistenteIA(BuildContext context) {
     showDialog(context: context, builder: (_) => const ChatBandaModal());
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, Object>> tarjetas = [
+    final List<Map<String, dynamic>> tarjetas = [
       {
         'titulo': 'NUESTRA HISTORIA',
         'img': 'assets/images/libro.png',
@@ -43,6 +45,7 @@ class Inicio extends StatelessWidget {
         child: SafeArea(
           child: Stack(
             children: [
+              // 1. Contenido principal desplazable
               SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24.0,
@@ -108,7 +111,7 @@ class Inicio extends StatelessWidget {
                 ),
               ),
 
-              // Botón superior del menú
+              // 2. Botón superior del menú
               Positioned(
                 top: 10,
                 left: 12,
@@ -127,8 +130,15 @@ class Inicio extends StatelessWidget {
                 ),
               ),
 
-              // Chatbot flotante arrastrable
-              BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
+              // 3. Botón flotante de la IA directo al final del Stack (sin Positioned externo)
+              BotonChatFlotante(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const ChatBandaModal(),
+                  );
+                },
+              ),
             ],
           ),
         ),
