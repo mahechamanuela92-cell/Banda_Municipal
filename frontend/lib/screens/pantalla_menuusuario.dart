@@ -78,9 +78,6 @@ class MenuUsuario extends StatelessWidget {
               ),
             ),
           ),
-
-          // Chatbot flotante arrastrable integrado también en el menú
-          BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
         ],
       ),
     );

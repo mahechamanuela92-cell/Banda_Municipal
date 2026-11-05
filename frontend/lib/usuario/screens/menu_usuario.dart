@@ -65,7 +65,7 @@ class MenuUsuario extends StatelessWidget {
                     ),
                     opcionMenu(
                       context,
-                      'multimedia',
+                      'Multimedia',
                       const PantallaMultimedia(),
                     ),
                     opcionMenu(

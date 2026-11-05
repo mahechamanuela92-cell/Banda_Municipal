@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import '../themes/colores.dart';
-import '../widgets/fondos.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:frontend/themes/colores.dart';
+import 'package:frontend/widgets/fondos.dart';
 
 class PantallaContacto extends StatelessWidget {
   const PantallaContacto({super.key});
+
+  // Coordenadas exactas de la Casa de la Cultura en Garzón, Huila
+  static const LatLng _ubicacionCasaCultura = LatLng(2.197307, -75.625975);
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +20,11 @@ class PantallaContacto extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Flecha para volver
+                // Flecha para volver al inicio
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 30),
+                    icon: Icon(Icons.arrow_back, color: Colores.naranja, size: 32),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -27,50 +32,67 @@ class PantallaContacto extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
-                // 1. LOGO PRINCIPAL (logo1.png)
+                // 1. LOGO PRINCIPAL
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
                   child: Image.asset(
-                    'assets/images/logo1.png',
+                    'assets/images/fondo_login1.png',
                     height: 130,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        height: 120,
-                        width: 120,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Colors.white24,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.image, size: 40, color: Colors.white70),
                       );
                     },
                   ),
                 ),
                 const SizedBox(height: 20),
 
-                // 2. TÍTULO CLARO CONTÁCTENOS
+                // 2. TÍTULO ESTÁTICO CONTÁCTENOS
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(15),
+                  height: 55,
                   decoration: BoxDecoration(
-                    color: Colores.botonClaro,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    'CONTÁCTENOS',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFB3F0EC),
+                        Color(0xFF8AE1DC),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
+                    borderRadius: BorderRadius.circular(30.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      SizedBox(width: 10),
+                      Text(
+                        'CONTÁCTENOS',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F4C5C),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 15),
 
-                // 3. CAJA OSCURA CON DATOS DE CONTACTO
+                // 3. CAJA OSCURA CON DATOS DE CONTACTO Y FOTO DE SERGIO
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -123,7 +145,7 @@ class PantallaContacto extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12.0),
                         child: Image.asset(
-                          'assets/images/sergio.jpg', // Reemplaza por la extensión real de tu foto (.png o .jpg)
+                          'assets/images/sergio.jpg',
                           height: 160,
                           width: 160,
                           fit: BoxFit.cover,
@@ -156,10 +178,10 @@ class PantallaContacto extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // 4. MAPA DE GARZÓN, HUILA (CASA DE LA CULTURA)
+                // 4. MAPA INTERACTIVO REAL (OpenStreetMap)
                 Container(
                   width: double.infinity,
-                  height: 180,
+                  height: 220,
                   decoration: BoxDecoration(
                     color: const Color(0xFF1E3A3A),
                     borderRadius: BorderRadius.circular(12),
@@ -174,57 +196,70 @@ class PantallaContacto extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.5),
-                    child: Stack(
-                      children: [
-                        // Fondo simulador visual de mapa con cuadrícula
-                        Positioned.fill(
-                          child: Container(
-                            color: const Color(0xFF132A2A),
-                            child: CustomPaint(
-                              painter: _GridPainter(),
-                            ),
-                          ),
+                    child: FlutterMap(
+                      options: MapOptions(
+                        initialCenter: _ubicacionCasaCultura,
+                        initialZoom: 16,
+                        minZoom: 5,
+                        maxZoom: 18,
+                        interactionOptions: const InteractionOptions(
+                          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                         ),
-                        // Contenido sobre el mapa (Pin y Dirección)
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.location_on,
-                                color: Colors.redAccent,
-                                size: 45,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.75),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colores.amarillo, width: 1),
-                                ),
-                                child: Column(
-                                  children: [
-                                    const Text(
-                                      'Casa de la Cultura Garzón',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName: 'com.example.frontend',
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: _ubicacionCasaCultura,
+                              width: 180,
+                              height: 75,
+                              alignment: Alignment.topCenter,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black87,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colores.amarillo, width: 1.2),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.5),
+                                          blurRadius: 6,
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      'Garzón, Huila - Colombia',
-                                      style: TextStyle(
-                                        color: Colores.amarillo,
-                                        fontSize: 12,
-                                      ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: const [
+                                        Text(
+                                          'Casa de la Cultura',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Garzón, Huila',
+                                          style: TextStyle(
+                                            color: Colors.yellowAccent,
+                                            fontSize: 9,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  const Icon(Icons.location_on, color: Colors.redAccent, size: 34),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -250,24 +285,4 @@ class PantallaContacto extends StatelessWidget {
       ),
     );
   }
-}
-
-// Dibujador de líneas de cuadrícula para dar textura de mapa
-class _GridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.08)
-      ..strokeWidth = 1;
-
-    for (double i = 0; i < size.width; i += 25) {
-      canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
-    }
-    for (double i = 0; i < size.height; i += 25) {
-      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

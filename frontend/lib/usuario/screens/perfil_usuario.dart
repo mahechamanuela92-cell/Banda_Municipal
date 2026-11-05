@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:frontend/config/api.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/inicioSesion.dart';
+import 'package:frontend/components/chat/boton_chat_flotante.dart';
+import 'package:frontend/components/chat/chat_banda_modal.dart';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
 
@@ -44,6 +46,10 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     super.dispose();
   }
 
+  void _abrirAsistenteIA(BuildContext context) {
+    showDialog(context: context, builder: (_) => const ChatBandaModal());
+  }
+
   String _mensajeError(http.Response response, String alternativa) {
     if (response.statusCode == 404) {
       return 'La ruta del perfil aún no está disponible en el backend.';
@@ -77,13 +83,13 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
       }
 
       final perfil = jsonDecode(response.body) as Map<String, dynamic>;
-        final usuario = perfil['usuarios'] is Map<String, dynamic>
+      final usuario = perfil['usuarios'] is Map<String, dynamic>
           ? perfil['usuarios'] as Map<String, dynamic>
           : const <String, dynamic>{};
-        _nombre.text = (perfil['nombre'] ?? usuario['nombre'] ?? Sesion.nombre ?? '')
+      _nombre.text = (perfil['nombre'] ?? usuario['nombre'] ?? Sesion.nombre ?? '')
           .toString();
-        _telefono.text = (perfil['telefono'] ?? usuario['telefono'] ?? '').toString();
-        _correo.text = (perfil['email'] ?? usuario['email'] ?? '').toString();
+      _telefono.text = (perfil['telefono'] ?? usuario['telefono'] ?? '').toString();
+      _correo.text = (perfil['email'] ?? usuario['email'] ?? '').toString();
       _fotoUrl = perfil['foto_perfil']?.toString();
       Sesion.nombre = _nombre.text;
     } catch (error) {
@@ -234,7 +240,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     );
   }
 
-  // <--- 2. Método _opcionMenu agregado para que funcione el botón de Cerrar Sesión --->
   Widget _opcionMenu(BuildContext context, String texto, VoidCallback onTap) {
     return SizedBox(
       width: double.infinity,
@@ -436,6 +441,9 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                   ),
                 ],
               ),
+
+              // Botón flotante del chatbot de la IA
+              BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),
         ),

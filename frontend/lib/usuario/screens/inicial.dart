@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/chat/boton_chat_flotante.dart';
+import 'package:frontend/components/chat/chat_banda_modal.dart';
 import 'menu_usuario.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_pantallas.dart';
 import 'package:frontend/widgets/inicio_pantallas/nuestra_historia_pantalla.dart';
@@ -10,10 +12,14 @@ import '../../widgets/fondos.dart';
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
 
+  void _abrirAsistenteIA(BuildContext context) {
+    showDialog(context: context, builder: (_) => const ChatBandaModal());
+  }
+
   @override
   Widget build(BuildContext context) {
     // Configuración de las tarjetas principales (cada una con su pantalla de destino)
-    final tarjetas = <Map<String, Object?>>[
+    final tarjetas = [
       {
         'titulo': 'NUESTRA HISTORIA',
         'img': 'assets/images/libro.png',
@@ -113,6 +119,9 @@ class Inicio extends StatelessWidget {
                   },
                 ),
               ),
+
+              // Botón flotante del chatbot de la IA
+              BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),
         ),
