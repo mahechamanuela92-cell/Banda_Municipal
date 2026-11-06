@@ -8,17 +8,23 @@ import '../../themes/colores.dart';
 class MenuUsuarios extends StatelessWidget {
   const MenuUsuarios({super.key});
 
-  Widget opcionMenu(BuildContext context, String texto, Widget? pantalla) {
+  Widget opcionMenu(BuildContext context, String texto, Widget? pantalla, IconData icono) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      leading: const Icon(Icons.music_note, color: Colors.white, size: 28),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      leading: Icon(icono, color: const Color(0xFFE2BC65), size: 24), // 🌟 Icono en tono dorado sutil
       title: Text(
         texto,
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 16,
-          letterSpacing: 0.5,
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
         ),
+      ),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        color: Colors.white70,
+        size: 14,
       ),
       onTap: () {
         final navegador = Navigator.of(context);
@@ -44,37 +50,59 @@ class MenuUsuarios extends StatelessWidget {
             ),
           ),
 
-          // CAPA 2: cuadro oscuro con las opciones
+          // CAPA 2: cuadro translúcido principal con bordes dorados
           SafeArea(
             child: Align(
               alignment: Alignment.topCenter,
-              child: Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colores.bloqueOscuro,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    opcionMenu(
-                      context,
-                      'Partituras',
-                      const PartiturasUsuario(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Container(
+                  width: 280, // Ajusta el ancho si prefieres que sea más compacto o déjalo adaptado
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 45, 51, 53).withValues(alpha: 0.85), // 🌟 Fondo translúcido oscuro unificado
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color(0xFFE2BC65).withValues(alpha: 0.6), // 🌟 Borde sutil dorado
+                      width: 1.2,
                     ),
-                    opcionMenu(
-                      context,
-                      'Multimedia',
-                      const PantallaMultimedia(),
-                    ),
-                    opcionMenu(
-                      context,
-                      'Eventos - presentaciones',
-                      const ListaEventosUsuario(),
-                    ),
-                    opcionMenu(context, 'Perfil', const PantallaPerfil()),
-                  ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      opcionMenu(
+                        context,
+                        'Partituras',
+                        const PartiturasUsuario(),
+                        Icons.library_music,
+                      ),
+                      opcionMenu(
+                        context,
+                        'Multimedia',
+                        const PantallaMultimedia(),
+                        Icons.perm_media,
+                      ),
+                      opcionMenu(
+                        context,
+                        'Eventos - presentaciones',
+                        const ListaEventosUsuario(),
+                        Icons.event_note,
+                      ),
+                      opcionMenu(
+                        context,
+                        'Perfil',
+                        const PantallaPerfil(),
+                        Icons.person_pin,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

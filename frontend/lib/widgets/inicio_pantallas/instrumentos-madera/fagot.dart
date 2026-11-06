@@ -55,7 +55,7 @@ class _FagotItemState extends State<FagotItem> {
       await _audioPlayer.pause();
     } else {
       //audio de los instrumentos
-      await _audioPlayer.play(AssetSource('audios/fagot.mp3'));
+      await _audioPlayer.play(AssetSource('audios/fagot.wav'));
     }
   }
 

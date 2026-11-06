@@ -9,9 +9,14 @@ class ChatHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colores.bloqueOscuro,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        border: Border(bottom: BorderSide(color: Colores.naranja.withOpacity(0.3))),
+        color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          bottom: BorderSide(
+            color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado unificado
+            width: 1.2,
+          ),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -20,7 +25,7 @@ class ChatHeader extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundColor: Colores.botonClaro,
+                backgroundColor: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
                 backgroundImage: const AssetImage('assets/images/chatbot.jpg'),
               ),
               const SizedBox(width: 10),
@@ -29,14 +34,15 @@ class ChatHeader extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 15,
                   letterSpacing: 0.5,
                 ),
               ),
             ],
           ),
           IconButton(
-            icon: const Icon(Icons.close, color: Colors.white70),
+            icon: const Icon(Icons.close, color: Color(0xFFE2BC65)),
+            tooltip: 'Cerrar',
             onPressed: () => Navigator.pop(context),
           ),
         ],

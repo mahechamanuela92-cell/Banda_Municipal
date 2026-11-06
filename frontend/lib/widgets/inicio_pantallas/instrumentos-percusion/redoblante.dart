@@ -55,7 +55,7 @@ class _RedoblanteItemState extends State<RedoblanteItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/redoblante.mp3'));
+      await _audioPlayer.play(AssetSource('audios/redoblante.wav'));
     }
   }
 

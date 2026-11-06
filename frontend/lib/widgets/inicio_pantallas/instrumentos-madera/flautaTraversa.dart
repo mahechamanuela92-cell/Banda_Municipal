@@ -54,7 +54,7 @@ class _FlautaTraversaItemState extends State<FlautaTraversaItem> {
     if (estaReproduciendo) {
       await _audioPlayer.pause();
     } else {
-      await _audioPlayer.play(AssetSource('audios/flauta.mp3'));
+      await _audioPlayer.play(AssetSource('audios/flauta_traversa.wav'));
     }
   }
 

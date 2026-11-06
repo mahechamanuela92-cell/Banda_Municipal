@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/themes/colores.dart';
 import 'package:frontend/widgets/fondos.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos-cuerda/contrabajo.dart';
-import 'package:frontend/widgets/inicio_pantallas/instrumentos-cuerda/viola.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos-cuerda/violonchelo.dart';
 
-// Importación de componentes de instrumentos de cuerda
-import 'instrumentos-cuerda/violin.dart';
+
 
 class CuerdasPantalla extends StatelessWidget {
   const CuerdasPantalla({super.key});
@@ -108,12 +106,6 @@ class CuerdasPantalla extends StatelessWidget {
                           ),
                           children: const [
                             SizedBox(height: 10),
-                            // 1. Violín
-                            ViolinItem(),
-                            SizedBox(height: 8),
-                            // 2. Viola
-                            ViolaItem(),
-                            SizedBox(height: 8),
                             // 3. Violonchelo
                             VioloncheloItem(),
                             SizedBox(height: 8),

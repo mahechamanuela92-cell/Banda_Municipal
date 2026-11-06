@@ -55,7 +55,7 @@ class _OboeItemState extends State<OboeItem> {
       await _audioPlayer.pause();
     } else {
       //audio de los instrumentos
-      await _audioPlayer.play(AssetSource('audios/oboe.mp3'));
+      await _audioPlayer.play(AssetSource('audios/oboe.wav'));
     }
   }
 
@@ -82,7 +82,7 @@ class _OboeItemState extends State<OboeItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/oboe.jpg',
+                  'assets/images/oboe.png',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,

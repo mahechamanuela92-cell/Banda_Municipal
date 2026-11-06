@@ -29,9 +29,7 @@ class PantallaMultimedia extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: const Color(
-                      0xFF0F4C5C,
-                    ).withValues(alpha: 0.8), // 🌟 Fondo translúcido unificado
+                    color: const Color.fromARGB(255, 45, 51, 53).withValues(alpha: 0.85), // 🌟 Fondo translúcido unificado
                     borderRadius: BorderRadius.circular(24.0),
                     border: Border.all(
                       color: const Color(
@@ -91,7 +89,7 @@ class PantallaMultimedia extends StatelessWidget {
                           children: const [
                             Icon(
                               Icons.perm_media,
-                              color: Color.fromARGB(255, 23, 30, 32),
+                              color: Color.fromARGB(255, 8, 8, 8),
                               size: 22,
                             ),
                             SizedBox(width: 10),
@@ -100,7 +98,7 @@ class PantallaMultimedia extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
-                                color: Color.fromARGB(255, 23, 30, 32),
+                                color: Color.fromARGB(255, 0, 0, 0),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -119,7 +117,7 @@ class PantallaMultimedia extends StatelessWidget {
                             final opcion = opciones[index];
                             return Container(
                               decoration: BoxDecoration(
-                                color: Colores.botonClaro,
+                                color: const Color.fromARGB(255, 71, 74, 75).withValues(alpha: 0.85),
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
                                   color: const Color(
@@ -136,7 +134,7 @@ class PantallaMultimedia extends StatelessWidget {
                                 title: Text(
                                   '${opcion['titulo']}',
                                   style: const TextStyle(
-                                    color: Colors.black87,
+                                    color: Color.fromARGB(221, 255, 255, 255),
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -145,11 +143,11 @@ class PantallaMultimedia extends StatelessWidget {
                                   opcion['tipo'] == 'foto'
                                       ? Icons.photo_library
                                       : Icons.video_library,
-                                  color: const Color(0xFF0F4C5C),
+                                  color: const Color(0xFFE2BC65),
                                 ),
                                 trailing: const Icon(
                                   Icons.arrow_forward_ios,
-                                  color: Color(0xFF0F4C5C),
+                                  color: const Color(0xFFE2BC65),
                                   size: 16,
                                 ),
                                 onTap: () {

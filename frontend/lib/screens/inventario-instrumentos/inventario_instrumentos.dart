@@ -20,12 +20,12 @@ class _InventarioInstrumentosState extends State<InventarioInstrumentos> {
   final TextEditingController _serialController = TextEditingController();
   
   List<String> instrumentos = [
-    'Flauta Traversa', 'Flauta Picolo', 'Clarinete', 'Saxófono',
+    'Flauta Traversa', 'Flauta Picolo', 'Clarinete', 'Clarinete Bajo','Saxófono', 'Saxofon Tenor', 'Saxofon Barítono', 'Saxofon Soprano',
     'Oboe', 'Fagot', 'Trompeta', 'Fliscorno', 'Trombón',
-    'Bombardino', 'Tuba', 'Corneta', 'Violín', 'Viola',
+    'Bombardino', 'Tuba', 'Corno',
     'Violonchelo', 'Contrabajo', 'Bombo', 'Redoblante',
     'Platillos', 'Batería', 'Glockenspiel', 'Timbales Sinfónicos',
-    'Congas', 'Timbal',
+    'Congas', 'Timbal', 'Chucho', 'Esterilla', 'Requinto', 'Marrana', 'Tambora',
   ];
   
   List<String> estados = ['Mantenimiento', 'Buen estado', 'Mal estado', 'Préstamo'];

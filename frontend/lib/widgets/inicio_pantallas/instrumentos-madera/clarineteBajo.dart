@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-class CornetaItem extends StatefulWidget {
-  const CornetaItem({super.key});
+class ClarineteBajoItem extends StatefulWidget {
+  const ClarineteBajoItem({super.key});
 
   @override
-  State<CornetaItem> createState() => _CornetaItemState();
+  State<ClarineteBajoItem> createState() => _ClarineteBajoItemState();
 }
 
-class _CornetaItemState extends State<CornetaItem> {
+class _ClarineteBajoItemState extends State<ClarineteBajoItem> {
   late AudioPlayer _audioPlayer;
   bool estaReproduciendo = false;
   Duration duracionTotal = Duration.zero;
@@ -55,7 +55,7 @@ class _CornetaItemState extends State<CornetaItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/corneta.mp3'));
+      await _audioPlayer.play(AssetSource('audios/clarinete_bajo.wav'));
     }
   }
 
@@ -65,7 +65,7 @@ class _CornetaItemState extends State<CornetaItem> {
       iconColor: Colors.white70,
       collapsedIconColor: Colors.white70,
       title: const Text(
-        "Corneta",
+        "Clarinete Bajo",
         style: TextStyle(
           color: Colors.white,
           fontSize: 18,
@@ -82,7 +82,7 @@ class _CornetaItemState extends State<CornetaItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/corneta.jpg',
+                  'assets/images/clarineteBajo.jpg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -99,7 +99,7 @@ class _CornetaItemState extends State<CornetaItem> {
 
               // Descripción
               const Text(
-                "La corneta es un instrumento de viento-metal, comúnmente de latón, caracterizado por un tubo cónico más corto y ancho que la trompeta, lo que produce un timbre más cálido y redondo.",
+                "El clarinete bajo es un instrumento de viento-madera perteneciente a la familia del clarinete, que destaca por su tamaño más grande y su tubo doblado en forma de curva metálica (con una campana y tudel curvados).",
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14.5,

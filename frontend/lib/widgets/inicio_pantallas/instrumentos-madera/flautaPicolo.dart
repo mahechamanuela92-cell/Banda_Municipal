@@ -55,7 +55,7 @@ class _FlautaPiccoloItemState extends State<FlautaPiccoloItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/piccolo.mp3'));
+      await _audioPlayer.play(AssetSource('audios/flauta_picolo.mp3'));
     }
   }
 

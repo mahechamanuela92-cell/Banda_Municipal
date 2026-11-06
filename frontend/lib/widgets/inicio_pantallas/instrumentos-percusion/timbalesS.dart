@@ -55,7 +55,7 @@ class _TimbalesSinfonicosItemState extends State<TimbalesSinfonicosItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/timbalesS.mp3'));
+      await _audioPlayer.play(AssetSource('audios/timbalesSinfonicos.wav'));
     }
   }
 
@@ -82,7 +82,7 @@ class _TimbalesSinfonicosItemState extends State<TimbalesSinfonicosItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/timbalesS.jpg',
+                  'assets/images/timbalSinfonico.jpg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,

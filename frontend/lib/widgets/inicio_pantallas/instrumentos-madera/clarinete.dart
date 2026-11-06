@@ -55,7 +55,7 @@ class _ClarineteItemState extends State<ClarineteItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/clarinete.mp3'));
+      await _audioPlayer.play(AssetSource('audios/clarinete.wav'));
     }
   }
 

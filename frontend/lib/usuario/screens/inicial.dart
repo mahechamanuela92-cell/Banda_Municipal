@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
 import 'package:frontend/components/chat/boton_chat_flotante.dart';
-import 'package:frontend/screens/pantalla_menuusuario.dart';
 import 'package:frontend/usuario/screens/menu_usuario.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_pantallas.dart';
 import 'package:frontend/widgets/inicio_pantallas/nuestra_historia_pantalla.dart';

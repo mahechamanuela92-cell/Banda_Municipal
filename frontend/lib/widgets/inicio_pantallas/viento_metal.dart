@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/themes/colores.dart';
 import 'package:frontend/widgets/fondos.dart';
 import 'package:frontend/widgets/inicio_pantallas/intrumentos-metal/bombardino.dart';
-import 'package:frontend/widgets/inicio_pantallas/intrumentos-metal/corneta.dart';
+import 'package:frontend/widgets/inicio_pantallas/intrumentos-metal/corno.dart';
 import 'package:frontend/widgets/inicio_pantallas/intrumentos-metal/fliscorno.dart';
 import 'package:frontend/widgets/inicio_pantallas/intrumentos-metal/trombon.dart';
 import 'package:frontend/widgets/inicio_pantallas/intrumentos-metal/tuba.dart';
@@ -120,11 +119,12 @@ class VientoMetalPantalla extends StatelessWidget {
                             // 4. Trombón
                             TrombonItem(),
                             SizedBox(height: 8),
-                            // 5. Corneta
-                            CornetaItem(),
-                            SizedBox(height: 8),
                             // 6. Bombardino
                             BombardinoItem(),
+                            SizedBox(height: 8),
+                            //5. Corno
+                            CornoItem(),
+                            SizedBox(height: 8),                     
                           ],
                         ),
                       ),

@@ -3,7 +3,6 @@ import 'package:frontend/components/chat/chat_burbuja.dart';
 import 'package:frontend/components/chat/chat_header.dart';
 import 'package:frontend/components/chat/chat_input_field.dart';
 import 'package:frontend/services/chat_banda_service.dart';
-import '../../themes/colores.dart';
 
 class ChatBandaModal extends StatefulWidget {
   const ChatBandaModal({super.key});
@@ -15,13 +14,14 @@ class ChatBandaModal extends StatefulWidget {
 class _ChatBandaModalState extends State<ChatBandaModal> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  
+
   String? sesionId;
   final List<Map<String, String>> _mensajes = [
     {
       'role': 'bot',
-      'text': '¡Hola! 🎵 Bienvenida, dime qué necesitas el día de hoy. ¿Has olvidado alguna posición en tu instrumento? 🎺 o ¿Necesitas que te dé alguna recomendación para que tu sonido sea más dulce, agudo, grave o afinado? ✨ Dime lo que necesitas y yo te ayudaré. 🎼',
-    }
+      'text':
+          '¡Hola! 🎵 Bienvenid@, dime qué necesitas el día de hoy. ¿Has olvidado alguna posición en tu instrumento? 🎺 o ¿Necesitas que te dé alguna recomendación para que tu sonido sea más dulce, agudo, grave o afinado? ✨ Dime lo que necesitas y yo te ayudaré. 🎼',
+    },
   ];
   bool _cargando = false;
 
@@ -37,12 +37,18 @@ class _ChatBandaModalState extends State<ChatBandaModal> {
 
     _scrollHaciaAbajo();
 
-    final resultado = await ChatBandaService.enviarMensaje(texto, sesionId: sesionId);
+    final resultado = await ChatBandaService.enviarMensaje(
+      texto,
+      sesionId: sesionId,
+    );
 
     if (mounted) {
       setState(() {
         sesionId = resultado['sesionId'] ?? sesionId;
-        _mensajes.add({'role': 'bot', 'text': resultado['respuesta'] ?? 'Sin respuesta'});
+        _mensajes.add({
+          'role': 'bot',
+          'text': resultado['respuesta'] ?? 'Sin respuesta',
+        });
         _cargando = false;
       });
       _scrollHaciaAbajo();
@@ -80,14 +86,18 @@ class _ChatBandaModalState extends State<ChatBandaModal> {
         height: MediaQuery.of(context).size.height * 0.85,
         margin: EdgeInsets.only(bottom: bottomInset),
         decoration: BoxDecoration(
-          color: Colores.bloqueOscuro,
+          color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido oscuro unificado
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colores.naranja, width: 2),
+          border: Border.all(
+            color: const Color(0xFFE2BC65), // 🌟 Borde dorado unificado
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colores.naranja.withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4),
               blurRadius: 20,
               spreadRadius: 3,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -111,16 +121,25 @@ class _ChatBandaModalState extends State<ChatBandaModal> {
             ),
             if (_cargando)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 6,
+                ),
                 child: Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 14,
                       height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colores.naranja),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Color(0xFFE2BC65),
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    const Text('El asistente está escribiendo...', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                    const Text(
+                      'El asistente está escribiendo...',
+                      style: TextStyle(color: Color(0xFFE2BC65), fontSize: 12),
+                    ),
                   ],
                 ),
               ),

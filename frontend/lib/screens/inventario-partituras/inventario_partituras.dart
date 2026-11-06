@@ -19,12 +19,12 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
   List<String> tipos = ['PDF', 'Imagen', 'Word'];
   
   final List<String> instrumentos = [
-    'Flauta Traversa', 'Flauta Picolo', 'Clarinete', 'Saxófono',
+    'Flauta Traversa', 'Flauta Picolo', 'Clarinete','Clarinete Bajo', 'Saxófono', 'Saxofon Tenor', 'Saxofon Barítono', 'Saxofon Soprano',
     'Oboe', 'Fagot', 'Trompeta', 'Fliscorno', 'Trombón',
-    'Bombardino', 'Tuba', 'Corneta', 'Violín', 'Viola',
+    'Bombardino', 'Tuba', 'Corno',
     'Violonchelo', 'Contrabajo', 'Bombo', 'Redoblante',
     'Platillos', 'Batería', 'Glockenspiel', 'Timbales Sinfónicos',
-    'Congas', 'Timbal'
+    'Congas', 'Timbal', 'Chucho', 'Esterilla', 'Requinto', 'Marrana', 'Tambora',
   ];
 
   final List<String> voces = ['Voz 1', 'Voz 2', 'Voz 3', 'Voz 4', 'Voz 5', 'Voz 6', 'Voz 7'];

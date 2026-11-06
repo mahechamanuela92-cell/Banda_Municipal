@@ -65,7 +65,7 @@ class _SaxofonItemState extends State<SaxofonItem> {
       iconColor: Colors.white70,
       collapsedIconColor: Colors.white70,
       title: const Text(
-        "Saxofon",
+        "Saxofon Alto",
         style: TextStyle(
           color: Colors.white,
           fontSize: 18,

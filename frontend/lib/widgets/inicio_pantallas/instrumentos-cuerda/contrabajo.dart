@@ -55,7 +55,7 @@ class _ContrabajoItemState extends State<ContrabajoItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/contrabajo.mp3'));
+      await _audioPlayer.play(AssetSource('audios/contrabajo.wav'));
     }
   }
 

@@ -55,7 +55,7 @@ class _GlockenspielItemState extends State<GlockenspielItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/glockenspiel.mp3'));
+      await _audioPlayer.play(AssetSource('audios/Glockenspiel.wav'));
     }
   }
 
@@ -82,7 +82,7 @@ class _GlockenspielItemState extends State<GlockenspielItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/glockenspiel.jpg',
+                  'assets/images/glock.jpg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,

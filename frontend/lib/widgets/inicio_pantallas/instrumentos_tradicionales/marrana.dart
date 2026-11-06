@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-class ViolinItem extends StatefulWidget {
-  const ViolinItem({super.key});
+class MarranaItem extends StatefulWidget {
+  const MarranaItem({super.key});
 
   @override
-  State<ViolinItem> createState() => _ViolinItemState();
+  State<MarranaItem> createState() => _MarranaItemState();
 }
 
-class _ViolinItemState extends State<ViolinItem> {
+class _MarranaItemState extends State<MarranaItem> {
   late AudioPlayer _audioPlayer;
   bool estaReproduciendo = false;
   Duration duracionTotal = Duration.zero;
@@ -55,7 +55,7 @@ class _ViolinItemState extends State<ViolinItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/violin.mp3'));
+      await _audioPlayer.play(AssetSource('audios/marrana.mp3'));
     }
   }
 
@@ -65,7 +65,7 @@ class _ViolinItemState extends State<ViolinItem> {
       iconColor: Colors.white70,
       collapsedIconColor: Colors.white70,
       title: const Text(
-        "Violin",
+        "Marrana",
         style: TextStyle(
           color: Colors.white,
           fontSize: 18,
@@ -82,7 +82,7 @@ class _ViolinItemState extends State<ViolinItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/violin.jpg',
+                  'assets/images/marrana.jpg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -99,7 +99,7 @@ class _ViolinItemState extends State<ViolinItem> {
 
               // Descripción
               const Text(
-                "Instrumento musical de cuerda y arco, que se toca sujetándolo entre el hombro y la barbilla. Toca el violín en un cuarteto de cuerda.",
+                "La marrana es un Tambor de fricción tradicional (o puerca) fabricado con un calabazo y cuero, que al frotar una varilla emite un sonido grave y ronco muy característico que imita el gruñido de un cerdo.",
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14.5,

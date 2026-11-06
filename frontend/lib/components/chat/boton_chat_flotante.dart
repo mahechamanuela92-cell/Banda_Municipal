@@ -37,7 +37,7 @@ class _BotonChatFlotanteState extends State<BotonChatFlotante> {
         final ancho = constraints.maxWidth;
         final alto = constraints.maxHeight;
 
-        // Límites dinámicos exactos basados en la estructura de tu compañera
+        // Límites dinámicos exactos basados en la estructura
         final maxX = (ancho - _tamanoBurbuja - _margen).clamp(_margen, ancho).toDouble();
         final maxY = (alto - _tamanoBurbuja - _margen).clamp(_margen, alto).toDouble();
         
@@ -63,11 +63,15 @@ class _BotonChatFlotanteState extends State<BotonChatFlotante> {
                   height: _tamanoBurbuja,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFFE2BC65), // 🌟 Borde sutil dorado unificado
+                      width: 2.0,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colores.naranja.withOpacity(0.5),
-                        blurRadius: 12,
-                        spreadRadius: 2,
+                        color: Colors.black.withValues(alpha: 0.4),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
@@ -78,8 +82,8 @@ class _BotonChatFlotanteState extends State<BotonChatFlotante> {
                       height: _tamanoBurbuja,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colores.naranja,
-                        child: const Icon(Icons.chat, color: Colors.white, size: 30),
+                        color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
+                        child: const Icon(Icons.chat, color: Color(0xFFE2BC65), size: 30),
                       ),
                     ),
                   ),

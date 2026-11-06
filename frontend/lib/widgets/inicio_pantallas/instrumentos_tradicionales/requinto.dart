@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-class ViolaItem extends StatefulWidget {
-  const ViolaItem({super.key});
+class RequintoItem extends StatefulWidget {
+  const RequintoItem({super.key});
 
   @override
-  State<ViolaItem> createState() => _ViolaItemState();
+  State<RequintoItem> createState() => _RequintoItemState();
 }
 
-class _ViolaItemState extends State<ViolaItem> {
+class _RequintoItemState extends State<RequintoItem> {
   late AudioPlayer _audioPlayer;
   bool estaReproduciendo = false;
   Duration duracionTotal = Duration.zero;
@@ -55,7 +55,7 @@ class _ViolaItemState extends State<ViolaItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/viola.mp3'));
+      await _audioPlayer.play(AssetSource('audios/requinto.mp3'));
     }
   }
 
@@ -65,7 +65,7 @@ class _ViolaItemState extends State<ViolaItem> {
       iconColor: Colors.white70,
       collapsedIconColor: Colors.white70,
       title: const Text(
-        "Viola",
+        "Requinto",
         style: TextStyle(
           color: Colors.white,
           fontSize: 18,
@@ -82,7 +82,7 @@ class _ViolaItemState extends State<ViolaItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/viola.jpg',
+                  'assets/images/requinto.jpg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -99,7 +99,7 @@ class _ViolaItemState extends State<ViolaItem> {
 
               // Descripción
               const Text(
-                "La viola es un instrumento musical de cuerda frotada, similar en cuanto a materiales y construcción al violín pero de mayor tamaño y sonido más grave.",
+                "El requinto es un Instrumento de cuerda pulsada más pequeño que la guitarra, afinado de forma aguda, ideal para interpretar melodías principales y punteros en los bambucos y rajaleñas.",
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14.5,

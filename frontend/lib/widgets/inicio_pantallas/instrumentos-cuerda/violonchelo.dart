@@ -55,7 +55,7 @@ class _VioloncheloItemState extends State<VioloncheloItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/violonchelo.mp3'));
+      await _audioPlayer.play(AssetSource('audios/chelo.wav'));
     }
   }
 
@@ -82,7 +82,7 @@ class _VioloncheloItemState extends State<VioloncheloItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/violonchelo.jpg',
+                  'assets/images/chelo.jpg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,

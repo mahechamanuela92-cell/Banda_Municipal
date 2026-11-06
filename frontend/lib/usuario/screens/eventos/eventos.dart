@@ -83,7 +83,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    color: const Color.fromARGB(255, 45, 51, 53).withValues(alpha: 0.85), // 🌟 Fondo translúcido unificado
                     borderRadius: BorderRadius.circular(24.0),
                     border: Border.all(
                       color: const Color(

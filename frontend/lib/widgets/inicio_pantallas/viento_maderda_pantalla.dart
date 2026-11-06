@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/themes/colores.dart';
 import 'package:frontend/widgets/fondos.dart';
+import 'package:frontend/widgets/inicio_pantallas/instrumentos-madera/clarineteBajo.dart';
+import 'package:frontend/widgets/inicio_pantallas/instrumentos-madera/saxoBaritono.dart';
+import 'package:frontend/widgets/inicio_pantallas/instrumentos-madera/saxoSoprano.dart';
+import 'package:frontend/widgets/inicio_pantallas/instrumentos-madera/saxoTenor.dart';
 
 // Importación de componentes de los instrumentos de madera
 import 'instrumentos-madera/flautaTraversa.dart';
@@ -119,11 +123,23 @@ class VientoMaderaPantalla extends StatelessWidget {
                             // 3. Clarinete
                             ClarineteItem(),
                             SizedBox(height: 8),
+                            //3.1. Clirenete Bajo
+                            ClarineteBajoItem(),
+                            SizedBox(height: 8),
                             // 4. Oboe
                             OboeItem(),
                             SizedBox(height: 8),
                             // 5. Saxofón
                             SaxofonItem(),
+                            SizedBox(height: 8),
+                            //5.1. Saxofón Barítono
+                            SaxofonBaritonoItem(),
+                            SizedBox(height: 8),
+                            // 5.2. Saxofón Tenor
+                            SaxofonTenorItem(),
+                            SizedBox(height: 8),
+                            // 5.3. Saxofón Alto
+                            SaxofonSopranoItem(),
                             SizedBox(height: 8),
                             // 6. Fagot
                             FagotItem(),

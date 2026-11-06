@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/inicio_pantallas/cuerdas_pantallas.dart';
+import 'package:frontend/widgets/inicio_pantallas/instrumentos_tradicionales.dart';
 import 'package:frontend/widgets/inicio_pantallas/percusion_pantallas.dart';
 import 'package:frontend/widgets/inicio_pantallas/viento_maderda_pantalla.dart';
 import 'package:frontend/widgets/inicio_pantallas/viento_metal.dart';
@@ -31,6 +32,12 @@ class InstrumentosPantalla extends StatelessWidget {
         'icono': Icons.album,
         'destino': const PercusionPantalla(),
       },
+            {
+        'titulo': 'Instrumento Tradicionales',
+        'icono': Icons.festival,
+        'destino': const InstrumentosTradicionalesPantalla(),
+      },
+  
     ];
 
     return Scaffold(
