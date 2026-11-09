@@ -134,7 +134,7 @@ class _PantallaRecuperarPasswordState extends State<PantallaRecuperarPassword> {
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F4C5C).withValues(alpha: 0.75), // Fondo oscuro translúcido
+                      color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // Fondo oscuro translúcido
                       borderRadius: BorderRadius.circular(30.0),
                       border: Border.all(
                         color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde sutil dorado

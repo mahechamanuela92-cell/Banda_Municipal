@@ -151,7 +151,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF0F4C5C),
+        backgroundColor: const Color.fromARGB(255, 63, 70, 71),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: Color(0xFFE2BC65), width: 1.2),
@@ -342,7 +342,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                         child: TextField(
                           controller: nombreController,
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Color.fromARGB(255, 248, 247, 247),
                             fontWeight: FontWeight.w600,
                           ),
                           decoration: const InputDecoration(
@@ -351,7 +351,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                             border: InputBorder.none,
                             suffixIcon: Icon(
                               Icons.edit,
-                              color: Color(0xFF0F4C5C),
+                              color: Color(0xFFE2BC65),
                               size: 18,
                             ),
                           ),
@@ -467,7 +467,7 @@ class _PantallaEventosState extends State<PantallaEventos> {
                             border: InputBorder.none,
                             suffixIcon: Icon(
                               Icons.edit,
-                              color: Color(0xFF0F4C5C),
+                              color: Color(0xFFE2BC65),
                               size: 18,
                             ),
                           ),

@@ -23,7 +23,7 @@ class _FondoBaseState extends State<FondoBase>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10), // Un poco más lento = más elegante
+      duration: const Duration(seconds: 10),
     )..repeat();
   }
 
@@ -88,16 +88,36 @@ class FondoMusicalPainter extends CustomPainter {
       ..color = Colores.fondoBolitasClaro.withValues(alpha: 0.18)
       ..style = PaintingStyle.fill;
 
-    // Líneas de los pentagramas (oro muy suave)
+    // Líneas de los pentagramas (oro muy suave - sin cambios)
     final Paint paintLineas = Paint()
-      ..color = Colores.oro.withValues(alpha: 0.28)
+      ..color = const Color.fromARGB(255, 243, 197, 44).withValues(alpha: 0.18)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8;
 
-    // Notas musicales (oro)
+    // --- Definición del Degradado Multicolor para las Notas ---
+    final Gradient gradientNotas = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: const [
+        Color.fromARGB(255, 238, 234, 9),  // Amarillo
+        Color.fromARGB(255, 235, 156, 10), // Naranja
+        Color.fromARGB(255, 245, 11, 214), // Rosa
+        Color.fromARGB(255, 78, 21, 236),  // Morado
+      ],
+      transform: GradientRotation(progress * 2 * math.pi),
+    );
+
+    // Pintura con shader para el relleno de las notas
     final Paint paintNotas = Paint()
-      ..color = const Color.fromARGB(255, 235, 216, 50).withValues(alpha: 0.55)
-      ..style = PaintingStyle.fill;
+      ..style = PaintingStyle.fill
+      ..shader = gradientNotas.createShader(Rect.fromLTWH(0, 0, width, height));
+
+    // Pintura con shader para las plicas / palitos y barras de las notas
+    final Paint paintNotasStroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round
+      ..shader = gradientNotas.createShader(Rect.fromLTWH(0, 0, width, height));
 
     // --- 1. Formas circulares de fondo (más sutiles) ---
     canvas.drawCircle(Offset(width * 0.1, height * 0.05), width * 0.35, paintNubesClaras);
@@ -122,10 +142,10 @@ class FondoMusicalPainter extends CustomPainter {
 
     _dibujarPentagrama(canvas, paintLineas, p1: p1Top, p2: p2Top, p3: p3Top, p4: p4Top);
 
-    _dibujarNotaSimple(canvas, _calcularBezier((0.18 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintLineas);
-    _dibujarNotaDoble(canvas, _calcularBezier((0.40 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintLineas);
-    _dibujarNotaSimple(canvas, _calcularBezier((0.65 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintLineas);
-    _dibujarNotaDoble(canvas, _calcularBezier((0.85 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintLineas);
+    _dibujarNotaSimple(canvas, _calcularBezier((0.18 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintNotasStroke);
+    _dibujarNotaDoble(canvas, _calcularBezier((0.40 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintNotasStroke);
+    _dibujarNotaSimple(canvas, _calcularBezier((0.65 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintNotasStroke);
+    _dibujarNotaDoble(canvas, _calcularBezier((0.85 + progress) % 1.0, p1Top, p2Top, p3Top, p4Top), paintNotas, paintNotasStroke);
 
     // --- 3. Pentagrama Inferior + Notas ---
     final Offset p1Bot = Offset(-20, height * 0.82 + oscilacionLeve);
@@ -135,10 +155,10 @@ class FondoMusicalPainter extends CustomPainter {
 
     _dibujarPentagrama(canvas, paintLineas, p1: p1Bot, p2: p2Bot, p3: p3Bot, p4: p4Bot);
 
-    _dibujarNotaDoble(canvas, _calcularBezier((0.15 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintLineas);
-    _dibujarNotaSimple(canvas, _calcularBezier((0.38 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintLineas);
-    _dibujarNotaSimple(canvas, _calcularBezier((0.62 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintLineas);
-    _dibujarNotaDoble(canvas, _calcularBezier((0.85 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintLineas);
+    _dibujarNotaDoble(canvas, _calcularBezier((0.15 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintNotasStroke);
+    _dibujarNotaSimple(canvas, _calcularBezier((0.38 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintNotasStroke);
+    _dibujarNotaSimple(canvas, _calcularBezier((0.62 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintNotasStroke);
+    _dibujarNotaDoble(canvas, _calcularBezier((0.85 + progress) % 1.0, p1Bot, p2Bot, p3Bot, p4Bot), paintNotas, paintNotasStroke);
 
     // --- 4. Líneas decorativas en oro/ámbar ---
     _dibujarLineasDecorativasGradient(canvas, size);
@@ -148,15 +168,14 @@ class FondoMusicalPainter extends CustomPainter {
     final double width = size.width;
     final double height = size.height;
 
-    // Gradiente elegante oro → ámbar
     final Gradient gradient = LinearGradient(
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
       colors: const [
-        Color.fromARGB(255, 238, 234, 9), // Amarillo
-        Color.fromARGB(255, 235, 156, 10), // Naranja
-        Color.fromARGB(255, 245, 11, 214), // Rosa
-        Color.fromARGB(255, 78, 21, 236), // Morado
+        Color.fromARGB(255, 238, 234, 9),
+        Color.fromARGB(255, 235, 156, 10),
+        Color.fromARGB(255, 245, 11, 214),
+        Color.fromARGB(255, 78, 21, 236),
       ],
       transform: GradientRotation(progress * 2 * math.pi),
     );
@@ -169,7 +188,6 @@ class FondoMusicalPainter extends CustomPainter {
 
     final double offsetY = math.sin(progress * 2 * math.pi) * 10.0;
 
-    // Línea superior derecha
     final pathTopRight = Path();
     pathTopRight.moveTo(width * 0.72, offsetY);
     pathTopRight.cubicTo(
@@ -179,7 +197,6 @@ class FondoMusicalPainter extends CustomPainter {
     );
     canvas.drawPath(pathTopRight, paintGradient);
 
-    // Línea lateral izquierda
     final pathLeft = Path();
     pathLeft.moveTo(-10, height * 0.31 + offsetY);
     pathLeft.cubicTo(
@@ -189,7 +206,6 @@ class FondoMusicalPainter extends CustomPainter {
     );
     canvas.drawPath(pathLeft, paintGradient);
 
-    // Línea inferior derecha
     final pathBottomRight = Path();
     pathBottomRight.moveTo(width + 5, height * 0.78 + offsetY);
     pathBottomRight.cubicTo(
@@ -272,12 +288,12 @@ class FondoMusicalPainter extends CustomPainter {
     canvas.restore();
     canvas.drawLine(const Offset(25, -3), const Offset(25, -28), paintStroke);
 
-    final paintBarra = Paint()
-      ..color = paintFill.color
+    final Paint paintBarraDoble = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.2;
+      ..strokeWidth = 3.2
+      ..shader = paintStroke.shader; // Reutiliza el degradado de las notas
 
-    canvas.drawLine(const Offset(5, -25), const Offset(25, -28), paintBarra);
+    canvas.drawLine(const Offset(5, -25), const Offset(25, -28), paintBarraDoble);
 
     canvas.restore();
   }
