@@ -1,12 +1,12 @@
 import { supabase } from '../config/supabase.js';
 
 export const PartiturasModel = {
-    // Crear categoría (esta ya la usa el admin y funciona bien)
-    createCategoria: async (nombre_partitura, voz_partitura) => {
+    // Crear categoría (Incluyendo el archivo_url que subió el admin)
+    createCategoria: async (nombre_partitura, voz_partitura, archivo_url) => {
         const { data, error } = await supabase
             .from('categorias_partituras')
-            .insert([{ nombre_partitura, voz_partitura }])
-            .select('id_categoria, nombre_partitura, voz_partitura')
+            .insert([{ nombre_partitura, voz_partitura, archivo_url }]) // 🌟 Agregamos la URL del archivo aquí
+            .select('id_categoria, nombre_partitura, voz_partitura, archivo_url')
             .single();
 
         if (error) throw error;
@@ -24,9 +24,7 @@ export const PartiturasModel = {
         return data;
     },
 
-    // --- AQUÍ ESTÁ LA SOLUCIÓN ---
-    // Consultamos directamente 'categorias_partituras' y lo envolvemos 
-    // para que la app del usuario lo lea sin modificar Flutter.
+    // Consultar todas las categorías (traerá automáticamente la `archivo_url`)
     getAll: async () => {
         const { data, error } = await supabase
             .from('categorias_partituras')
