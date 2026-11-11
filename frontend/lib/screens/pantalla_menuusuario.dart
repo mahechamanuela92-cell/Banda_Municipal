@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/eventos/pantalla_evento.dart';
 import 'package:frontend/screens/multimedia/multimedia.dart';
+import 'package:frontend/screens/pantallaAyuda.dart';
 import 'package:frontend/screens/pantalla_generar_codigo.dart';
 
 import 'inventario-partituras/inventario_partituras.dart';
@@ -57,10 +58,10 @@ class MenuUsuario extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // Fondo oscuro translúcido unificado
+                  color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde dorado sutil
+                    color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
                     width: 1.2,
                   ),
                   boxShadow: [
@@ -78,38 +79,45 @@ class MenuUsuario extends StatelessWidget {
                       context,
                       'Inventario - Instrumentos',
                       const InventarioInstrumentos(),
-                      Icons.piano, // Icono representativo de instrumentos
+                      Icons.piano,
                     ),
                     opcionMenu(
                       context,
                       'Inventario - Partituras',
                       const InventarioPartituras(),
-                      Icons.library_music, // Icono representativo de partituras/música
+                      Icons.library_music,
                     ),
                     opcionMenu(
                       context,
                       'Multimedia',
                       const MultimediaPantalla(),
-                      Icons.perm_media, // Icono multimedia / videos / fotos
+                      Icons.perm_media,
                     ),
                     opcionMenu(
                       context,
                       'Eventos',
                       const PantallaEventos(),
-                      Icons.event, // Icono de calendario / eventos
+                      Icons.event,
                     ),
                     if (Sesion.rol == 'admin')
                       opcionMenu(
                         context,
                         'Generar Código de Registro',
                         const PantallaGenerarCodigo(),
-                        Icons.qr_code_rounded, // Icono de códigos QR / registro
+                        Icons.qr_code_rounded,
                       ),
                     opcionMenu(
                       context,
                       'Perfil',
                       const PantallaPerfil(),
-                      Icons.person_outline, // Icono de perfil de usuario
+                      Icons.person_outline,
+                    ),
+                    // 🌟 Opción de Ayuda agregada aquí
+                    opcionMenu(
+                      context,
+                      'Ayuda',
+                      const PantallaAyuda(), // Aquí irá la pantalla del manual de usuario
+                      Icons.help_outline,
                     ),
                   ],
                 ),

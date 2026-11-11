@@ -19,6 +19,8 @@ dependencies:
   timezone: ^0.10.1
   flutter_map: ^7.0.2 
   latlong2: ^0.9.1
+  flutter_pdfview: ^1.3.2 # Paquete para renderizar el PDF
+  path_provider: ^2.1.2     # Necesario para copiar el PDF de assets a la memoria temporal del dispositivo
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +49,7 @@ flutter:
   assets:
     - assets/images/
     - assets/audios/
+    - assets/pdf/
 
   fonts:
     - family: Freeman

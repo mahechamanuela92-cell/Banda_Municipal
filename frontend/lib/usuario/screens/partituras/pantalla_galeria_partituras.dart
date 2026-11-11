@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart'; // 🌟 1. Importar para abrir URLs/archivos
 import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
 
@@ -52,6 +53,21 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
     }
   }
 
+  // 🌟 2. Función para abrir o descargar el archivo (PDF, Word, Imagen)
+  Future<void> _abrirArchivo(String urlArchivo) async {
+    final Uri url = Uri.parse(urlArchivo);
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        throw 'No se pudo abrir el archivo';
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al abrir el archivo: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,10 +80,10 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color:const Color.fromARGB(255, 45, 51, 53).withValues(alpha: 0.85),  // 🌟 Fondo translúcido unificado
+                    color: const Color.fromARGB(255, 45, 51, 53).withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(24.0),
                     border: Border.all(
-                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
                       width: 1.2,
                     ),
                     boxShadow: [
@@ -159,6 +175,9 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
                                       final partitura = partituras[index];
                                       final cat = partitura['categorias_partituras'];
                                       final nombre = cat != null ? cat['nombre_partitura'] : 'Partitura';
+                                      
+                                      // 🌟 3. Obtenemos la URL del archivo guardada en la base de datos
+                                      final archivoUrl = cat != null ? cat['archivo_url'] : null;
 
                                       return Container(
                                         decoration: BoxDecoration(
@@ -193,10 +212,15 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
                                                   borderRadius: BorderRadius.circular(16),
                                                 ),
                                               ),
+                                              // 🌟 4. Conectamos el botón para abrir/descargar el archivo real
                                               onPressed: () {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  const SnackBar(content: Text('Abriendo/Descargando partitura...')),
-                                                );
+                                                if (archivoUrl != null && archivoUrl.toString().isNotEmpty) {
+                                                  _abrirArchivo(archivoUrl);
+                                                } else {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    const SnackBar(content: Text('Este archivo no tiene un enlace válido')),
+                                                  );
+                                                }
                                               },
                                               child: const Text('Descargar', style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 11, fontWeight: FontWeight.bold)),
                                             ),
