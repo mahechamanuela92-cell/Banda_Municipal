@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
-import '../../../themes/colores.dart';
+
 import '../../../widgets/fondos.dart';
 import 'pantalla_galeria_partituras.dart';
 

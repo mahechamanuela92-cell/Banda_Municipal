@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../themes/colores.dart';
 
 class ChatInputField extends StatelessWidget {
   final TextEditingController controller;

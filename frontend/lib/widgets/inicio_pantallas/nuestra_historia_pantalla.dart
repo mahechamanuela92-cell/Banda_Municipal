@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:frontend/themes/colores.dart';
+
 import '../fondos.dart';
 
 class NuestraHistoriaPantalla extends StatefulWidget {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../themes/colores.dart';
 
 class ChatHeader extends StatelessWidget {
   const ChatHeader({super.key});

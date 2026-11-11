@@ -55,7 +55,7 @@ class _MarranaItemState extends State<MarranaItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/marrana.mp3'));
+      await _audioPlayer.play(AssetSource('audios/marrana.m4a'));
     }
   }
 
@@ -82,7 +82,7 @@ class _MarranaItemState extends State<MarranaItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: Image.asset(
-                  'assets/images/marrana.jpg',
+                  'assets/images/marrana.jpeg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,

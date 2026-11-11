@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/services/eventos_api.dart';
-import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
 import '../../components/chat/boton_chat_flotante.dart';
 import '../../components/chat/chat_banda_modal.dart';

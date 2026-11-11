@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/multimedia/galeria_multimedia_admin.dart';
-import 'package:frontend/themes/colores.dart';
+
 import 'package:frontend/widgets/fondos.dart';
 
 class MultimediaPantalla extends StatelessWidget {

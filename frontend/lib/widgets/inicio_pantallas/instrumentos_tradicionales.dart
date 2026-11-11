@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/fondos.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_tradicionales/chucho.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_tradicionales/esterilla.dart';
+import 'package:frontend/widgets/inicio_pantallas/instrumentos_tradicionales/marrana.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_tradicionales/requinto.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_tradicionales/tambora.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos_tradicionales/tiple.dart';
@@ -115,6 +116,8 @@ class InstrumentosTradicionalesPantalla extends StatelessWidget {
                             TipleItem(),
                             SizedBox(height: 8),
                             ChuchoItem(),
+                            SizedBox(height: 10),
+                            MarranaItem(),
                           ],
                         ),
                       ),

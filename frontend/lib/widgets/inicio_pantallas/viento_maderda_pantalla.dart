@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/themes/colores.dart';
+
 import 'package:frontend/widgets/fondos.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos-madera/clarineteBajo.dart';
 import 'package:frontend/widgets/inicio_pantallas/instrumentos-madera/saxoBaritono.dart';

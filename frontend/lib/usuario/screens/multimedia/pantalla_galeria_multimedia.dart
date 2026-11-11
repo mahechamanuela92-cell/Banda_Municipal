@@ -3,7 +3,7 @@ import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
 import 'package:frontend/services/multimedia_api.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../themes/colores.dart';
+
 import '../../../widgets/fondos.dart';
 
 class PantallaGaleriaMultimedia extends StatefulWidget {

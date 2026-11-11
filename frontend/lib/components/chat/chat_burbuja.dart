@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/themes/colores.dart';
 
 class ChatBurbuja extends StatelessWidget {
   final String texto;

@@ -20,6 +20,9 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _codigoController = TextEditingController();
   bool _mostrarPassword = false;
+  
+  // Variable para controlar los términos y condiciones
+  bool _aceptaTerminos = false;
 
   static final RegExp _mayusculaRegex = RegExp(r'[A-ZÁÉÍÓÚÜÑ]');
   static final RegExp _numeroRegex = RegExp(r'[0-9]');
@@ -54,6 +57,44 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     super.dispose();
   }
 
+  // Método para mostrar el modal con las políticas y condiciones
+  void _mostrarTerminosYCondiciones(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF3F4647),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Color(0xFFE2BC65), width: 1),
+          ),
+          title: const Text(
+            'Términos, Políticas y Condiciones',
+            style: TextStyle(color: Color(0xFFE2BC65), fontWeight: FontWeight.bold),
+          ),
+          content: const SingleChildScrollView(
+            child: Text(
+              'Bienvenido a la aplicación de la Banda Sinfónica Municipal de Garzón Huila.\n\n'
+              '1. Protección de Datos: Al registrarte autorizas el tratamiento de tus datos personales para fines informativos, de gestión de miembros y actividades musicales de la banda.\n\n'
+              '2. Uso de la Información: Tus datos de contacto, tipo de documento y número de identificación se mantendrán seguros bajo los protocolos de almacenamiento y no serán compartidos con terceros sin tu consentimiento.\n\n'
+              '3. Compromiso del Músico: Te comprometes a hacer un uso adecuado de la plataforma, respetando las normas internas y las convocatorias institucionales.',
+              style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'Cerrar',
+                style: TextStyle(color: Color(0xFFE2BC65), fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _registrarUsuario() async {
     final nombre = _nombreController.text.trim();
     final tipoDoc = _tipoDocumentoElegido;
@@ -79,6 +120,16 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       return;
     }
 
+    // Validación obligatoria de los términos y condiciones
+    if (!_aceptaTerminos) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Debes aceptar los términos, políticas y condiciones'),
+        ),
+      );
+      return;
+    }
+
     try {
       final url = Uri.parse('$apiUrl/api/auth/register');
 
@@ -93,6 +144,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
           'email': correo,
           'password': password,
           'codigoInvitacion': codigo,
+          'acepta_terminos': _aceptaTerminos, // Se envía al backend
         }),
       ).timeout(const Duration(seconds: 5));
 
@@ -305,9 +357,45 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     keyboardType: TextInputType.number,
                   ),
 
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 18),
 
-                  // --- BOTÓN REGISTRARSE (Centrado y elegante) ---
+                  // --- CHECKBOX DE TÉRMINOS Y POLÍTICAS ---
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _aceptaTerminos,
+                          activeColor: const Color(0xFFE2BC65),
+                          checkColor: const Color(0xFF171E20),
+                          side: const BorderSide(color: Color(0xFFE2BC65), width: 1.5),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _aceptaTerminos = value ?? false;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _mostrarTerminosYCondiciones(context),
+                            child: const Text(
+                              'Acepto los Términos, Políticas y Condiciones de tratamiento de datos.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Color(0xFFE2BC65),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // --- BOTÓN REGISTRARSE ---
                   Center(
                     child: SizedBox(
                       width: 250,
@@ -430,10 +518,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
       width: double.infinity,
       height: 55,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // Fondo oscuro translúcido
+        color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(30.0),
         border: Border.all(
-          color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // Borde sutil dorado
+          color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
           width: 1.2,
         ),
         boxShadow: [
@@ -452,14 +540,14 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         keyboardType: keyboardType,
         onChanged: onChanged,
         style: const TextStyle(
-          color: Colors.white, // Texto en blanco para mayor visibilidad
+          color: Colors.white,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           icon: Icon(
             icon,
-            color: const Color(0xFFE2BC65), // Icono dorado unificado
+            color: const Color(0xFFE2BC65),
             size: 22,
           ),
           hintText: hintText,

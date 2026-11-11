@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/services/multimedia_api.dart';
-import 'package:frontend/themes/colores.dart';
+
 import 'package:frontend/widgets/fondos.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -363,7 +363,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                         border: InputBorder.none,
                       ),
                       style: const TextStyle(
-                        color: Colors.black87,
+                        color: Color.fromARGB(221, 247, 246, 246),
                         fontWeight: FontWeight.w600,
                       ),
                       items: [

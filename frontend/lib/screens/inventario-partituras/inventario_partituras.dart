@@ -4,7 +4,7 @@ import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../themes/colores.dart';
+
 import '../../widgets/fondos.dart';
 import '../../config/api.dart';
 

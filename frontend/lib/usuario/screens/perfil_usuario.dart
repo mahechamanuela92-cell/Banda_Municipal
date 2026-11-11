@@ -8,7 +8,7 @@ import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/inicioSesion.dart';
 import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
-import '../../themes/colores.dart';
+
 import '../../widgets/fondos.dart';
 
 class PantallaPerfil extends StatefulWidget {

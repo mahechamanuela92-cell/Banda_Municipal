@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/themes/colores.dart';
 import 'chat_banda_modal.dart'; // Asegúrate de que la ruta a tu modal sea correcta
 
 class BotonChatFlotante extends StatefulWidget {

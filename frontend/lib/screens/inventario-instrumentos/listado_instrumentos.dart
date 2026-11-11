@@ -3,7 +3,7 @@ import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../themes/colores.dart';
+
 import '../../widgets/fondos.dart';
 import '../../config/api.dart';
 
@@ -185,7 +185,7 @@ class _ListadoInstrumentosScreenState extends State<ListadoInstrumentosScreen> {
                                       final listaDetalles = entry.value;
 
                                       return Theme(
-                                        data: Theme.of(context).copyWith(dividerColor: const Color.fromARGB(0, 148, 144, 144)),
+                                        data: Theme.of(context).copyWith(dividerColor: const Color.fromARGB(0, 240, 239, 239)),
                                         child: ExpansionTile(
                                           title: Text(
                                             nombreInstrumento,
@@ -226,14 +226,14 @@ class _ListadoInstrumentosScreenState extends State<ListadoInstrumentosScreen> {
                                                     flex: 2,
                                                     child: Text(
                                                       estado,
-                                                      style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                                                      style: const TextStyle(color: Color.fromARGB(221, 252, 250, 250), fontWeight: FontWeight.bold),
                                                     ),
                                                   ),
                                                   Expanded(
                                                     flex: 2,
                                                     child: Text(
                                                       serial,
-                                                      style: const TextStyle(color: Colors.black54),
+                                                      style: const TextStyle(color: Color.fromARGB(137, 245, 243, 243)),
                                                       textAlign: TextAlign.center,
                                                     ),
                                                   ),
@@ -241,7 +241,7 @@ class _ListadoInstrumentosScreenState extends State<ListadoInstrumentosScreen> {
                                                     flex: 2,
                                                     child: Text(
                                                       fechaFormateada,
-                                                      style: const TextStyle(color: Colors.black54, fontSize: 12),
+                                                      style: const TextStyle(color: Color.fromARGB(137, 248, 248, 248), fontSize: 12),
                                                       textAlign: TextAlign.end,
                                                     ),
                                                   ),
