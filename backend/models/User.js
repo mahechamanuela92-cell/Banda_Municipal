@@ -1,8 +1,7 @@
 import { supabase } from "../config/supabase.js";
 
 // Crear un nuevo usuario (Registro)
-// Nota: en Supabase la columna de expiración se llama "codigoverificacionExpiracion"
-export const crearUser = async (nombre, email, password, rol, codigoVerificacion, codigoVerificacionExpiracion, tipo_documento, numero_documento, telefono) => {
+export const crearUser = async (nombre, email, password, rol, codigoVerificacion, codigoVerificacionExpiracion, tipo_documento, numero_documento, telefono, acepta_terminos) => {
   const { data, error } = await supabase
     .from("usuarios")
     .insert([
@@ -15,10 +14,11 @@ export const crearUser = async (nombre, email, password, rol, codigoVerificacion
         codigoverificacionExpiracion: codigoVerificacionExpiracion,
         tipo_documento,
         numero_documento,
-        telefono
+        telefono,
+        acepta_terminos // <-- Nuevo campo agregado
       }
     ])
-    .select("user_id, nombre, email, rol, isVerified, codigoVerificacion, codigoverificacionExpiracion");
+    .select("user_id, nombre, email, rol, isVerified, codigoVerificacion, codigoverificacionExpiracion, acepta_terminos");
   return { data, error };
 };
 

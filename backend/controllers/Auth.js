@@ -8,10 +8,15 @@ export const registro = async (req, res) => {
   console.log("🔥 ¡LLEGÓ UNA PETICIÓN DESDE EL CELULAR AL BACKEND! 🔥");
 
   try {
-    const { nombre, email, password, tipo_documento, numero_documento, telefono, codigoInvitacion } = req.body;
+    const { nombre, email, password, tipo_documento, numero_documento, telefono, codigoInvitacion, acepta_terminos } = req.body;
 
     if (!nombre || !email || !password || !codigoInvitacion) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
+    }
+
+    // 🔍 Validar que el usuario haya aceptado los términos y condiciones
+    if (!acepta_terminos || (acepta_terminos !== true && acepta_terminos !== 'true')) {
+      return res.status(400).json({ error: "Debes aceptar los términos y condiciones para registrarte" });
     }
 
     // Validar el código de invitación generado por el administrador
@@ -40,7 +45,7 @@ export const registro = async (req, res) => {
     const codigoVerificacion = Math.floor(100000 + Math.random() * 900000).toString();
     const codigoVerificacionExpiracion = new Date(Date.now() + 15 * 60 * 1000).toISOString();
 
-    // Guardar en Supabase enviando los nuevos campos
+    // Guardar en Supabase enviando también acepta_terminos
     const { data, error } = await crearUser(
       nombre, 
       email, 
@@ -50,7 +55,8 @@ export const registro = async (req, res) => {
       codigoVerificacionExpiracion,
       tipo_documento,
       numero_documento,
-      telefono
+      telefono,
+      acepta_terminos
     );
 
     if (error) {
@@ -58,7 +64,6 @@ export const registro = async (req, res) => {
       return res.status(500).json({ error: error.message || "Error al crear el usuario" });
     }
 
-    // Asegurarnos de que data tenga elementos antes de usarlos
     if (!data || data.length === 0) {
       return res.status(500).json({ error: "No se pudo retornar el usuario creado" });
     }
@@ -81,7 +86,6 @@ export const registro = async (req, res) => {
       rol: usuarioCreado.rol
     };
 
-    // Si Brevo falló, el usuario ya quedó creado, pero avisamos que el correo no llegó
     if (!resultadoEnvio.exito) {
       return res.status(201).json({
         message: 'Tu cuenta fue creada, pero hubo un problema enviando el código de verificación a tu correo. Intenta registrar de nuevo en unos minutos o contacta soporte.',
@@ -128,7 +132,7 @@ export const login = async (req, res) => {
         rol: usuario.rol
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "365d" }
     );
 
     return res.status(200).json({
