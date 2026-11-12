@@ -255,12 +255,12 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // Fondo translúcido del contenedor principal
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   color: const Color(
                     0xFFE2BC65,
-                  ).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                  ).withValues(alpha: 0.5), // Borde dorado suave
                   width: 1.2,
                 ),
                 boxShadow: [
@@ -273,7 +273,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
               ),
               child: Column(
                 children: [
-                  // Cabecera con botón de regresar y botón de actualizar
+                  // Encabezado con acceso de regreso y actualización
                   Row(
                     children: [
                       IconButton(
@@ -298,7 +298,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                   ),
                   const SizedBox(height: 5),
 
-                  // Título principal con degradado dorado unificado
+                  // Título principal con estilo dorado y elegante
                   Container(
                     width: double.infinity,
                     height: 55,
@@ -343,7 +343,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                   ),
                   const SizedBox(height: 15),
 
-                  // Selector de Evento (opcional)
+                  // Selector del evento, si se desea asociar alguna actividad
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     decoration: BoxDecoration(
@@ -391,7 +391,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Grid de archivos
+                  // Cuadrícula de archivos disponibles
                   Expanded(
                     child: _cargando
                         ? const Center(
@@ -428,7 +428,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Botón de selección / subida con estilo píldora
+                  // Botón para seleccionar o subir archivos con estilo redondeado
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -473,7 +473,7 @@ class _GaleriaMultimediaAdminState extends State<GaleriaMultimediaAdmin> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Pie de página institucional unificado
+                  // Pie de página institucional
                   const Center(
                     child: Text(
                       "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
