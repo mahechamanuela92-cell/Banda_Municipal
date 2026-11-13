@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/fondos.dart';
 
 class PantallaAyuda extends StatefulWidget {
@@ -18,8 +20,16 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
   Future<void> _abrirManual() async {
     setState(() => _cargando = true);
     try {
+      if (kIsWeb) {
+        final url = Uri.base.resolve('assets/assets/pdf/Manual_de_Usuario.pdf');
+        if (!await launchUrl(url)) {
+          throw StateError('No se pudo abrir el manual en el navegador.');
+        }
+        return;
+      }
+
       // Cargar el PDF desde assets
-      final bytes = await rootBundle.load('pdf/Manual_de_Usuario.pdf');
+      final bytes = await rootBundle.load('assets/pdf/Manual_de_Usuario.pdf');
 
       // Copiarlo a la carpeta temporal
       final dir = await getTemporaryDirectory();
@@ -108,7 +118,7 @@ class _PantallaAyudaState extends State<PantallaAyuda> {
                               )
                             : const Icon(Icons.picture_as_pdf),
                         label: const Text(
-                          'Abrir Manual_de_Usuario.pdf',
+                          'Abrir manual en PDF',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
