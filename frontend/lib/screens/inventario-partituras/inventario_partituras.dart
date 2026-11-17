@@ -16,81 +16,150 @@ class InventarioPartituras extends StatefulWidget {
 }
 
 class _InventarioPartiturasState extends State<InventarioPartituras> {
-  List<String> tipos = ['PDF', 'Imagen', 'Word'];
-  
+  final List<String> tipos = ['PDF', 'Imagen'];
+
   final List<String> instrumentos = [
-    'Flauta Traversa', 'Flauta Picolo', 'Clarinete','Clarinete Bajo', 'Saxófono', 'Saxofon Tenor', 'Saxofon Barítono', 'Saxofon Soprano',
-    'Oboe', 'Fagot', 'Trompeta', 'Fliscorno', 'Trombón',
-    'Bombardino', 'Tuba', 'Corno',
-    'Violonchelo', 'Contrabajo', 'Bombo', 'Redoblante',
-    'Platillos', 'Batería', 'Glockenspiel', 'Timbales Sinfónicos',
-    'Congas', 'Timbal', 'Chucho', 'Esterilla', 'Requinto', 'Marrana', 'Tambora',
+    'Flauta Traversa',
+    'Flauta Picolo',
+    'Clarinete',
+    'Clarinete Bajo',
+    'Saxófono',
+    'Saxofon Tenor',
+    'Saxofon Barítono',
+    'Saxofon Soprano',
+    'Oboe',
+    'Fagot',
+    'Trompeta',
+    'Fliscorno',
+    'Trombón',
+    'Bombardino',
+    'Tuba',
+    'Corno',
+    'Violonchelo',
+    'Contrabajo',
+    'Bombo',
+    'Redoblante',
+    'Platillos',
+    'Batería',
+    'Glockenspiel',
+    'Timbales Sinfónicos',
+    'Congas',
+    'Timbal',
+    'Chucho',
+    'Esterilla',
+    'Requinto',
+    'Marrana',
+    'Tambora',
   ];
 
-  final List<String> voces = ['Voz 1', 'Voz 2', 'Voz 3', 'Voz 4', 'Voz 5', 'Voz 6', 'Voz 7'];
+  final List<String> voces = [
+    'Voz 1',
+    'Voz 2',
+    'Voz 3',
+    'Voz 4',
+    'Voz 5',
+    'Voz 6',
+    'Voz 7',
+  ];
 
   String? tipoElegido;
   String? nombreArchivo;
   String? instrumentoElegido;
   String? vozElegida;
+  PlatformFile? archivoElegido;
+  bool _guardando = false;
 
   void elegirArchivo(String tipo) async {
     List<String> extensiones = ['pdf'];
     if (tipo == 'Imagen') extensiones = ['jpg', 'jpeg', 'png'];
-    if (tipo == 'Word') extensiones = ['doc', 'docx'];
-
     FilePickerResult? resultado = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: extensiones,
+      withData: true,
     );
-    if (resultado != null) {
-      setState(() => nombreArchivo = resultado.files.single.name);
+    if (!mounted) return;
+    if (resultado != null && resultado.files.isNotEmpty) {
+      setState(() {
+        archivoElegido = resultado.files.single;
+        nombreArchivo = archivoElegido!.name;
+      });
+    } else {
+      setState(() {
+        archivoElegido = null;
+        nombreArchivo = null;
+      });
     }
   }
 
   void _abrirAsistenteIA(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => const ChatBandaModal(),
-    );
+    showDialog(context: context, builder: (_) => const ChatBandaModal());
   }
 
   Future<void> guardarEnBackend() async {
-    if (nombreArchivo == null || instrumentoElegido == null || vozElegida == null) {
+    final archivo = archivoElegido;
+    if (archivo == null ||
+        archivo.bytes == null ||
+        instrumentoElegido == null ||
+        vozElegida == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor elige un archivo, un instrumento y una voz')),
+        const SnackBar(
+          content: Text('Por favor elige un archivo, un instrumento y una voz'),
+        ),
       );
       return;
     }
 
+    setState(() => _guardando = true);
     try {
-      final responseCategoria = await http.post(
-        Uri.parse('$apiUrl/partituras/categorias'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'nombre_partitura': '$nombreArchivo ($instrumentoElegido)',
-          'voz_partitura': vozElegida,
-        }),
+      final request =
+          http.MultipartRequest(
+              'POST',
+              Uri.parse('$apiUrl/partituras/categorias'),
+            )
+            ..fields['nombre_partitura'] =
+                '$nombreArchivo ($instrumentoElegido)'
+            ..fields['voz_partitura'] = vozElegida!
+            ..files.add(
+              http.MultipartFile.fromBytes(
+                'archivo',
+                archivo.bytes!,
+                filename: archivo.name,
+              ),
+            );
+      final streamedResponse = await request.send().timeout(
+        const Duration(seconds: 60),
       );
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (!mounted) return;
 
-      if (responseCategoria.statusCode == 201) {
+      if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Partitura guardada correctamente en la BD')),
+          const SnackBar(
+            content: Text('Partitura guardada correctamente en la BD'),
+          ),
         );
         Navigator.pop(context);
       } else {
-        final errorData = jsonDecode(responseCategoria.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${errorData['error'] ?? 'No se pudo guardar'}')),
-        );
+        String mensaje = 'No se pudo guardar la partitura';
+        try {
+          final errorData = jsonDecode(response.body);
+          if (errorData is Map<String, dynamic>) {
+            mensaje = (errorData['error'] ?? errorData['detalle'] ?? mensaje)
+                .toString();
+          }
+        } on FormatException {
+          if (response.body.trim().isNotEmpty) mensaje = response.body;
+        }
+        throw Exception(mensaje);
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error de conexión: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error de conexión: $e')));
+    } finally {
+      if (mounted) setState(() => _guardando = false);
     }
   }
 
@@ -106,10 +175,17 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    color: const Color.fromARGB(
+                      255,
+                      63,
+                      70,
+                      71,
+                    ).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
                     borderRadius: BorderRadius.circular(24.0),
                     border: Border.all(
-                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      color: const Color(
+                        0xFFE2BC65,
+                      ).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
                       width: 1.2,
                     ),
                     boxShadow: [
@@ -125,7 +201,11 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                     children: [
                       // Botón de regresar unificado en dorado
                       IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Color(0xFFE2BC65), size: 28),
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Color(0xFFE2BC65),
+                          size: 28,
+                        ),
                         tooltip: 'Volver',
                         onPressed: () => Navigator.pop(context),
                       ),
@@ -137,10 +217,7 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                         height: 55,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFE2BC65),
-                              Color(0xFFC29B45),
-                            ],
+                            colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -157,7 +234,11 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
-                            Icon(Icons.library_music, color: Color.fromARGB(255, 23, 30, 32), size: 22),
+                            Icon(
+                              Icons.library_music,
+                              color: Color.fromARGB(255, 23, 30, 32),
+                              size: 22,
+                            ),
                             SizedBox(width: 10),
                             Text(
                               'SUBIR PARTITURA (ADMIN)',
@@ -174,25 +255,52 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                       const SizedBox(height: 25),
 
                       // Tipo de archivo
-                      const Text('Tipo de archivo', style: TextStyle(color: Color(0xFFE2BC65), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Tipo de archivo',
+                        style: TextStyle(
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          color: const Color.fromARGB(
+                            255,
+                            67,
+                            71,
+                            71,
+                          ).withValues(alpha: 0.75),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
                             width: 1.0,
                           ),
                         ),
                         child: DropdownButton<String>(
                           value: tipoElegido,
-                          hint: const Text('Subir archivo', style: TextStyle(color: Color.fromARGB(137, 247, 246, 246))),
+                          hint: const Text(
+                            'Subir archivo',
+                            style: TextStyle(
+                              color: Color.fromARGB(137, 247, 246, 246),
+                            ),
+                          ),
                           isExpanded: true,
                           underline: const SizedBox(),
-                          dropdownColor: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
-                          style: const TextStyle(color: Color.fromARGB(255, 250, 250, 250), fontSize: 15),
+                          dropdownColor: const Color.fromARGB(
+                            255,
+                            67,
+                            71,
+                            71,
+                          ).withValues(alpha: 0.75),
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 250, 250, 250),
+                            fontSize: 15,
+                          ),
                           items: [
                             for (String tipo in tipos)
                               DropdownMenuItem(value: tipo, child: Text(tipo)),
@@ -209,35 +317,68 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                           child: Text(
                             'Archivo: $nombreArchivo',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.white70, fontSize: 13),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
 
                       const SizedBox(height: 20),
 
                       // Elegir Instrumento
-                      const Text('Elegir Instrumento', style: TextStyle(color: Color(0xFFE2BC65), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Elegir Instrumento',
+                        style: TextStyle(
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          color: const Color.fromARGB(
+                            255,
+                            67,
+                            71,
+                            71,
+                          ).withValues(alpha: 0.75),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
                             width: 1.0,
                           ),
                         ),
                         child: DropdownButton<String>(
                           value: instrumentoElegido,
-                          hint: const Text('Seleccionar instrumento', style: TextStyle(color: Color.fromARGB(137, 250, 250, 250))),
+                          hint: const Text(
+                            'Seleccionar instrumento',
+                            style: TextStyle(
+                              color: Color.fromARGB(137, 250, 250, 250),
+                            ),
+                          ),
                           isExpanded: true,
                           underline: const SizedBox(),
-                          dropdownColor: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
-                          style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 15),
+                          dropdownColor: const Color.fromARGB(
+                            255,
+                            63,
+                            70,
+                            71,
+                          ).withValues(alpha: 0.75),
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            fontSize: 15,
+                          ),
                           items: [
                             for (String instrumento in instrumentos)
-                              DropdownMenuItem(value: instrumento, child: Text(instrumento)),
+                              DropdownMenuItem(
+                                value: instrumento,
+                                child: Text(instrumento),
+                              ),
                           ],
                           onChanged: (valor) {
                             setState(() => instrumentoElegido = valor);
@@ -248,25 +389,52 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                       const SizedBox(height: 20),
 
                       // Seleccionar Voz
-                      const Text('Seleccionar Voz', style: TextStyle(color: Color(0xFFE2BC65), fontSize: 15, fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Seleccionar Voz',
+                        style: TextStyle(
+                          color: Color(0xFFE2BC65),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
+                          color: const Color.fromARGB(
+                            255,
+                            67,
+                            71,
+                            71,
+                          ).withValues(alpha: 0.75),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: const Color(0xFFE2BC65).withValues(alpha: 0.4),
+                            color: const Color(
+                              0xFFE2BC65,
+                            ).withValues(alpha: 0.4),
                             width: 1.0,
                           ),
                         ),
                         child: DropdownButton<String>(
                           value: vozElegida,
-                          hint: const Text('Seleccionar voz', style: TextStyle(color: Color.fromARGB(137, 250, 250, 250))),
+                          hint: const Text(
+                            'Seleccionar voz',
+                            style: TextStyle(
+                              color: Color.fromARGB(137, 250, 250, 250),
+                            ),
+                          ),
                           isExpanded: true,
                           underline: const SizedBox(),
-                          dropdownColor: const Color.fromARGB(255, 67, 71, 71).withValues(alpha: 0.75),
-                          style: const TextStyle(color: Color.fromARGB(255, 253, 253, 253), fontSize: 15),
+                          dropdownColor: const Color.fromARGB(
+                            255,
+                            67,
+                            71,
+                            71,
+                          ).withValues(alpha: 0.75),
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 253, 253, 253),
+                            fontSize: 15,
+                          ),
                           items: [
                             for (String voz in voces)
                               DropdownMenuItem(value: voz, child: Text(voz)),
@@ -284,18 +452,37 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFE2BC65),
-                            foregroundColor: const Color.fromARGB(255, 23, 30, 32),
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                            foregroundColor: const Color.fromARGB(
+                              255,
+                              23,
+                              30,
+                              32,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 40,
+                              vertical: 12,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                             elevation: 3,
                           ),
-                          onPressed: guardarEnBackend,
-                          child: const Text(
-                            'Guardar Partitura',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
+                          onPressed: _guardando ? null : guardarEnBackend,
+                          child: _guardando
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Guardar Partitura',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 25),
@@ -319,9 +506,7 @@ class _InventarioPartiturasState extends State<InventarioPartituras> {
               ),
 
               // Chatbot flotante arrastrable
-              BotonChatFlotante(
-                onPressed: () => _abrirAsistenteIA(context),
-              ),
+              BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),
         ),

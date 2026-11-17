@@ -1,21 +1,28 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart'; // 🌟 1. Importar para abrir URLs/archivos
+
 import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
 
 import '../../../widgets/fondos.dart';
 import '../../../config/api.dart';
+import 'pantalla_ver_partitura.dart';
 
 class PantallaGaleriaPartituras extends StatefulWidget {
   final String instrumento;
   final String voz;
 
-  const PantallaGaleriaPartituras({super.key, required this.instrumento, required this.voz});
+  const PantallaGaleriaPartituras({
+    super.key,
+    required this.instrumento,
+    required this.voz,
+  });
 
   @override
-  State<PantallaGaleriaPartituras> createState() => _PantallaGaleriaPartiturasState();
+  State<PantallaGaleriaPartituras> createState() =>
+      _PantallaGaleriaPartiturasState();
 }
 
 class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
@@ -41,9 +48,14 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
           partituras = todas.where((item) {
             final cat = item['categorias_partituras'];
             if (cat == null) return false;
-            final String nombre = (cat['nombre_partitura'] ?? '').toString().toLowerCase();
-            final String vozPart = (cat['voz_partitura'] ?? '').toString().trim();
-            return vozPart.toLowerCase() == widget.voz.toLowerCase() && nombre.contains(widget.instrumento.toLowerCase());
+            final String nombre = (cat['nombre_partitura'] ?? '')
+                .toString()
+                .toLowerCase();
+            final String vozPart = (cat['voz_partitura'] ?? '')
+                .toString()
+                .trim();
+            return vozPart.toLowerCase() == widget.voz.toLowerCase() &&
+                nombre.contains(widget.instrumento.toLowerCase());
           }).toList();
           isLoading = false;
         });
@@ -53,19 +65,29 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
     }
   }
 
-  // 🌟 2. Función para abrir o descargar el archivo (PDF, Word, Imagen)
-  Future<void> _abrirArchivo(String urlArchivo) async {
-    final Uri url = Uri.parse(urlArchivo);
-    try {
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-        throw 'No se pudo abrir el archivo';
-      }
-    } catch (e) {
-      if (!mounted) return;
+  bool _esImagenPartitura(String? urlArchivo) {
+    if (urlArchivo == null) return false;
+    final segmentos = Uri.tryParse(urlArchivo)?.pathSegments ?? const [];
+    if (segmentos.isEmpty) return false;
+    final extension = segmentos.last.split('.').last.toLowerCase();
+    return const {'jpg', 'jpeg', 'png'}.contains(extension);
+  }
+
+  void _verPartitura(String nombre, String? urlArchivo) {
+    if (urlArchivo == null || urlArchivo.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al abrir el archivo: $e')),
+        const SnackBar(
+          content: Text('Esta partitura no tiene un archivo disponible'),
+        ),
       );
+      return;
     }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PantallaVerPartitura(nombre: nombre, url: urlArchivo),
+      ),
+    );
   }
 
   @override
@@ -80,7 +102,12 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 45, 51, 53).withValues(alpha: 0.85),
+                    color: const Color.fromARGB(
+                      255,
+                      45,
+                      51,
+                      53,
+                    ).withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(24.0),
                     border: Border.all(
                       color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
@@ -117,10 +144,7 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
                         height: 55,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFE2BC65),
-                              Color(0xFFC29B45),
-                            ],
+                            colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -154,81 +178,178 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
                       // Contenido de la galería
                       Expanded(
                         child: isLoading
-                            ? const Center(child: CircularProgressIndicator(color: Color(0xFFE2BC65)))
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFFE2BC65),
+                                ),
+                              )
                             : partituras.isEmpty
-                                ? const Center(
-                                    child: Text(
-                                      'No hay partituras registradas',
-                                      style: TextStyle(color: Colors.white70, fontSize: 15),
-                                    ),
-                                  )
-                                : GridView.builder(
-                                    padding: const EdgeInsets.all(4),
-                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            ? const Center(
+                                child: Text(
+                                  'No hay partituras registradas',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              )
+                            : GridView.builder(
+                                padding: const EdgeInsets.all(4),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 10,
                                       childAspectRatio: 0.8,
                                     ),
-                                    itemCount: partituras.length,
-                                    itemBuilder: (context, index) {
-                                      final partitura = partituras[index];
-                                      final cat = partitura['categorias_partituras'];
-                                      final nombre = cat != null ? cat['nombre_partitura'] : 'Partitura';
-                                      
-                                      // 🌟 3. Obtenemos la URL del archivo guardada en la base de datos
-                                      final archivoUrl = cat != null ? cat['archivo_url'] : null;
+                                itemCount: partituras.length,
+                                itemBuilder: (context, index) {
+                                  final partitura = partituras[index];
+                                  final cat =
+                                      partitura['categorias_partituras'];
+                                  final nombre = cat != null
+                                      ? cat['nombre_partitura']
+                                      : 'Partitura';
 
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(255, 71, 74, 75).withValues(alpha: 0.85),
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(
-                                            color: const Color(0xFFE2BC65).withValues(alpha: 0.3),
+                                  // 🌟 3. Obtenemos la URL del archivo guardada en la base de datos
+                                  final archivoUrl = cat != null
+                                      ? cat['archivo_url']
+                                      : null;
+                                  final urlTexto = archivoUrl?.toString();
+                                  final esImagen = _esImagenPartitura(urlTexto);
+
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                        255,
+                                        71,
+                                        74,
+                                        75,
+                                      ).withValues(alpha: 0.85),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: const Color(
+                                          0xFFE2BC65,
+                                        ).withValues(alpha: 0.3),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          behavior: HitTestBehavior.opaque,
+                                          onTap: () => _verPartitura(
+                                            nombre.toString(),
+                                            archivoUrl?.toString(),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                if (esImagen &&
+                                                    urlTexto != null)
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                    child: Image.network(
+                                                      urlTexto,
+                                                      height: 80,
+                                                      width: double.infinity,
+                                                      fit: BoxFit.cover,
+                                                      errorBuilder: (_, _, _) =>
+                                                          const Icon(
+                                                            Icons.broken_image,
+                                                            size: 38,
+                                                            color: Color(
+                                                              0xFFE2BC65,
+                                                            ),
+                                                          ),
+                                                    ),
+                                                  )
+                                                else
+                                                  const Icon(
+                                                    Icons.picture_as_pdf,
+                                                    size: 38,
+                                                    color: Color(0xFFE2BC65),
+                                                  ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  nombre.toString(),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color.fromARGB(
+                                                      221,
+                                                      255,
+                                                      255,
+                                                      255,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                const Text(
+                                                  'Toca para ver',
+                                                  style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 10,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(Icons.insert_drive_file, size: 38, color: Color(0xFFE2BC65)),
-                                            const SizedBox(height: 8),
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                              child: Text(
-                                                nombre,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color.fromARGB(221, 255, 255, 255)),
-                                              ),
+                                        const SizedBox(height: 10),
+                                        ElevatedButton.icon(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: const Color(
+                                              0xFFE2BC65,
                                             ),
-                                            const SizedBox(height: 10),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: const Color(0xFFE2BC65),
-                                                foregroundColor: Colors.white,
-                                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(16),
-                                                ),
-                                              ),
-                                              // 🌟 4. Conectamos el botón para abrir/descargar el archivo real
-                                              onPressed: () {
-                                                if (archivoUrl != null && archivoUrl.toString().isNotEmpty) {
-                                                  _abrirArchivo(archivoUrl);
-                                                } else {
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                    const SnackBar(content: Text('Este archivo no tiene un enlace válido')),
-                                                  );
-                                                }
-                                              },
-                                              child: const Text('Descargar', style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 11, fontWeight: FontWeight.bold)),
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 4,
                                             ),
-                                          ],
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                          ),
+                                          onPressed: () => _verPartitura(
+                                            nombre.toString(),
+                                            urlTexto,
+                                          ),
+                                          icon: const Icon(
+                                            Icons.open_in_new,
+                                            size: 16,
+                                          ),
+                                          label: const Text(
+                                            'Abrir',
+                                            style: TextStyle(
+                                              color: Color.fromARGB(
+                                                255,
+                                                0,
+                                                0,
+                                                0,
+                                              ),
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
-                                      );
-                                    },
-                                  ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
                       const SizedBox(height: 15),
 
