@@ -106,7 +106,7 @@ class PantallaContacto extends StatelessWidget {
                         children: [
                           Icon(Icons.phone, color: Colors.white),
                           SizedBox(width: 15),
-                          Text('3225172363', style: TextStyle(color: Colors.white, fontSize: 16)),
+                          Text('310 852 57 24', style: TextStyle(color: Colors.white, fontSize: 16)),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -114,7 +114,7 @@ class PantallaContacto extends StatelessWidget {
                         children: [
                           Icon(Icons.email, color: Colors.white),
                           SizedBox(width: 15),
-                          Text('mahechamanuela92@gmail.com', style: TextStyle(color: Colors.white, fontSize: 16)),
+                          Text('sevara56@hotmail.com', style: TextStyle(color: Colors.white, fontSize: 16)),
                         ],
                       ),
                       const SizedBox(height: 20),

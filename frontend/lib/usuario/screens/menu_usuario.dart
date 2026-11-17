@@ -8,7 +8,12 @@ import 'partituras/partituras_usuario.dart';
 class MenuUsuarios extends StatelessWidget {
   const MenuUsuarios({super.key});
 
-  Widget opcionMenu(BuildContext context, String texto, Widget? pantalla, IconData icono) {
+  Widget opcionMenu(
+    BuildContext context,
+    String texto,
+    Widget? pantalla,
+    IconData icono,
+  ) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       leading: Icon(icono, color: const Color(0xFFE2BC65), size: 24),
@@ -52,12 +57,20 @@ class MenuUsuarios extends StatelessWidget {
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: Container(
                   width: 280,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 45, 51, 53).withValues(alpha: 0.85),
+                    color: const Color.fromARGB(
+                      255,
+                      45,
+                      51,
+                      53,
+                    ).withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: const Color(0xFFE2BC65).withValues(alpha: 0.6),
@@ -88,7 +101,7 @@ class MenuUsuarios extends StatelessWidget {
                       ),
                       opcionMenu(
                         context,
-                        'Eventos - presentaciones',
+                        'Eventos',
                         const ListaEventosUsuario(),
                         Icons.event_note,
                       ),

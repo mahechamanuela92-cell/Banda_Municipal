@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart'; // Útil para abrir o descargar el archivo
+import 'package:url_launcher/url_launcher.dart';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
 import 'package:frontend/components/chat/boton_chat_flotante.dart';
@@ -20,18 +20,23 @@ class PantallaGaleriaPartituras extends StatelessWidget {
     showDialog(context: context, builder: (_) => const ChatBandaModal());
   }
 
-  // Consulta directa a Supabase filtrando por instrumento y voz
   Future<List<Map<String, dynamic>>> _obtenerPartiturasDeSupabase() async {
     final response = await Supabase.instance.client
-        .from('partituras')
+        .from('categorias_partituras')
         .select()
-        .eq('instrumento', nombreInstrumento)
-        .eq('voz', nombreVoz);
+        .order('id_categoria', ascending: false);
 
-    return List<Map<String, dynamic>>.from(response);
+    final todas = List<Map<String, dynamic>>.from(response);
+    final nombreFiltro = nombreInstrumento.toLowerCase();
+    final vozFiltro = nombreVoz.trim().toLowerCase();
+
+    return todas.where((item) {
+      final nombre = (item['nombre_partitura'] ?? '').toString().toLowerCase();
+      final voz = (item['voz_partitura'] ?? '').toString().trim().toLowerCase();
+      return voz == vozFiltro && nombre.contains(nombreFiltro);
+    }).toList();
   }
 
-  // Función para descargar o abrir el archivo de la partitura
   Future<void> _descargarPartitura(String urlString) async {
     final Uri url = Uri.parse(urlString);
     if (await canLaunchUrl(url)) {
