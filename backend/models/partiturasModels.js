@@ -28,7 +28,7 @@ export const PartiturasModel = {
     getAll: async () => {
         const { data, error } = await supabase
             .from('categorias_partituras')
-            .select('*')
+            .select('id_categoria, nombre_partitura, voz_partitura, archivo_url')
             .order('id_categoria', { ascending: false });
 
         if (error) throw error;
@@ -42,7 +42,7 @@ export const PartiturasModel = {
     getByCategoria: async (id_categoria) => {
         const { data, error } = await supabase
             .from('categorias_partituras')
-            .select('*')
+            .select('id_categoria, nombre_partitura, voz_partitura, archivo_url')
             .eq('id_categoria', id_categoria);
 
         if (error) throw error;

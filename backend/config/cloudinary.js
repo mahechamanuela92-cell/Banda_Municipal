@@ -32,9 +32,27 @@ const storage = new CloudinaryStorage({
   }),
 });
 
+const tiposPartituraPermitidos = new Set(['.pdf', '.jpg', '.jpeg', '.png']);
+
 export const upload = multer({
   storage,
   limits: { fileSize: 50 * 1024 * 1024 },
+});
+
+export const uploadPartitura = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: (req, file, callback) => {
+    const extension = file.originalname
+      .slice(file.originalname.lastIndexOf('.'))
+      .toLowerCase();
+    if (!tiposPartituraPermitidos.has(extension)) {
+      const error = new Error('Solo se permiten archivos PDF o imágenes JPG, JPEG y PNG');
+      error.code = 'UNSUPPORTED_FILE_TYPE';
+      return callback(error);
+    }
+    callback(null, true);
+  },
 });
 
 export { cloudinary };

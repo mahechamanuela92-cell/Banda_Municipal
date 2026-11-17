@@ -4,13 +4,28 @@ import { PartiturasModel } from '../models/partiturasModels.js';
 
 export const createCategoria = async (req, res) => {
     try {
-        const { nombre_partitura, voz_partitura } = req.body;
+        const body = req.body ?? {};
+        const nombre_partitura = typeof body.nombre_partitura === 'string'
+            ? body.nombre_partitura.trim()
+            : '';
+        const voz_partitura = typeof body.voz_partitura === 'string'
+            ? body.voz_partitura.trim()
+            : '';
+        const archivo = req.file;
 
-        if (!nombre_partitura || !voz_partitura) {
-            return res.status(400).json({ error: 'El nombre y la voz de la partitura son obligatorios' });
+        if (!nombre_partitura || !voz_partitura || !archivo) {
+            return res.status(400).json({
+                error: 'El nombre, la voz y el archivo de la partitura son obligatorios'
+            });
         }
 
-        const nuevaCategoria = await PartiturasModel.createCategoria(nombre_partitura, voz_partitura);
+        const archivoUrl = archivo.path || archivo.filename || '';
+
+        const nuevaCategoria = await PartiturasModel.createCategoria(
+            nombre_partitura,
+            voz_partitura,
+            archivoUrl
+        );
         return res.status(201).json(nuevaCategoria);
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -19,7 +34,9 @@ export const createCategoria = async (req, res) => {
 
 export const createPartitura = async (req, res) => {
     try {
-        const { id_listado, id_categoria } = req.body;
+        const body = req.body ?? {};
+        const id_listado = body.id_listado;
+        const id_categoria = body.id_categoria;
         const archivo = req.file; // 📁 Aquí llega el archivo gracias a Multer
 
         if (!id_listado || !id_categoria) {
@@ -29,12 +46,12 @@ export const createPartitura = async (req, res) => {
         }
 
         if (!archivo) {
-            return res.status(400).json({ error: 'Debes adjuntar un archivo (PDF, Word o imagen)' });
+            return res.status(400).json({ error: 'Debes adjuntar un archivo PDF o una imagen' });
         }
 
         // 🌟 Aquí subes el archivo a Cloudinary / Supabase Storage y obtienes la URL pública
         // Ejemplo genérico de URL obtenida tras subir el archivo:
-        const archivoUrl = archivo.path; // O la URL que te retorne tu servicio de almacenamiento
+        const archivoUrl = archivo.path || archivo.filename || ''; // O la URL que te retorne tu servicio de almacenamiento
 
         // Guardas en la base de datos incluyendo la URL del archivo
         const nuevaPartitura = await PartiturasModel.createPartitura(id_listado, id_categoria, archivoUrl);
