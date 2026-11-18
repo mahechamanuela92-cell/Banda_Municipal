@@ -122,21 +122,29 @@ class _VideosPantallaState extends State<VideosPantalla> {
                         ),
                         itemCount: videosMiniaturas.length,
                         itemBuilder: (context, index) {
+                          final item = videosMiniaturas[index];
+                          final esHttp = item.startsWith('http');
+
                           return GestureDetector(
-                            onTap: () => _verVideoGrande(context, videosMiniaturas[index]),
+                            onTap: () => _verVideoGrande(context, item),
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: Image.network(
-                                    videosMiniaturas[index].startsWith('http')
-                                        ? videosMiniaturas[index]
-                                        : 'https://picsum.photos/600/600?random=20', // Imagen temporal para local
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  ),
+                                  child: esHttp
+                                      ? Image.network(
+                                          item,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        )
+                                      : Container(
+                                          color: Colors.grey[900],
+                                          child: const Center(
+                                            child: Icon(Icons.videocam, color: Colors.white54, size: 40),
+                                          ),
+                                        ),
                                 ),
                                 Container(
                                   decoration: const BoxDecoration(
@@ -159,7 +167,7 @@ class _VideosPantallaState extends State<VideosPantalla> {
 
                   const SizedBox(height: 15),
 
-// Botón Seleccionar Video
+                  // Botón Seleccionar Video
                   SizedBox(
                     width: double.infinity,
                     height: 48,
@@ -172,7 +180,7 @@ class _VideosPantallaState extends State<VideosPantalla> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text( // <--- Incluir 'child:'
+                      child: const Text(
                         "Seleccionar Video",
                         style: TextStyle(fontSize: 16, fontFamily: 'Serif', fontWeight: FontWeight.bold),
                       ),
@@ -196,7 +204,7 @@ class _VideosPantallaState extends State<VideosPantalla> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text( // <--- Incluir 'child:'
+                      child: const Text(
                         "Guardar",
                         style: TextStyle(fontSize: 16, fontFamily: 'Serif', fontWeight: FontWeight.bold),
                       ),

@@ -8,6 +8,7 @@ import 'package:frontend/usuario/screens/inicial.dart' as musico;
 import 'package:flutter/material.dart';
 import '../widgets/fondos.dart';
 import 'pantalla_registro.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InicioSesion extends StatefulWidget {
   const InicioSesion({super.key});
@@ -83,12 +84,24 @@ class _InicioSesionState extends State<InicioSesion> {
           return;
         }
 
+        // Asignamos a la clase de sesión global
         Sesion.token = data['token'];
         Sesion.nombre = data['nombre'];
         Sesion.rol = data['rol'];
+
+        // Guardamos la sesión en el teléfono permanentemente
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['token']);
+        await prefs.setString('nombre', data['nombre'] ?? '');
+        await prefs.setString('rol', data['rol'] ?? '');
+
+        // 🌟 Validación de seguridad para que Flutter no se queje del context tras un await
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('¡Bienvenido, ${data['nombre']}!')),
         );
+        
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => pantalla),
