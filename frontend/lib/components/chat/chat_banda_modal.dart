@@ -76,79 +76,88 @@ class _ChatBandaModalState extends State<ChatBandaModal> {
 
   @override
   Widget build(BuildContext context) {
+    // Obtenemos la altura real que ocupa el teclado en pantalla
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
-      child: Container(
-        // Ventana más grande: ocupa el 85% de la altura de la pantalla
-        height: MediaQuery.of(context).size.height * 0.85,
-        margin: EdgeInsets.only(bottom: bottomInset),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido oscuro unificado
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: const Color(0xFFE2BC65), // 🌟 Borde dorado unificado
-            width: 1.5,
+    return Padding(
+      // Empujamos el diálogo hacia arriba usando exactamente el espacio del teclado
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+        child: Container(
+          // Usamos restricciones de altura máxima en lugar de una altura fija rígida
+          constraints: BoxConstraints(
+            maxHeight: screenHeight * 0.75, // Altura máxima ideal sin chocar con el teclado
+            minHeight: 300,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 20,
-              spreadRadius: 3,
-              offset: const Offset(0, 8),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.90), // Fondo sólido translúcido para evitar transparencias raras con el teclado
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: const Color(0xFFE2BC65), // 🌟 Borde dorado unificado
+              width: 1.5,
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            const ChatHeader(),
-            // Expanded garantiza que la lista ocupe todo el espacio central y baje bien
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(16),
-                itemCount: _mensajes.length,
-                itemBuilder: (context, index) {
-                  final item = _mensajes[index];
-                  return ChatBurbuja(
-                    texto: item['text']!,
-                    esUsuario: item['role'] == 'user',
-                  );
-                },
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.4),
+                blurRadius: 20,
+                spreadRadius: 3,
+                offset: const Offset(0, 8),
               ),
-            ),
-            if (_cargando)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 6,
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Vital para que se adapte al contenido disponible
+            children: [
+              const ChatHeader(),
+              // Expanded permite que la lista ocupe dinámicamente el espacio restante
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _mensajes.length,
+                  itemBuilder: (context, index) {
+                    final item = _mensajes[index];
+                    return ChatBurbuja(
+                      texto: item['text']!,
+                      esUsuario: item['role'] == 'user',
+                    );
+                  },
                 ),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Color(0xFFE2BC65),
+              ),
+              if (_cargando)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 6,
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFFE2BC65),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'El asistente está escribiendo...',
-                      style: TextStyle(color: Color(0xFFE2BC65), fontSize: 12),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      const Text(
+                        'El asistente está escribiendo...',
+                        style: TextStyle(color: Color(0xFFE2BC65), fontSize: 12),
+                      ),
+                    ],
+                  ),
                 ),
+              ChatInputField(
+                controller: _controller,
+                cargando: _cargando,
+                onEnviar: _enviarMensaje,
               ),
-            ChatInputField(
-              controller: _controller,
-              cargando: _cargando,
-              onEnviar: _enviarMensaje,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
