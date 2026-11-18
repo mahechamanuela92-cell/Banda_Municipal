@@ -66,11 +66,9 @@ class _PantallaGaleriaPartiturasState extends State<PantallaGaleriaPartituras> {
   }
 
   bool _esImagenPartitura(String? urlArchivo) {
-    if (urlArchivo == null) return false;
-    final segmentos = Uri.tryParse(urlArchivo)?.pathSegments ?? const [];
-    if (segmentos.isEmpty) return false;
-    final extension = segmentos.last.split('.').last.toLowerCase();
-    return const {'jpg', 'jpeg', 'png'}.contains(extension);
+    if (urlArchivo == null || urlArchivo.trim().isEmpty) return false;
+    final url = urlArchivo.toLowerCase();
+    return RegExp(r'\.(jpe?g|png|webp)(?:[/?#]|$)').hasMatch(url);
   }
 
   void _verPartitura(String nombre, String? urlArchivo) {

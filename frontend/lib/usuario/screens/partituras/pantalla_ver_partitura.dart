@@ -27,11 +27,23 @@ class _PantallaVerPartituraState extends State<PantallaVerPartitura> {
   bool _cargando = false;
 
   String get _extension {
+    final url = widget.url.toLowerCase();
     final segmentos = Uri.tryParse(widget.url)?.pathSegments ?? const [];
-    if (segmentos.isEmpty) return '';
-    final nombreArchivo = segmentos.last;
-    final punto = nombreArchivo.lastIndexOf('.');
-    return punto < 0 ? '' : nombreArchivo.substring(punto + 1).toLowerCase();
+    if (segmentos.isNotEmpty) {
+      final nombreArchivo = segmentos.last;
+      final punto = nombreArchivo.lastIndexOf('.');
+      if (punto >= 0) {
+        return nombreArchivo.substring(punto + 1).toLowerCase();
+      }
+    }
+    if (RegExp(r'\.pdf(?:[/?#]|$)').hasMatch(url)) return 'pdf';
+    if (RegExp(r'\.(?:jpe?g|png|webp)(?:[/?#]|$)').hasMatch(url)) {
+      final coincidencia = RegExp(
+        r'\.(jpe?g|png|webp)(?:[/?#]|$)',
+      ).firstMatch(url);
+      return coincidencia?.group(1) ?? '';
+    }
+    return '';
   }
 
   bool get _esPdf => _extension == 'pdf';
@@ -50,18 +62,66 @@ class _PantallaVerPartituraState extends State<PantallaVerPartitura> {
       _error = null;
     });
     try {
-      final response = await http
-          .get(Uri.parse(widget.url))
-          .timeout(const Duration(seconds: 60));
-      if (response.statusCode != 200) {
-        throw Exception('No se pudo cargar el PDF (${response.statusCode})');
+      http.Response? respuesta;
+      Object? ultimoError;
+
+      final candidatos = <String>{widget.url};
+      final uri = Uri.tryParse(widget.url);
+      if (uri != null &&
+          uri.host == 'res.cloudinary.com' &&
+          uri.path.contains('/image/upload/')) {
+        candidatos.add(
+          widget.url.replaceFirst('/image/upload/', '/raw/upload/'),
+        );
+      }
+      if (uri != null &&
+          uri.host == 'res.cloudinary.com' &&
+          uri.path.contains('/raw/upload/')) {
+        candidatos.add(
+          widget.url.replaceFirst('/raw/upload/', '/image/upload/'),
+        );
+      }
+
+      for (final candidato in candidatos) {
+        try {
+          final response = await http
+              .get(Uri.parse(candidato))
+              .timeout(const Duration(seconds: 60));
+          if (response.statusCode == 200) {
+            respuesta = response;
+            break;
+          }
+          if (response.statusCode == 404) {
+            ultimoError = StateError(
+              'El PDF no existe en Cloudinary (404). '
+              'Elimina este registro y vuelve a subir el PDF.',
+            );
+          } else {
+            ultimoError = Exception(
+              'No se pudo cargar el PDF (${response.statusCode}). '
+              'El archivo puede estar protegido o no estar disponible.',
+            );
+          }
+        } catch (error) {
+          ultimoError = error;
+        }
+      }
+
+      if (respuesta == null) {
+        throw ultimoError ?? StateError('No se pudo descargar el archivo PDF');
+      }
+
+      if (respuesta.bodyBytes.isEmpty ||
+          String.fromCharCodes(respuesta.bodyBytes.take(5)).toUpperCase() !=
+              '%PDF-') {
+        throw StateError('El servidor no entregó un archivo PDF válido');
       }
 
       final directorio = await getTemporaryDirectory();
       final archivo = File(
         '${directorio.path}/partitura_${DateTime.now().millisecondsSinceEpoch}.pdf',
       );
-      await archivo.writeAsBytes(response.bodyBytes, flush: true);
+      await archivo.writeAsBytes(respuesta.bodyBytes, flush: true);
       if (!mounted) return;
       setState(() => _rutaPdf = archivo.path);
     } catch (error) {
@@ -121,6 +181,11 @@ class _PantallaVerPartituraState extends State<PantallaVerPartitura> {
                     onPressed: _cargarPdf,
                     icon: const Icon(Icons.refresh),
                     label: const Text('Reintentar'),
+                  ),
+                  TextButton.icon(
+                    onPressed: _abrirEnOtraAplicacion,
+                    icon: const Icon(Icons.open_in_new),
+                    label: const Text('Abrir en otra aplicación'),
                   ),
                 ],
               ),

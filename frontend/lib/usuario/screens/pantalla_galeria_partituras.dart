@@ -5,6 +5,7 @@ import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
 import 'package:frontend/components/chat/boton_chat_flotante.dart';
 import 'package:frontend/components/chat/chat_banda_modal.dart';
+import 'partituras/pantalla_ver_partitura.dart';
 
 class PantallaGaleriaPartituras extends StatelessWidget {
   final String nombreInstrumento;
@@ -142,7 +143,14 @@ class PantallaGaleriaPartituras extends StatelessWidget {
                             ),
                             itemBuilder: (context, index) {
                               final item = partituras[index];
-                              final imageUrl = item['imagen_url'] ?? '';
+                              final imageUrl =
+                                  item['archivo_url']?.toString() ??
+                                  item['imagen_url']?.toString() ??
+                                  '';
+                              final esPdf = RegExp(
+                                r'\.pdf(?:[/?#]|$)',
+                                caseSensitive: false,
+                              ).hasMatch(imageUrl);
 
                               return Container(
                                 decoration: BoxDecoration(
@@ -152,25 +160,56 @@ class PantallaGaleriaPartituras extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
-                                    // Imagen de la partitura obtenida desde Supabase
                                     Expanded(
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-                                        child: Image.network(
-                                          imageUrl,
-                                          fit: BoxFit.cover,
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) return child;
-                                            return Center(
-                                              child: CircularProgressIndicator(
-                                                color: Colores.amarillo,
-                                                strokeWidth: 2,
+                                        child: esPdf
+                                            ? InkWell(
+                                                onTap: () => Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        PantallaVerPartitura(
+                                                          nombre:
+                                                              item['nombre_partitura']
+                                                                  ?.toString() ??
+                                                              'Partitura',
+                                                          url: imageUrl,
+                                                        ),
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Icon(
+                                                    Icons.picture_as_pdf,
+                                                    size: 64,
+                                                    color: Colores.amarillo,
+                                                  ),
+                                                ),
+                                              )
+                                            : Image.network(
+                                                imageUrl,
+                                                fit: BoxFit.cover,
+                                                loadingBuilder:
+                                                    (context, child, loadingProgress) {
+                                                      if (loadingProgress == null) {
+                                                        return child;
+                                                      }
+                                                      return Center(
+                                                        child: CircularProgressIndicator(
+                                                          color: Colores.amarillo,
+                                                          strokeWidth: 2,
+                                                        ),
+                                                      );
+                                                    },
+                                                errorBuilder:
+                                                    (context, error, stackTrace) =>
+                                                        Center(
+                                                          child: Icon(
+                                                            Icons.broken_image,
+                                                            color: Colors.white54,
+                                                          ),
+                                                        ),
                                               ),
-                                            );
-                                          },
-                                          errorBuilder: (context, error, stackTrace) =>
-                                              Center(child: Icon(Icons.broken_image, color: Colors.white54)),
-                                        ),
                                       ),
                                     ),
                                     // Botón Descargar que vincula la descarga de la URL

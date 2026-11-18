@@ -26,10 +26,22 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => ({
-    folder: 'banda_municipal',
-    resource_type: 'auto',
-  }),
+  params: async (req, file) => {
+    const extension = file.originalname
+      .slice(file.originalname.lastIndexOf('.'))
+      .toLowerCase();
+    const esPdf = extension === '.pdf';
+
+    return {
+      folder: 'banda_municipal',
+      resource_type: esPdf ? 'raw' : 'image',
+      use_filename: true,
+      unique_filename: true,
+      type: 'upload',
+      format: esPdf ? 'pdf' : undefined,
+      access_mode: 'public',
+    };
+  },
 });
 
 const tiposPartituraPermitidos = new Set(['.pdf', '.jpg', '.jpeg', '.png']);
