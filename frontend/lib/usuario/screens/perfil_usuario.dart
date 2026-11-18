@@ -217,6 +217,79 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     });
   }
 
+  // 🌟 Método para confirmar y procesar la eliminación de la cuenta
+  void _confirmarEliminarCuenta() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 63, 70, 71),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Color(0xFFE2BC65), width: 1.2),
+          ),
+          title: const Text(
+            'Eliminar cuenta',
+            style: TextStyle(
+              color: Color(0xFFE2BC65),
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          content: const Text(
+            '¿Estas seguro que quieres eliminar tu cuenta de la Banda Sinfónica Municipal de Garzón Huila?',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Cierra el diálogo (No)
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Color(0xFFE2BC65),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el diálogo
+                // TODO: Aquí puedes agregar tu lógica o petición HTTP para eliminar la cuenta en el backend.
+                // Por ahora limpia la sesión y redirige al inicio de sesión:
+                Sesion.token = null;
+                Sesion.nombre = null;
+                Sesion.rol = null;
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const InicioSesion()),
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                'Sí',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _campo(String titulo, TextEditingController controlador) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,7 +323,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
       height: 48,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: esGuardar ? const Color(0xFFE2BC65) : const Color(0xFFE2BC65),
+          backgroundColor: const Color(0xFFE2BC65),
           foregroundColor: esGuardar ? const Color.fromARGB(255, 23, 30, 32) : Colors.redAccent,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           elevation: 3,
@@ -452,7 +525,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                 const SizedBox(height: 12),
                               ],
 
-                              if (!_modoEdicion)
+                              if (!_modoEdicion) ...[
                                 _opcionMenu(context, 'Cerrar Sesión', () {
                                   Sesion.token = null;
                                   Sesion.nombre = null;
@@ -463,6 +536,10 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                     (route) => false,
                                   );
                                 }),
+                                const SizedBox(height: 12),
+                                // 🌟 Nuevo botón de Eliminar Cuenta con el estilo de la app
+                                _opcionMenu(context, 'Eliminar cuenta', _confirmarEliminarCuenta),
+                              ],
                             ],
                           ),
                         ),
