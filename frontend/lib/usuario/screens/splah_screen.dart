@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/config/sesion.dart';
+import 'package:frontend/screens/pantalla_inicio.dart';
+import 'package:frontend/usuario/screens/inicial.dart' as musico;
 import 'inicio_sesion.dart';
 import '../../widgets/fondos.dart';
 
@@ -14,14 +17,33 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const InicioSesion()),
-        );
+    _iniciarSiguientePantalla();
+  }
+
+  Future<void> _iniciarSiguientePantalla() async {
+    await Future.delayed(const Duration(seconds: 3));
+    final haySesion = await Sesion.cargar();
+    if (!mounted) return;
+
+    Widget destino;
+    if (haySesion) {
+      if (Sesion.rol == 'admin') {
+        destino = const Inicio();
+      } else if (Sesion.rol == 'musico') {
+        destino = const musico.Inicio();
+      } else {
+        await Sesion.limpiar();
+        if (!mounted) return;
+        destino = const InicioSesion();
       }
-    });
+    } else {
+      destino = const InicioSesion();
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => destino),
+    );
   }
 
   @override
@@ -38,11 +60,11 @@ class _SplashscreenState extends State<Splashscreen> {
                   // Logo
                   Image.asset(
                     "assets/images/fondo_login1.png",
-                    height: 230, 
+                    height: 230,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 30),
-                  
+
                   // Texto de la Banda
                   const Text(
                     'BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA',
