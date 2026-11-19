@@ -228,7 +228,7 @@ class _PantallaEditarState extends State<PantallaEditar> {
                           controller: _nombre,
                           onSubmitted: (_) => _agregar(),
                           style: const TextStyle(
-                            color: Colors.black,
+                            color: Color.fromARGB(137, 255, 254, 254),
                             fontWeight: FontWeight.w600,
                           ),
                           decoration: InputDecoration(
