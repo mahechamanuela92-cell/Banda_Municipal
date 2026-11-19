@@ -24,6 +24,16 @@ cloudinary.config({
   secure: true,
 });
 
+const extensionesVideo = new Set([
+  '.mp4',
+  '.mov',
+  '.avi',
+  '.mkv',
+  '.webm',
+  '.3gp',
+  '.m4v',
+]);
+
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
@@ -31,10 +41,21 @@ const storage = new CloudinaryStorage({
       .slice(file.originalname.lastIndexOf('.'))
       .toLowerCase();
     const esPdf = extension === '.pdf';
+    const esVideo =
+      req.body?.tipo_archivo === 'video' ||
+      file.mimetype?.startsWith('video/') ||
+      extensionesVideo.has(extension);
+
+    let resourceType = 'image';
+    if (esPdf) {
+      resourceType = 'raw';
+    } else if (esVideo) {
+      resourceType = 'video';
+    }
 
     return {
       folder: 'banda_municipal',
-      resource_type: esPdf ? 'raw' : 'image',
+      resource_type: resourceType,
       use_filename: true,
       unique_filename: true,
       type: 'upload',
