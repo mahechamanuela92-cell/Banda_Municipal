@@ -32,13 +32,35 @@ export const obtenerPorEmail = async (email) => {
   return { data, error };
 };
 
-// Obtener todos los usuarios (CRUD Admin)
+// Obtener todos los usuarios con su foto desde la tabla perfil
 export const ObtenerUsuarios = async () => {
-  const { data, error } = await supabase
+  const { data: usuarios, error } = await supabase
     .from("usuarios")
-    .select("user_id, nombre, email, rol, foto_perfil, fecha_registro")
+    .select("user_id, nombre, email, rol, fecha_registro")
     .order("nombre", { ascending: true });
-  return { data, error };
+
+  if (error || !usuarios) {
+    return { data: null, error };
+  }
+
+  const { data: perfiles, error: errorPerfiles } = await supabase
+    .from("perfil")
+    .select("user_id, foto_perfil");
+
+  if (errorPerfiles) {
+    console.error("Error obteniendo fotos de perfil:", errorPerfiles);
+  }
+
+  const mapaFotos = new Map(
+    (perfiles || []).map((p) => [String(p.user_id), p.foto_perfil])
+  );
+
+  const usuariosConFoto = usuarios.map((u) => ({
+    ...u,
+    foto_perfil: mapaFotos.get(String(u.user_id)) ?? null,
+  }));
+
+  return { data: usuariosConFoto, error: null };
 };
 
 // Obtener usuario por ID (CRUD Admin)
@@ -63,6 +85,8 @@ export const actualizarUsuario = async (id, campos) => {
 
 // Eliminar usuario (CRUD Admin)
 export const eliminarUsuario = async (id) => {
+  await supabase.from("perfil").delete().eq("user_id", id);
+
   const { data, error } = await supabase
     .from("usuarios")
     .delete()
