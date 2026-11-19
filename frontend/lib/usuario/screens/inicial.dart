@@ -7,6 +7,7 @@ import 'package:frontend/widgets/inicio_pantallas/nuestra_historia_pantalla.dart
 import 'package:frontend/widgets/inicio_pantallas/contactenos_pantalla.dart';
 import '../../themes/colores.dart';
 import '../../widgets/fondos.dart';
+import 'package:frontend/screens/integrantes_pantalla.dart';
 
 class Inicio extends StatelessWidget {
   const Inicio({super.key});
@@ -27,6 +28,11 @@ class Inicio extends StatelessWidget {
         'titulo': 'INSTRUMENTOS CON LOS QUE CONTAMOS',
         'icono': Icons.music_note,
         'destino': const InstrumentosPantalla(),
+      },
+      {
+        'titulo': 'INTEGRANTES',
+        'icono': Icons.groups,
+        'destino': const PantallaIntegrantes(),
       },
       {
         'titulo': 'CONTÁCTENOS',
