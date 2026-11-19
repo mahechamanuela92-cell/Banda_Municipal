@@ -53,6 +53,22 @@ export const updateUsuario = async (req, res) => {
 export const deleteUsuario = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (String(req.usuario?.id) === String(id)) {
+      return res.status(400).json({ error: "No puedes eliminar tu propia cuenta" });
+    }
+
+    const { data: usuarioObjetivo, error: errorBusqueda } = await obtenerUsuarioPorId(id);
+    if (errorBusqueda || !usuarioObjetivo) {
+      return res.status(404).json({ error: "Integrante no encontrado" });
+    }
+
+    if (usuarioObjetivo.rol === "admin") {
+      return res.status(403).json({
+        error: "No está permitido eliminar a un administrador",
+      });
+    }
+
     const { data, error } = await eliminarUsuario(id);
 
     if (error) {
@@ -60,7 +76,10 @@ export const deleteUsuario = async (req, res) => {
       return res.status(500).json({ error: "Error al eliminar usuario" });
     }
 
-    return res.status(200).json({ usuario: data });
+    return res.status(200).json({
+      mensaje: "Integrante eliminado correctamente",
+      usuario: data,
+    });
   } catch (error) {
     console.error("Error en deleteUsuario:", error);
     return res.status(500).json({ error: error.message });

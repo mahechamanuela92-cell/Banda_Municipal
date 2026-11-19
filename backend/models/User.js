@@ -36,7 +36,8 @@ export const obtenerPorEmail = async (email) => {
 export const ObtenerUsuarios = async () => {
   const { data, error } = await supabase
     .from("usuarios")
-    .select("user_id, nombre, email, rol, fecha_registro");
+    .select("user_id, nombre, email, rol, foto_perfil, fecha_registro")
+    .order("nombre", { ascending: true });
   return { data, error };
 };
 
