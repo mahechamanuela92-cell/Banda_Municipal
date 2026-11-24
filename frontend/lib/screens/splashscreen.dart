@@ -5,7 +5,6 @@ import 'package:frontend/screens/pantalla_inicio.dart';
 import 'package:frontend/usuario/screens/inicial.dart' as musico;
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/widgets/fondos.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});

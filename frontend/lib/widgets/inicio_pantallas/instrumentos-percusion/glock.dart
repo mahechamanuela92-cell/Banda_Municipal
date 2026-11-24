@@ -55,7 +55,7 @@ class _GlockenspielItemState extends State<GlockenspielItem> {
       await _audioPlayer.pause();
     } else {
       // Ajusta la ruta del archivo MP3 de la flauta píccolo si cambia de nombre
-      await _audioPlayer.play(AssetSource('audios/Glockenspiel.wav'));
+      await _audioPlayer.play(AssetSource('audios/GLOCKENSPIEL.mp3'));
     }
   }
 
