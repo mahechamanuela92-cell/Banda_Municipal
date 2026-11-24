@@ -16,20 +16,39 @@ export const chatBanda = async (req, res) => {
 
     // Detectar si el usuario solo saluda para responder de forma exacta e inmediata con el saludo requerido
     const mensajeLimpio = mensaje.trim().toLowerCase();
-    const esSaludo = ["hola", "buenas", "buenos dias", "buenas tardes", "buenas noches", "hey", "saludos"].includes(mensajeLimpio);
+    const esSaludo = [
+      "hola",
+      "buenas",
+      "buenos dias",
+      "buenos días",
+      "buenas tardes",
+      "buenas noches",
+      "hey",
+      "saludos",
+    ].includes(mensajeLimpio);
 
     if (esSaludo) {
-      // Reemplaza "Danny" o puedes extraer dinámicamente si tienes el nombre, por ahora usaremos un trato cordial o personalizado
-      const saludoPersonalizado = `¡Hola Danny! 🎵 Bienvenida, dime qué necesitas el día de hoy. ¿Has olvidado alguna posición en tu instrumento? 🎺 o ¿Necesitas que te dé alguna recomendación para que tu sonido sea más dulce, agudo, grave o afinado? ✨ Dime lo que necesitas y yo te ayudaré. 🎼`;
-      
+      const saludoGeneral =
+        "¡Hola! 🎵 Bienvenid@, dime qué necesitas el día de hoy. ¿Has olvidado alguna posición en tu instrumento? 🎺 o ¿Necesitas que te dé alguna recomendación para que tu sonido sea más dulce, agudo, grave o afinado? ✨ Dime lo que necesitas y yo te ayudaré. 🎼";
+
       // Guardar el intercambio en Supabase para mantener el historial
       await supabase.from("mensajes_chat").insert([
-        { sesion_id: idSesionValido, usuario_id: usuarioId || null, emisor: "user", mensaje: mensaje.trim() },
-        { sesion_id: idSesionValido, usuario_id: usuarioId || null, emisor: "bot", mensaje: saludoPersonalizado }
+        {
+          sesion_id: idSesionValido,
+          usuario_id: usuarioId || null,
+          emisor: "user",
+          mensaje: mensaje.trim(),
+        },
+        {
+          sesion_id: idSesionValido,
+          usuario_id: usuarioId || null,
+          emisor: "bot",
+          mensaje: saludoGeneral,
+        },
       ]);
 
       return res.status(200).json({
-        respuesta: saludoPersonalizado,
+        respuesta: saludoGeneral,
         sesionId: idSesionValido,
       });
     }
@@ -45,7 +64,9 @@ export const chatBanda = async (req, res) => {
         .select("id_partitura, id_listado, id_categoria"),
       supabase
         .from("eventos")
-        .select("id_evento, user_id, nombre_evento, hora_evento, fecha_evento, lugar_evento, descripcion"),
+        .select(
+          "id_evento, user_id, nombre_evento, hora_evento, fecha_evento, lugar_evento, descripcion"
+        ),
       supabase
         .from("instrumentos")
         .select("id_instrumentos, numero_serial"),
@@ -54,23 +75,46 @@ export const chatBanda = async (req, res) => {
     if (errorPartituras || errorEventos || errorInstrumentos) {
       console.error(
         "Error al consultar Supabase:",
-        errorPartituras?.message || errorEventos?.message || errorInstrumentos?.message
+        errorPartituras?.message ||
+          errorEventos?.message ||
+          errorInstrumentos?.message
       );
-      return res.status(500).json({ message: "Error al consultar la información de la banda." });
+      return res
+        .status(500)
+        .json({ message: "Error al consultar la información de la banda." });
     }
 
     // 2. Armar el texto de recursos para la IA
-    const partiturasTexto = partituras && partituras.length > 0
-      ? partituras.map((p) => `- Partitura #${p.id_partitura} | Listado: ${p.id_listado} | Categoría: ${p.id_categoria}`).join("\n")
-      : "No hay partituras registradas.";
+    const partiturasTexto =
+      partituras && partituras.length > 0
+        ? partituras
+            .map(
+              (p) =>
+                `- Partitura #${p.id_partitura} | Listado: ${p.id_listado} | Categoría: ${p.id_categoria}`
+            )
+            .join("\n")
+        : "No hay partituras registradas.";
 
-    const eventosTexto = eventos && eventos.length > 0
-      ? eventos.map((e) => `- **${e.nombre_evento}**: ${e.fecha_evento} ${e.hora_evento ? `a las ${e.hora_evento}` : ""} en ${e.lugar_evento || "lugar por confirmar"}. ${e.descripcion || ""}`).join("\n")
-      : "No hay eventos programados.";
+    const eventosTexto =
+      eventos && eventos.length > 0
+        ? eventos
+            .map(
+              (e) =>
+                `- **${e.nombre_evento}**: ${e.fecha_evento} ${
+                  e.hora_evento ? `a las ${e.hora_evento}` : ""
+                } en ${e.lugar_evento || "lugar por confirmar"}. ${
+                  e.descripcion || ""
+                }`
+            )
+            .join("\n")
+        : "No hay eventos programados.";
 
-    const instrumentosTexto = instrumentos && instrumentos.length > 0
-      ? instrumentos.map((i) => `- Instrumento #${i.id_instrumentos} | Serial: ${i.numero_serial}`).join("\n")
-      : "No hay instrumentos registrados.";
+    const instrumentosTexto =
+      instrumentos && instrumentos.length > 0
+        ? instrumentos
+            .map((i) => `- Instrumento #${i.id_instrumentos} | Serial: ${i.numero_serial}`)
+            .join("\n")
+        : "No hay instrumentos registrados.";
 
     const recursosTexto = `
 PARTITURAS:
@@ -94,6 +138,7 @@ REGLAS ESTRICTAS DE ATENCIÓN:
 1. DEBES responder ÚNICAMENTE a preguntas referidas a la Banda Municipal, instrumentos, partituras, eventos o a la música en general. 
 2. Si el usuario te pregunta sobre cualquier otro tema ajeno a la música o a la banda (ej. matemáticas, cocina, tecnología general, chistes, etc.), debes rechazar amablemente la pregunta diciendo que estás programada únicamente para ayudarte con temas de la Banda Sinfónica y la música 🎵.
 3. Sé servicial, entusiasta, usa emojis musicales apropiados (🎺, 🎷, 🎶, ✨, 🎼) y mantén tus respuestas claras y concisas.
+4. Cuando presenten cuadros, comparaciones o listados estructurados, usa tablas Markdown bien formadas con 2 o 3 columnas cortas y textos breves para que se vean limpias en pantalla móvil.
 `;
 
     // 3. Inferencia con Groq
@@ -104,10 +149,12 @@ REGLAS ESTRICTAS DE ATENCIÓN:
         { role: "user", content: mensaje },
       ],
       temperature: 0.3,
-      max_tokens: 500,
+      max_tokens: 700,
     });
 
-    const respuestaTexto = completion.choices[0]?.message?.content || "No pude generar una respuesta.";
+    const respuestaTexto =
+      completion.choices[0]?.message?.content ||
+      "No pude generar una respuesta.";
 
     // 4. Guardar ambos mensajes (pregunta y respuesta) en la tabla 'mensajes_chat' de Supabase
     const registrosAInsertar = [
@@ -130,7 +177,10 @@ REGLAS ESTRICTAS DE ATENCIÓN:
       .insert(registrosAInsertar);
 
     if (errorInsert) {
-      console.error("Error guardando el historial en Supabase:", errorInsert.message);
+      console.error(
+        "Error guardando el historial en Supabase:",
+        errorInsert.message
+      );
     }
 
     return res.status(200).json({
@@ -158,11 +208,16 @@ export const obtenerHistorialBanda = async (req, res) => {
       .order("created_at", { ascending: true });
 
     if (error) {
-      return res.status(500).json({ message: "Error al consultar historial", error: error.message });
+      return res.status(500).json({
+        message: "Error al consultar historial",
+        error: error.message,
+      });
     }
 
     return res.status(200).json({ historial: historial || [] });
   } catch (error) {
-    return res.status(500).json({ message: "Error interno", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error interno", error: error.message });
   }
 };
