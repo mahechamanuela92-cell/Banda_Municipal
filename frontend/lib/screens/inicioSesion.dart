@@ -4,6 +4,7 @@ import 'package:frontend/config/api.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/pantalla_inicio.dart';
 import 'package:frontend/screens/recuperar_password.dart';
+import 'package:frontend/screens/verificar_cuenta_screen.dart';
 import 'package:frontend/usuario/screens/inicial.dart' as musico;
 import 'package:http/http.dart' as http;
 import '../widgets/fondos.dart';
@@ -43,6 +44,60 @@ class _InicioSesionState extends State<InicioSesion> {
       default:
         return null;
     }
+  }
+
+  void _mostrarDialogoCuentaNoVerificada(String correo) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color.fromARGB(255, 63, 70, 71),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFE2BC65), width: 1.2),
+        ),
+        title: const Text(
+          'Cuenta no verificada',
+          style: TextStyle(
+            color: Color(0xFFE2BC65),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'El correo "$correo" aún no ha sido verificado. ¿Deseas ingresar el código de 6 dígitos ahora?',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE2BC65),
+              foregroundColor: const Color.fromARGB(255, 23, 30, 32),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VerificarCuentaScreen(
+                    correoRegistrado: correo,
+                  ),
+                ),
+              );
+            },
+            child: const Text(
+              'Verificar',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _iniciarSesion() async {
@@ -104,9 +159,21 @@ class _InicioSesionState extends State<InicioSesion> {
           MaterialPageRoute(builder: (context) => pantalla),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['error'] ?? 'Error al iniciar sesión')),
-        );
+        final mensajeError =
+            (data['error'] ?? data['message'] ?? 'Error al iniciar sesión')
+                .toString();
+        final esCuentaSinVerificar =
+            mensajeError.toLowerCase().contains('no ha sido verificada') ||
+                mensajeError.toLowerCase().contains('no está verificada') ||
+                mensajeError.toLowerCase().contains('verificar');
+
+        if (esCuentaSinVerificar) {
+          _mostrarDialogoCuentaNoVerificada(correo);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(mensajeError)),
+          );
+        }
       }
     } catch (e) {
       if (!mounted) return;

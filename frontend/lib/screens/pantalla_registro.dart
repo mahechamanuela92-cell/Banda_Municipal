@@ -1,4 +1,5 @@
 import 'package:frontend/config/api.dart';
+import 'package:frontend/screens/verificar_cuenta_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -20,14 +21,13 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _codigoController = TextEditingController();
   bool _mostrarPassword = false;
-  
+
   // Variable para controlar los términos y condiciones
   bool _aceptaTerminos = false;
 
   static final RegExp _mayusculaRegex = RegExp(r'[A-ZÁÉÍÓÚÜÑ]');
   static final RegExp _numeroRegex = RegExp(r'[0-9]');
-  static final RegExp _simboloRegex =
-      RegExp(r'[^A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ\s]');
+  static final RegExp _simboloRegex = RegExp(r'[^A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ\s]');
 
   bool get _cumpleLongitud => _passwordController.text.length >= 8;
   bool get _cumpleMayuscula =>
@@ -43,7 +43,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     'Cédula de Ciudadanía',
     'Tarjeta de Identidad',
     'Cédula de Extranjería',
-    'Pasaporte'
+    'Pasaporte',
   ];
 
   @override
@@ -70,7 +70,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
           ),
           title: const Text(
             'Términos, Políticas y Condiciones',
-            style: TextStyle(color: Color(0xFFE2BC65), fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Color(0xFFE2BC65),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           content: const SingleChildScrollView(
             child: Text(
@@ -78,7 +81,11 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               '1. Protección de Datos: Al registrarte autorizas el tratamiento de tus datos personales para fines informativos, de gestión de miembros y actividades musicales de la banda.\n\n'
               '2. Uso de la Información: Tus datos de contacto, tipo de documento y número de identificación se mantendrán seguros bajo los protocolos de almacenamiento y no serán compartidos con terceros sin tu consentimiento.\n\n'
               '3. Compromiso del Músico: Te comprometes a hacer un uso adecuado de la plataforma, respetando las normas internas y las convocatorias institucionales.',
-              style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+                height: 1.4,
+              ),
             ),
           ),
           actions: [
@@ -86,7 +93,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text(
                 'Cerrar',
-                style: TextStyle(color: Color(0xFFE2BC65), fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Color(0xFFE2BC65),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -104,9 +114,17 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     final password = _passwordController.text.trim();
     final codigo = _codigoController.text.trim();
 
-    if (nombre.isEmpty || tipoDoc == null || numDoc.isEmpty || telefono.isEmpty || correo.isEmpty || password.isEmpty || codigo.isEmpty) {
+    if (nombre.isEmpty ||
+        tipoDoc == null ||
+        numDoc.isEmpty ||
+        telefono.isEmpty ||
+        correo.isEmpty ||
+        password.isEmpty ||
+        codigo.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, completa todos los campos y el código')),
+        const SnackBar(
+          content: Text('Por favor, completa todos los campos y el código'),
+        ),
       );
       return;
     }
@@ -133,20 +151,22 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
     try {
       final url = Uri.parse('$apiUrl/api/auth/register');
 
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'nombre': nombre,
-          'tipo_documento': tipoDoc,
-          'numero_documento': numDoc,
-          'telefono': telefono,
-          'email': correo,
-          'password': password,
-          'codigoInvitacion': codigo,
-          'acepta_terminos': _aceptaTerminos, // Se envía al backend
-        }),
-      ).timeout(const Duration(seconds: 5));
+      final response = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'nombre': nombre,
+              'tipo_documento': tipoDoc,
+              'numero_documento': numDoc,
+              'telefono': telefono,
+              'email': correo,
+              'password': password,
+              'codigoInvitacion': codigo,
+              'acepta_terminos': _aceptaTerminos, // Se envía al backend
+            }),
+          )
+          .timeout(const Duration(seconds: 5));
 
       final data = jsonDecode(response.body);
 
@@ -154,18 +174,35 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('¡Registro exitoso! Ya puedes iniciar sesión.')),
+          SnackBar(
+            content: Text(
+              data['message']?.toString() ??
+                  '¡Registro exitoso! Revisa tu correo e ingresa el código de verificación.',
+            ),
+          ),
         );
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                VerificarCuentaScreen(correoRegistrado: correo),
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['error'] ?? 'Error al registrarse')),
+          SnackBar(
+            content: Text(
+              data['error']?.toString() ??
+                  data['message']?.toString() ??
+                  'No se pudo completar el registro',
+            ),
+          ),
         );
       }
-    } catch (e) {
+    } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error de conexión con el servidor: $e')),
+        const SnackBar(content: Text('No se pudo conectar con el servidor')),
       );
     }
   }
@@ -177,18 +214,21 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
         child: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 20.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 10), 
+                  const SizedBox(height: 10),
                   Center(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
                       child: Image.asset(
                         "assets/images/fondo_login1.png",
                         fit: BoxFit.contain,
-                        height: 130, 
+                        height: 130,
                       ),
                     ),
                   ),
@@ -212,7 +252,12 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
+                      color: const Color.fromARGB(
+                        255,
+                        63,
+                        70,
+                        71,
+                      ).withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(30.0),
                       border: Border.all(
                         color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
@@ -233,7 +278,11 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                         value: _tipoDocumentoElegido,
                         hint: Row(
                           children: const [
-                            Icon(Icons.badge, color: Color(0xFFE2BC65), size: 22),
+                            Icon(
+                              Icons.badge,
+                              color: Color(0xFFE2BC65),
+                              size: 22,
+                            ),
                             SizedBox(width: 15),
                             Text(
                               'Tipo de Documento',
@@ -245,9 +294,17 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                             ),
                           ],
                         ),
-                        icon: const Icon(Icons.arrow_drop_down, color: Color(0xFFE2BC65)),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: Color(0xFFE2BC65),
+                        ),
                         isExpanded: true,
-                        dropdownColor: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
+                        dropdownColor: const Color.fromARGB(
+                          255,
+                          63,
+                          70,
+                          71,
+                        ).withValues(alpha: 0.75),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -256,7 +313,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                         items: _tiposDocumento.map((String tipo) {
                           return DropdownMenuItem<String>(
                             value: tipo,
-                            child: Text(tipo, style: const TextStyle(color: Colors.white)),
+                            child: Text(
+                              tipo,
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           );
                         }).toList(),
                         onChanged: (String? nuevoValor) {
@@ -320,10 +380,14 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                         setState(() => _mostrarPassword = !_mostrarPassword);
                       },
                       icon: Icon(
-                        _mostrarPassword ? Icons.visibility_off : Icons.visibility,
+                        _mostrarPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                         color: const Color(0xFFE2BC65),
                       ),
-                      tooltip: _mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña',
+                      tooltip: _mostrarPassword
+                          ? 'Ocultar contraseña'
+                          : 'Mostrar contraseña',
                     ),
                     onChanged: (_) => setState(() {}),
                   ),
@@ -340,7 +404,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                         ),
                         const SizedBox(height: 4),
                         _crearRequisito(_cumpleLongitud, 'Mínimo 8 caracteres'),
-                        _crearRequisito(_cumpleMayuscula, 'Una letra mayúscula'),
+                        _crearRequisito(
+                          _cumpleMayuscula,
+                          'Una letra mayúscula',
+                        ),
                         _crearRequisito(_cumpleNumero, 'Un número'),
                         _crearRequisito(_cumpleSimbolo, 'Un símbolo'),
                       ],
@@ -368,7 +435,10 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                           value: _aceptaTerminos,
                           activeColor: const Color(0xFFE2BC65),
                           checkColor: const Color(0xFF171E20),
-                          side: const BorderSide(color: Color(0xFFE2BC65), width: 1.5),
+                          side: const BorderSide(
+                            color: Color(0xFFE2BC65),
+                            width: 1.5,
+                          ),
                           onChanged: (bool? value) {
                             setState(() {
                               _aceptaTerminos = value ?? false;
@@ -424,10 +494,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                           child: Ink(
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFFE2BC65),
-                                  Color(0xFFC29B45),
-                                ],
+                                colors: [Color(0xFFE2BC65), Color(0xFFC29B45)],
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                               ),
@@ -545,11 +612,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
-          icon: Icon(
-            icon,
-            color: const Color(0xFFE2BC65),
-            size: 22,
-          ),
+          icon: Icon(icon, color: const Color(0xFFE2BC65), size: 22),
           hintText: hintText,
           hintStyle: TextStyle(
             color: Colors.white.withValues(alpha: 0.6),
