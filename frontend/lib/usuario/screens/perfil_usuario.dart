@@ -131,9 +131,9 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
       );
       return;
     }
-    if (_nombre.text.trim().isEmpty || _correo.text.trim().isEmpty) {
+    if (_nombre.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('El nombre y el correo son obligatorios')),
+        const SnackBar(content: Text('El nombre es obligatorio')),
       );
       return;
     }
@@ -148,7 +148,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
         },
         body: jsonEncode({
           'nombre': _nombre.text.trim(),
-          'email': _correo.text.trim(),
           'telefono': _telefono.text.trim(),
         }),
       ).timeout(const Duration(seconds: 15));
@@ -184,11 +183,10 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
       }
 
       _nombre.text = _nombre.text.trim();
-      _correo.text = _correo.text.trim();
+      _telefono.text = _telefono.text.trim();
       Sesion.nombre = _nombre.text;
       _nombreOriginal = _nombre.text;
       _telefonoOriginal = _telefono.text;
-      _correoOriginal = _correo.text;
       if (mounted) {
         setState(() => _modoEdicion = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -245,7 +243,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(), // Cierra el diálogo (No)
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text(
                 'No',
                 style: TextStyle(
@@ -264,9 +262,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                 ),
               ),
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
-                // TODO: Aquí puedes agregar tu lógica o petición HTTP para eliminar la cuenta en el backend.
-                // Por ahora limpia la sesión y redirige al inicio de sesión:
+                Navigator.of(context).pop();
                 Sesion.token = null;
                 Sesion.nombre = null;
                 Sesion.rol = null;
@@ -290,18 +286,34 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
     );
   }
 
-  Widget _campo(String titulo, TextEditingController controlador) {
+  Widget _campo(
+    String titulo,
+    TextEditingController controlador, {
+    bool editable = true,
+  }) {
+    final puedeEditar = _modoEdicion && editable;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (titulo.isNotEmpty)
-          Text(titulo, style: const TextStyle(color: Color(0xFFE2BC65), fontSize: 14, fontWeight: FontWeight.bold)),
+          Text(
+            titulo,
+            style: const TextStyle(
+              color: Color(0xFFE2BC65),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         TextField(
           controller: controlador,
-          readOnly: !_modoEdicion,
-          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+          readOnly: !puedeEditar,
+          style: TextStyle(
+            color: editable ? Colors.white : Colors.white70,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
           decoration: InputDecoration(
-            suffixIcon: _modoEdicion
+            suffixIcon: puedeEditar
                 ? const Icon(Icons.edit, color: Color(0xFFE2BC65), size: 18)
                 : null,
             enabledBorder: const UnderlineInputBorder(
@@ -354,16 +366,15 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
         child: SafeArea(
           child: Stack(
             children: [
-              // Contenido principal dentro de un contenedor unificado
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75), // 🌟 Fondo translúcido unificado
+                    color: const Color.fromARGB(255, 63, 70, 71).withValues(alpha: 0.75),
                     borderRadius: BorderRadius.circular(24.0),
                     border: Border.all(
-                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5), // 🌟 Borde sutil dorado
+                      color: const Color(0xFFE2BC65).withValues(alpha: 0.5),
                       width: 1.2,
                     ),
                     boxShadow: [
@@ -376,7 +387,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                   ),
                   child: Column(
                     children: [
-                      // Barra superior (Volver y Botón Editar)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -408,7 +418,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                       ),
                       const SizedBox(height: 5),
 
-                      // Título principal unificado con degradado dorado
                       Container(
                         width: double.infinity,
                         height: 55,
@@ -464,7 +473,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                   ),
                                 ),
 
-                              // Avatar de Perfil
                               SizedBox(
                                 width: 120,
                                 height: 120,
@@ -517,7 +525,7 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                               const SizedBox(height: 16),
                               _campo('Teléfono', _telefono),
                               const SizedBox(height: 16),
-                              _campo('Correo electrónico', _correo),
+                              _campo('Correo electrónico', _correo, editable: false),
                               const SizedBox(height: 25),
 
                               if (_modoEdicion) ...[
@@ -537,7 +545,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                                   );
                                 }),
                                 const SizedBox(height: 12),
-                                // 🌟 Nuevo botón de Eliminar Cuenta con el estilo de la app
                                 _opcionMenu(context, 'Eliminar cuenta', _confirmarEliminarCuenta),
                               ],
                             ],
@@ -546,7 +553,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                       ),
                       const SizedBox(height: 15),
 
-                      // Pie de página institucional unificado
                       const Center(
                         child: Text(
                           "BANDA SINFONICA SAN MIGUEL\nGARZÓN HUILA",
@@ -564,7 +570,6 @@ class _PantallaPerfilState extends State<PantallaPerfil> {
                 ),
               ),
 
-              // Botón flotante del chatbot de la IA
               BotonChatFlotante(onPressed: () => _abrirAsistenteIA(context)),
             ],
           ),

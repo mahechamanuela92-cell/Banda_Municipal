@@ -22,45 +22,28 @@ class _SplashscreenState extends State<Splashscreen> {
   }
 
   Future<void> _verificarSesionGuardada() async {
-    // Esperamos 3 segundos para mostrar el splash institucional
-    await Future.delayed(const Duration(seconds: 3));
+  await Future.delayed(const Duration(seconds: 3));
+  if (!mounted) return;
 
+  final haySesion = await Sesion.cargar();
+  if (!mounted) return;
+
+  Widget pantallaDestino;
+  if (haySesion && Sesion.rol == 'admin') {
+    pantallaDestino = const Inicio();
+  } else if (haySesion && Sesion.rol == 'musico') {
+    pantallaDestino = const musico.Inicio();
+  } else {
+    await Sesion.limpiar();
     if (!mounted) return;
-
-    // Consultamos la memoria interna del teléfono
-    final prefs = await SharedPreferences.getInstance();
-    final tokenGuardado = prefs.getString('token');
-    final rolGuardado = prefs.getString('rol');
-    final nombreGuardado = prefs.getString('nombre');
-
-    if (tokenGuardado != null && tokenGuardado.isNotEmpty) {
-      // Restauramos los datos en tu clase estática Sesion
-      Sesion.token = tokenGuardado;
-      Sesion.rol = rolGuardado;
-      Sesion.nombre = nombreGuardado;
-
-      // Redirigimos según el rol guardado sin pasar por el login
-      Widget pantallaDestino;
-      if (rolGuardado == 'admin') {
-        pantallaDestino = const Inicio();
-      } else if (rolGuardado == 'musico') {
-        pantallaDestino = const musico.Inicio();
-      } else {
-        pantallaDestino = const InicioSesion();
-      }
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => pantallaDestino),
-      );
-    } else {
-      // Si no hay sesión, mandamos al login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const InicioSesion()),
-      );
-    }
+    pantallaDestino = const InicioSesion();
   }
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => pantallaDestino),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
