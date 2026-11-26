@@ -14,6 +14,7 @@ import multimediaRoutes from './routes/multimediaRoutes.js';
 import catalogoRoutes from './routes/catalogoRoutes.js';
 import partiturasRoutes from './routes/partiturasRoutes.js';
 import perfilRoutes from './routes/perfil.js';
+import rankingMemoriaRoutes from "./routes/rankingMemoriaRoutes.js";
 
 
 
@@ -54,6 +55,7 @@ app.use('/multimedia', multimediaRoutes);
 app.use('/catalogo', catalogoRoutes);
 app.use('/partituras', partiturasRoutes);
 app.use("/api/banda", chatBandaRoutes);
+app.use("/api/ranking-memoria", rankingMemoriaRoutes);
 
 
 
