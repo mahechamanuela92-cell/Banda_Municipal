@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/config/api.dart';
 import 'package:frontend/config/sesion.dart';
@@ -126,6 +127,9 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
     return lista;
   }
 
+  final AudioPlayer _player = AudioPlayer();
+  bool _sonidoActivado = true;
+
   int _nivel = 1;
   int _puntosTotales = 0;
   int _intentos = 0;
@@ -147,7 +151,29 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _player.dispose();
     super.dispose();
+  }
+
+  Future<void> _reproducirSonido(String nombreArchivo) async {
+    if (!_sonidoActivado) return;
+    try {
+      await _player.stop();
+      await _player.play(AssetSource('audios/$nombreArchivo'));
+    } catch (_) {
+      // Si falta un archivo o el audio no está disponible, el juego continúa sin fallar
+    }
+  }
+
+  void _alternarSonido() {
+    setState(() {
+      _sonidoActivado = !_sonidoActivado;
+    });
+    if (!_sonidoActivado) {
+      _player.stop();
+    } else {
+      _reproducirSonido('voltear_carta.mp3');
+    }
   }
 
   Future<void> _cargarUsuarioYIniciarPartida() async {
@@ -234,6 +260,7 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
     });
 
     if (_primeraSeleccionada == null) {
+      _reproducirSonido('voltear_carta.mp3');
       _primeraSeleccionada = carta;
       return;
     }
@@ -243,6 +270,7 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
     setState(() => _intentos++);
 
     if (anterior.definicion.claveUnica == carta.definicion.claveUnica) {
+      _reproducirSonido('correcto.mp3');
       setState(() {
         anterior.encontrada = true;
         carta.encontrada = true;
@@ -250,6 +278,7 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
       });
       _verificarVictoria();
     } else {
+      _reproducirSonido('incorrecto.mp3');
       setState(() => _bloqueado = true);
       Future.delayed(const Duration(milliseconds: 650), () {
         if (!mounted) return;
@@ -267,6 +296,7 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
     if (!todasEncontradas) return;
 
     _timer?.cancel();
+    _reproducirSonido('victoria.mp3');
 
     // Bono por rapidez (hasta 300 pts si resuelve rápido)
     final bonoTiempo = max(0, 300 - (_segundosTranscurridos * 2));
@@ -296,13 +326,12 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
   }) async {
     try {
       final url = Uri.parse('$apiUrl/api/ranking-memoria');
-      final respuesta = await http
+      await http
           .post(
             url,
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
               'nombre': _nombreJugador,
-              'correo': null,
               'nivel': _nivel,
               'puntos': puntosAEnviar,
               'tiempoSegundos': tiempoSegundos,
@@ -310,15 +339,12 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
             }),
           )
           .timeout(const Duration(seconds: 8));
-      if (respuesta.statusCode < 200 || respuesta.statusCode >= 300) {
-        throw Exception('HTTP ${respuesta.statusCode}: ${respuesta.body}');
-      }
     } catch (_) {
       // Si no hay conexión en el momento, el jugador igual puede ver su partida y reintentar el ranking
     }
   }
 
-  Future<List<dynamic>> _consultarRanking() async {
+  Future<List<Map<String, dynamic>>> _consultarRanking() async {
     final url = Uri.parse('$apiUrl/api/ranking-memoria');
     final resp = await http.get(url).timeout(const Duration(seconds: 8));
     if (resp.statusCode < 200 || resp.statusCode >= 300) {
@@ -387,7 +413,7 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
                   ),
                   const SizedBox(height: 14),
                   Expanded(
-                    child: FutureBuilder<List<dynamic>>(
+                    child: FutureBuilder<List<Map<String, dynamic>>>(
                       future: _consultarRanking(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -731,6 +757,14 @@ class _MemoriaMusicalScreenState extends State<MemoriaMusicalScreen> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: _sonidoActivado ? 'Silenciar' : 'Activar sonido',
+                      onPressed: _alternarSonido,
+                      icon: Icon(
+                        _sonidoActivado ? Icons.volume_up : Icons.volume_off,
+                        color: _dorado,
                       ),
                     ),
                     IconButton(
