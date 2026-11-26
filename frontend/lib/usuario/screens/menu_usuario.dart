@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/memoria_musical_screen.dart';
 import 'package:frontend/screens/pantallaAyuda.dart';
 import 'eventos/eventos.dart';
 import 'multimedia/multimedia.dart';
@@ -104,6 +105,12 @@ class MenuUsuarios extends StatelessWidget {
                         'Eventos',
                         const ListaEventosUsuario(),
                         Icons.event_note,
+                      ),
+                      opcionMenu(
+                        context,
+                        'Memoria Musical',
+                        const MemoriaMusicalScreen(),
+                        Icons.extension,
                       ),
                       opcionMenu(
                         context,

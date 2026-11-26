@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/config/sesion.dart';
 import 'package:frontend/screens/eventos/pantalla_evento.dart';
+import 'package:frontend/screens/memoria_musical_screen.dart';
 import 'package:frontend/screens/multimedia/multimedia.dart';
 import 'package:frontend/screens/pantallaAyuda.dart';
 import 'package:frontend/screens/pantalla_generar_codigo.dart';
@@ -16,7 +17,7 @@ class MenuUsuario extends StatelessWidget {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       leading: Icon(
-        icono, 
+        icono,
         color: const Color(0xFFE2BC65), // Iconos en tono dorado elegante
         size: 26,
       ),
@@ -98,6 +99,12 @@ class MenuUsuario extends StatelessWidget {
                       'Eventos',
                       const PantallaEventos(),
                       Icons.event,
+                    ),
+                    opcionMenu(
+                      context,
+                      'Memoria Musical',
+                      const MemoriaMusicalScreen(),
+                      Icons.extension,
                     ),
                     if (Sesion.rol == 'admin')
                       opcionMenu(
